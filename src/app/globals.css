@@ -1,0 +1,242 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* ========== BASE VARIABLES ========== */
+@layer base {
+  :root {
+    
+    /* Radios y tipografía */
+    --radius: 0.75rem;
+    font-family: 'Poppins', 'Inter', sans-serif;
+  
+    /* Fondo principal */
+    --background: #F8F7FC;            /* Gris lila muuy claro (no blanco puro) */
+    --foreground: #191936;            /* Gris ultra oscuro, elegante */
+  
+    /* Sidebar */
+    --sidebar: rgba(33, 25, 77, 0.94);                 /* Lila pastel, muy suave */
+    --sidebar-foreground: #57409E;    /* Lila oscuro/azulado para textos */
+    --sidebar-primary: #7B61FF;       /* Violeta marca */
+    --sidebar-primary-foreground: #fff;
+    --sidebar-accent: #EFEAFF;        /* Lila claro para hover activo */
+    --sidebar-accent-foreground: #7B61FF;
+    --sidebar-border: #E3D8FF;
+  
+    /* Card principal */
+    --card: #FCFBFF;                  /* Gris-lila ultra claro, NO blanco puro */
+    --card-foreground: #191936;       /* Gris oscuro */
+    --card-border: #ECE6FA;
+    --shadow-card: 0 4px 32px 0 rgba(123, 97, 255, 0.07);
+  
+    /* Card interna/ventaja/features */
+    --card-inner: #F1EDFF;            /* Lila grisáceo, sutilmente más fuerte */
+    --card-feature: #E3D8FF;          /* Lila pastel, para destacar cards feature */
+    --card-feature-border: #C7B8FA;
+  
+    /* Colores principales */
+    --primary: #7B61FF;               /* Violeta marca */
+    --primary-foreground: #fff;
+  
+    /* Secundarios y muted */
+    --secondary: #EFEAFF;             /* Lila grisáceo suave */
+    --secondary-foreground: #57409E;  /* Texto para lo secundario */
+    --muted: #F3F2FB;                 /* Gris liloso, menos saturado */
+    --muted-foreground: #A9A9BC;
+  
+    /* Acento */
+    --accent: #3252FF;                /* Azul digital para detalles y links */
+    --accent-foreground: #fff;
+  
+    /* Textos */
+    --text: #1A1B22;                  /* Gris negro moderno */
+    --text-secondary: #86859A;        /* Gris liloso */
+    
+    /* Sombra tarjeta */
+    --shadow-card: 0 4px 24px 0 rgba(123,97,255,0.08);
+  
+    /* Otros */
+    --destructive: #F44336;
+    --border: #E3D8FF;
+    --input: #EDEDF7;
+    --ring: #7B61FF;
+  }
+  
+  .dark {
+    --background: #181925;
+    --foreground: #fff;
+
+    --card: #23243A;
+    --card-foreground: #fff;
+
+ --card-feature: #46454aaa;   /* Violeta oscuro translúcido */
+  --card-feature-border: #7860ff;
+
+    --primary: #7B61FF;
+    --primary-foreground: #fff;
+
+    --secondary: #21194D;
+    --secondary-foreground: #E3D8FF;
+
+    --muted: #22233E;
+    --muted-foreground: #A9A9BC;
+
+    --accent: #FFE066;
+    --accent-foreground: #21194D;
+
+    --destructive: #F44336;
+
+    --border: #23243A;
+    --input: #23243A;
+    --ring: #7B61FF;
+
+    --sidebar: rgba(33, 25, 77, 0.92);  
+    --sidebar-foreground: #E3D8FF;
+    --sidebar-primary: #A88AFF;
+    --sidebar-primary-foreground: #fff;
+    --sidebar-accent: #27284D;
+    --sidebar-accent-foreground: #A88AFF;
+    --sidebar-border: #2D2D53;
+  }
+
+  body {
+    background: transparent !important;
+    color: var(--foreground);
+    font-family: 'Poppins', 'Inter', sans-serif;
+    min-height: 100vh;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    border-color: var(--border);
+    outline-color: var(--ring);
+    transition: background-color 0.18s, color 0.18s, border-color 0.18s;
+  }
+}
+
+/* ========== SIDEBAR MODERNO ========== */
+.sidebar {
+  background: var(--sidebar);
+  color: var(--sidebar-foreground);
+  min-width: 250px;
+  max-width: 300px;
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 0 2px 24px 0 rgba(123,97,255,0.08);
+  transition: background 0.22s, color 0.22s;
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+}
+
+.sidebar a, .sidebar button {
+  color: var(--sidebar-foreground);
+  font-weight: 500;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+
+.sidebar a.active,
+.sidebar button.active,
+.sidebar a[aria-current="page"] {
+  background: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
+  box-shadow: 0 1px 6px 0 rgba(123, 97, 255, 0.15);
+}
+
+.sidebar a:focus-visible,
+.sidebar button:focus-visible {
+  outline: 2px solid var(--sidebar-primary);
+  outline-offset: 2px;
+}
+
+.sidebar a:hover,
+.sidebar button:hover,
+[data-sidebar="menu-button"]:hover {
+  background: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+  box-shadow: 0 2px 12px 0 rgba(123, 97, 255, 0.10);
+}
+
+.sidebar .sidebar-footer {
+  border-top: 1px solid var(--sidebar-border);
+  padding: 1.5rem 1rem;
+  font-size: 0.95rem;
+  color: var(--muted-foreground);
+  background: transparent;
+  margin-top: auto;
+}
+
+/* ========== ANIMACIONES SUAVES ========== */
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-24px);} to { opacity: 1; transform: translateY(0);} }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px);} to { opacity: 1; transform: translateY(0);} }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.96);} to { opacity: 1; transform: scale(1);} }
+@keyframes spin { to { transform: rotate(360deg);} }
+
+/* ========== UTILIDADES EXTRA ========== */
+@layer base {
+  .bg-background    { background: var(--background) !important; }
+  .bg-sidebar       { background: var(--sidebar) !important; }
+  .bg-card          { background: var(--card) !important; }
+  .bg-primary       { background: var(--primary) !important; }
+  .text-foreground  { color: var(--foreground) !important; }
+  .text-sidebar     { color: var(--sidebar-foreground) !important; }
+  .text-primary     { color: var(--primary) !important; }
+  .border-card      { border-color: var(--card) !important; }
+}
+
+/* ========== BOTONES Y TARJETAS MODERNOS ========== */
+.button, .btn, button, [type="button"], [type="submit"] {
+  border-radius: 0.75rem;
+  font-family: inherit;
+  font-weight: 600;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 2px 8px 0 rgba(247, 247, 248, 0.1);
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+
+.button:hover, .btn:hover, button:hover, [type="button"]:hover, [type="submit"]:hover {
+  background: #6F54DD;
+}
+
+.card, .bg-card {
+  background: var(--card);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .sidebar { min-width: 64px; max-width: 68px; }
+  .sidebar .sidebar-footer { padding: 0.6rem 0.2rem; font-size: 0.8rem;}
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E3D8FF;
+  border-radius: 8px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #21194D;
+}
+
+/* ========== TRANSICIÓN SUAVE EN TODO ========== */
+* {
+  transition: background-color 0.22s, color 0.22s, border-color 0.22s, box-shadow 0.18s;
+}
+.bg-sidebar {
+  background-color: var(--sidebar) !important;
+  color: var(--sidebar-foreground) !important;
+  transition: background 0.25s, color 0.2s;
+}
