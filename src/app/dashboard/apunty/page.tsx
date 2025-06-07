@@ -13,7 +13,9 @@ import { useAuth } from "@/hooks/useAuth"
 import { useMonthlyUsage } from "@/hooks/useMonthlyUsage"
 import { useUserPlan } from "@/hooks/useUserPlan"
 import { FileTextIcon, Sparkles, Info, CheckCircle, XCircle } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
+import { ProgressTracker } from "@/components/ProgressTracker"
+import { JobStatus } from "@/lib/statusMessages"
 import Link from "next/link"
 import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore"
 import { getStorage, ref, uploadBytes } from "firebase/storage"
@@ -22,36 +24,6 @@ import { getFirebaseFunctions } from "@/lib/firebase"
 
 const DEBUG = process.env.NODE_ENV !== 'production'
 
-type JobStatus =
-  | "idle"
-  | "validating"
-  | "uploading_pdf"
-  | "saving_firestore"
-  | "calling_function"
-  | "pending"
-  | "processing"
-  | "extracting_text"
-  | "generating_schema"
-  | "formatting_html"
-  | "uploading_final_pdf"
-  | "completed"
-  | "failed"
-
-const statusMessages: Record<JobStatus, string> = {
-  idle: "Esperando acción del usuario.",
-  validating: "Validando datos y permisos...",
-  uploading_pdf: "Subiendo PDF al almacenamiento...",
-  saving_firestore: "Guardando registro en Firestore...",
-  calling_function: "Iniciando procesamiento con IA...",
-  pending: "En cola...",
-  processing: "Procesando PDF...",
-  extracting_text: "Extrayendo texto del PDF...",
-  generating_schema: "Generando esquema del apunte...",
-  formatting_html: "Formateando HTML...",
-  uploading_final_pdf: "Subiendo PDF final...",
-  completed: "¡Apunte generado exitosamente!",
-  failed: "Error durante la generación.",
-}
 
 export default function Page() {
   const router = useRouter()
@@ -200,17 +172,17 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
 
   const ventajas = [
     {
-      icon: <Sparkles className="text-primary w-5 h-5" />,
+      icon: <Sparkles className="text-primary w-5 h-5 sm:w-6 sm:h-6" />,
       title: "Apuntes claros y limpios",
       desc: "La IA organiza y resume por vos, en PDF profesional."
     },
     {
-      icon: <CheckCircle className="text-accent w-5 h-5" />,
+      icon: <CheckCircle className="text-accent w-5 h-5 sm:w-6 sm:h-6" />,
       title: "Ahorro de tiempo",
       desc: "Subí, esperá unos segundos y recibí tu apunte al instante."
     },
     {
-      icon: <FileTextIcon className="text-digitalBlue w-5 h-5" />,
+      icon: <FileTextIcon className="text-digitalBlue w-5 h-5 sm:w-6 sm:h-6" />,
       title: "Archivos 100% tuyos",
       desc: "Tus apuntes son privados y los podés usar cuando quieras."
     },
@@ -220,7 +192,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
     <SidebarProvider className="flex flex-col">
       <div className="flex flex-1 ">
         <AppSidebar />
-        <SidebarInset className="px-2 md:px-8 pt-6 py-10">
+        <SidebarInset className="px-2 sm:px-4 md:px-8 pt-6 py-10">
           <div className="flex flex-col items-center w-full min-h-[calc(100vh-140px)]">
             {/* Header hero */}
             <motion.div
@@ -230,7 +202,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
               className="flex flex-col items-center mb-6"
             >
               <div className="bg-primary/10 rounded-full p-4 mb-2">
-                <Sparkles className="w-8 h-8 text-primary" />
+                <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold text-text dark:text-text-dark text-center">
                 Generá tus apuntes con IA
@@ -246,7 +218,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 8 }}
-                  className="w-full max-w-xl flex flex-col gap-2 items-center py-2"
+                  className="w-full max-w-lg sm:max-w-xl flex flex-col gap-2 items-center py-2"
                 >
                   <div className="w-full h-3 bg-softLila rounded-xl overflow-hidden border border-primary/20">
                     <motion.div
@@ -276,17 +248,18 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
               )}
             </AnimatePresence>
 
-            {/* Card principal */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
-              className="w-full max-w-xl"
-            >
+            <div className="w-full grid gap-6 lg:grid-cols-2">
+              {/* Card principal */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="w-full max-w-lg sm:max-w-xl"
+              >
               <Card className="shadow-card border border-border/30 bg-card dark:bg-card-dark rounded-card w-full">
                 <CardHeader className="text-center flex flex-col items-center gap-2">
                   <CardTitle className="text-2xl flex items-center gap-2">
-                    <FileTextIcon className="w-6 h-6 text-primary" />
+                    <FileTextIcon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                     Generar Apunte (PDF)
                   </CardTitle>
                   <CardDescription className="text-sm text-text-secondary">
@@ -309,7 +282,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                   <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-2">
                       <Label htmlFor="file" className="font-medium flex items-center gap-2">
-                        <FileTextIcon className="inline-block size-4" /> Archivo PDF
+                        <FileTextIcon className="inline-block w-4 h-4 sm:w-5 sm:h-5" /> Archivo PDF
                       </Label>
                       <Input
                         id="file"
@@ -339,7 +312,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                     >
                       {loadingForm ? (
                         <>
-                          <Sparkles className="animate-spin w-5 h-5" />
+                          <Sparkles className="animate-spin w-5 h-5 sm:w-6 sm:h-6" />
                           Procesando...
                         </>
                       ) : (
@@ -356,7 +329,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-[#FFE06622] text-accent border-l-4 border-accent rounded-lg px-3 py-2 mt-2 flex gap-2 items-center text-sm"
                       >
-                        <XCircle className="w-4 h-4" />
+                        <XCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                         <span>
                           Alcanzaste tu límite de PDFs este mes.
                           <Link href="/upgrade" className="ml-1 underline font-semibold hover:text-primary">
@@ -375,17 +348,17 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
               </Card>
             </motion.div>
 
-            {/* Ventajas de Apunty */}
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-              className="w-full max-w-xl mt-8"
-            >
+              {/* Ventajas de Apunty */}
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.4 }}
+                className="w-full max-w-lg sm:max-w-xl mt-8"
+              >
               <Card className="bg-[var(--card-feature)] border-none shadow-card rounded-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-primary text-xl">
-                    <Sparkles className="w-5 h-5" /> ¿Por qué usar Apunty PDF?
+                    <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" /> ¿Por qué usar Apunty PDF?
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="flex flex-col md:flex-row gap-4">
@@ -412,16 +385,16 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
               </Card>
             </motion.div>
 
-            {/* Cómo usar Apunty PDF */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.3 }}
-              className="w-full max-w-xl mt-6"
-            >
+              {/* Cómo usar Apunty PDF */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.3 }}
+                className="w-full max-w-lg sm:max-w-xl mt-6"
+              >
               <Card className="w-full bg-[var(--card)] dark:bg-[var(--card-dark)] border border-[var(--border)] shadow-card rounded-2xl">
                 <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                  <Info className="w-5 h-5 text-digitalBlue" />
+                  <Info className="w-5 h-5 sm:w-6 sm:h-6 text-digitalBlue" />
                   <CardTitle className="text-lg font-bold text-[var(--card-foreground)]">
                     ¿Cómo usar Apunty PDF?
                   </CardTitle>
@@ -441,7 +414,8 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
+              </motion.div>
+            </div>
           </div>
         </SidebarInset>
       </div>

@@ -13,7 +13,9 @@ import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
 import { useUserPlan } from '@/hooks/useUserPlan'
 import { useMonthlyUsage } from '@/hooks/useMonthlyUsage'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
+import { ProgressTracker } from '@/components/ProgressTracker'
+import { JobStatus } from '@/lib/statusMessages'
 import { VideoIcon, Info, CheckCircle } from 'lucide-react'
 import { PLAN_LIMITS } from '@/lib/plans'
 import { Loader2 } from "lucide-react"
@@ -21,32 +23,6 @@ import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore"
 
 const DEBUG = process.env.NODE_ENV !== 'production'
 
-type JobStatus =
-  | "idle"
-  | "validating"
-  | "saving_firestore"
-  | "calling_function"
-  | "pending"
-  | "processing"
-  | "generating_schema"
-  | "formatting_html"
-  | "uploading_final_pdf"
-  | "completed"
-  | "failed"
-
-const statusMessages: Record<JobStatus, string> = {
-  idle: "Esperando acción del usuario.",
-  validating: "Validando datos y permisos...",
-  saving_firestore: "Guardando registro en Firestore...",
-  calling_function: "Procesando video con IA...",
-  pending: "En cola...",
-  processing: "Procesando video...",
-  generating_schema: "Generando esquema del apunte...",
-  formatting_html: "Formateando HTML...",
-  uploading_final_pdf: "Generando PDF final...",
-  completed: "¡Apunte generado exitosamente!",
-  failed: "Error durante la generación.",
-}
 
 export default function Page() {
   const router = useRouter()
@@ -213,24 +189,24 @@ export default function Page() {
       <div className="flex-1 min-h-screen flex">
         <AppSidebar />
         {loading ? (
-          <SidebarInset className="flex-1 min-h-screen w-full flex items-center justify-center">
+          <SidebarInset className="flex-1 min-h-screen w-full flex items-center justify-center px-2 sm:px-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.4 }}
               className="flex flex-col items-center gap-4"
             >
-              <Loader2 className="w-8 h-8 text-primary animate-spin" />
+              <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 text-primary animate-spin" />
               <p className="text-muted-foreground font-medium">Cargando interfaz de VideoAI…</p>
             </motion.div>
           </SidebarInset>
         ) : (
-          <SidebarInset className="relative flex-1 min-h-screen w-full flex flex-col items-center justify-center px-2 md:px-0 pt-10">
+          <SidebarInset className="relative flex-1 min-h-screen w-full flex flex-col items-center justify-center px-2 sm:px-4 md:px-0 pt-10">
             <motion.section
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="w-full max-w-xl space-y-10 mx-auto"
+              className="w-full max-w-lg sm:max-w-xl space-y-10 mx-auto"
             >
               {/* Hero */}
               <div className="text-center">
@@ -241,11 +217,11 @@ export default function Page() {
                   className="text-[2.4rem] md:text-4xl font-extrabold flex flex-col items-center gap-2"
                 >
                   <span className="inline-flex items-center gap-2 text-primary text-[2.7rem]">
-                    <VideoIcon className="w-8 h-8" /> VideoAI
+                    <VideoIcon className="w-8 h-8 sm:w-10 sm:h-10" /> VideoAI
                   </span>
                   <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Transcribí Videos</span>
                 </motion.h1>
-                <p className="text-base text-muted-foreground mt-2 max-w-xl mx-auto font-medium">
+                <p className="text-base text-muted-foreground mt-2 max-w-lg sm:max-w-xl mx-auto font-medium">
                   Convertí cualquier clase, seminario o video educativo de YouTube en un apunte PDF profesional, limpio y organizado.
                 </p>
               </div>
@@ -258,7 +234,7 @@ export default function Page() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    className="w-full max-w-xl flex flex-col gap-2 items-center py-2"
+                    className="w-full max-w-lg sm:max-w-xl flex flex-col gap-2 items-center py-2"
                   >
                     <div className="w-full h-3 bg-softLila rounded-xl overflow-hidden border border-primary/20">
                       <motion.div
@@ -288,16 +264,17 @@ export default function Page() {
                 )}
               </AnimatePresence>
 
-              {/* Card principal */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.18, duration: 0.5 }}
-              >
-                <Card className="shadow-card bg-card border border-[var(--card-border)] rounded-2xl w-full">
+              <div className="w-full grid gap-6 lg:grid-cols-2">
+                {/* Card principal */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.18, duration: 0.5 }}
+                >
+                  <Card className="shadow-card bg-card border border-[var(--card-border)] rounded-2xl w-full">
                   <CardHeader className="text-center flex flex-col items-center gap-2">
                     <CardTitle className="text-2xl flex items-center gap-2 text-primary">
-                      <VideoIcon className="w-7 h-7" />
+                      <VideoIcon className="w-7 h-7 sm:w-8 sm:h-8" />
                       Generar Apunte desde Video
                     </CardTitle>
                     <CardDescription className="text-base text-muted-foreground">
@@ -342,18 +319,18 @@ export default function Page() {
                     </form>
                   </CardContent>
                 </Card>
-              </motion.div>
+                </motion.div>
 
-              {/* Card de ayuda / instrucciones */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="w-full"
-              >
+                {/* Card de ayuda / instrucciones */}
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  className="w-full"
+                >
                 <Card className="w-full bg-[#232243]/90 border border-[var(--card-border)] shadow-card rounded-2xl transition-colors">
                   <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                    <Info className="w-5 h-5 text-accent" />
+                    <Info className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
                     <CardTitle className="text-lg font-bold text-[var(--card-foreground)]">
                       ¿Cómo funciona?
                     </CardTitle>
@@ -366,11 +343,12 @@ export default function Page() {
                       <li>¡Listo! Descargá el PDF generado.</li>
                     </ol>
                     <div className="pt-2 flex items-center gap-2 text-xs text-green-600 dark:text-green-400">
-                      <CheckCircle className="w-4 h-4" /> Mejor resultado: videos nítidos, sin música de fondo.
+                      <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Mejor resultado: videos nítidos, sin música de fondo.
                     </div>
                   </CardContent>
                 </Card>
-              </motion.div>
+                </motion.div>
+              </div>
             </motion.section>
           </SidebarInset>
         )}

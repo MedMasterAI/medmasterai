@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button"
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -109,14 +110,15 @@ export default function DashboardPage() {
                       ).toLocaleString()}
                     </span>
                     {note.url && (
-                      <Link
-                        href={note.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary text-sm"
-                      >
-                        Ver Apunte
-                      </Link>
+                      <Button variant="link" size="sm" asChild>
+                        <Link
+                          href={note.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver Apunte
+                        </Link>
+                      </Button>
                     )}
                   </li>
                 ))}
