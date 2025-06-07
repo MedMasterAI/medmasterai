@@ -1,5 +1,5 @@
-// src/app/login/page.tsx
 'use client'
+// src/app/login/page.tsx
 
 import { useAuthRedirect } from '@/hooks/useAuthRedirect'
 import { LoginForm } from '@/components/login-form'

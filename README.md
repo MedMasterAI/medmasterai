@@ -1,12 +1,10 @@
 # medmasterai
 
-<<<<<<< ours
-## Variables de entorno
+## Configuración del entorno y CORS
 
-El proyecto requiere varias credenciales que se definen mediante variables de entorno.
+El proyecto utiliza varias credenciales que se definen como variables de entorno. Guárdalas en un archivo `.env` o en tu gestor de secretos antes de ejecutar la aplicación o desplegar las funciones.
 
-### Firebase
-
+### Firebase (cliente)
 ```
 NEXT_PUBLIC_FIREBASE_API_KEY
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
@@ -18,35 +16,23 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 ```
 
 ### Firebase Admin
-
 ```
 FIREBASE_PROJECT_ID
 FIREBASE_CLIENT_EMAIL
-FIREBASE_PRIVATE_KEY (con los saltos de línea escapados)
+FIREBASE_PRIVATE_KEY  # con los saltos de línea escapados
 FIREBASE_STORAGE_BUCKET
 ```
 
 ### Google Vision / Document AI
-
 ```
 VISION_SERVICE_ACCOUNT_BASE64   # JSON de la cuenta de servicio en base64
 DOCUMENT_AI_PROCESSOR_ID        # Identificador del procesador de Document AI
 DOCUMENT_AI_LOCATION            # Ubicación opcional (por defecto "us")
 ```
 
-Guarda estas variables en un archivo `.env` o en el gestor de secretos que prefieras antes de ejecutar la aplicación o desplegar las funciones.
-=======
-## Configuraci\u00f3n de CORS para la funci\u00f3n de PDF
-
-La funci\u00f3n ubicada en `functions-pdf/index.ts` usa el paquete `cors` para
-habilitar solicitudes desde dominios permitidos. Estos dominios se especifican a
-trav\u00e9s de la variable de entorno `ALLOWED_ORIGINS`, que debe contener una lista
-de URLs separadas por comas. Por ejemplo:
-
+### CORS para la función PDF
+La función ubicada en `functions-pdf/index.ts` emplea el paquete `cors`. Define los dominios permitidos mediante la variable `ALLOWED_ORIGINS`, una lista separada por comas:
 ```bash
 ALLOWED_ORIGINS=https://ejemplo.com,https://otro.com
 ```
-
-Al desplegar, aseg\u00farese de definir `ALLOWED_ORIGINS` con los dominios que
-pueden invocar la funci\u00f3n PDF.
->>>>>>> theirs
+Al desplegar, establece `ALLOWED_ORIGINS` con los dominios autorizados a invocar la función PDF.
