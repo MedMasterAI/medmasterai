@@ -43,5 +43,5 @@ next-env.d.ts
 # Claves privadas
 src/lib/frontedwebmedmaster-firebase-adminsdk-fbsvc-*.json
 lib/credentials/vision-service-account.json
-functions/src/credentials/vision-service-account.*
-functions/lib/credentials/vision-service-account.js*
+(?i)functions/src/credentials/vision-service-account.*
+(?i)functions/lib/credentials/vision-service-account.js*
