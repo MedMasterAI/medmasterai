@@ -5,7 +5,15 @@ import cors from "cors";
 const app = express();
 
 // Middleware global
-app.use(cors({ origin: "*" }));
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+app.use(
+  cors({
+    origin: allowedOrigins,
+  })
+);
 app.use(express.json({ limit: "20mb" }));
 
 app.post("/generate-pdf", async (req: Request, res: Response) => {

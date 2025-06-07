@@ -46,8 +46,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "types/**/*.d.ts"
-, "functions-pdf/lib/htmlToPdf.js"  ],
+    "types/**/*.d.ts",
+    "functions-pdf/lib/htmlToPdf.js"
+  ],
   "exclude": [
     "node_modules"
   ]

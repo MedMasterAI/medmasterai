@@ -96,7 +96,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                   <Link
                     href="/dashboard/apunty"
-                    className="rounded-2xl bg-[#5d28f0] hover:bg-[#5A3DAA] text-white p-6 flex flex-col items-center gap-2 shadow-md transition-all"
+                    className="rounded-2xl bg-primary hover:bg-primary/80 text-white p-6 flex flex-col items-center gap-2 shadow-md transition-all"
                   >
                     <FileTextIcon className="w-10 h-10 mb-1" />
                     <span className="text-base font-semibold">Apunty PDF</span>
@@ -105,7 +105,7 @@ export default function DashboardPage() {
 
                   <Link
                     href="/dashboard/videoai"
-                    className="rounded-2xl bg-[#5d28f0] hover:bg-[#5A3DAA] text-white p-6 flex flex-col items-center gap-2 shadow-md transition-all"
+                    className="rounded-2xl bg-primary hover:bg-primary/80 text-white p-6 flex flex-col items-center gap-2 shadow-md transition-all"
                   >
                     <VideoIcon className="w-10 h-10 mb-1" />
                     <span className="text-base font-semibold">VideoAI</span>
@@ -114,7 +114,7 @@ export default function DashboardPage() {
 
                   <Link
                     href="/dashboard/mis-apuntes"
-                    className="rounded-2xl bg-[#5d28f0] hover:bg-[#5A3DAA] text-white p-6 flex flex-col items-center gap-2 shadow-md transition-all"
+                    className="rounded-2xl bg-primary hover:bg-primary/80 text-white p-6 flex flex-col items-center gap-2 shadow-md transition-all"
                   >
                     <FileTextIcon className="w-10 h-10 mb-1" />
                     <span className="text-base font-semibold">Mis Apuntes</span>

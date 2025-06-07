@@ -26,12 +26,13 @@
     --card: #FCFBFF;                  /* Gris-lila ultra claro, NO blanco puro */
     --card-foreground: #191936;       /* Gris oscuro */
     --card-border: #ECE6FA;
-    --shadow-card: 0 4px 32px 0 rgba(123, 97, 255, 0.07);
   
     /* Card interna/ventaja/features */
     --card-inner: #F1EDFF;            /* Lila grisáceo, sutilmente más fuerte */
     --card-feature: #E3D8FF;          /* Lila pastel, para destacar cards feature */
     --card-feature-border: #C7B8FA;
+    --card-feature-title: #57409E;    /* Títulos de cards feature en violeta */
+    --card-feature-desc: #86859A;     /* Descripciones en gris liloso */
   
     /* Colores principales */
     --primary: #7B61FF;               /* Violeta marca */
@@ -68,8 +69,10 @@
     --card: #23243A;
     --card-foreground: #fff;
 
- --card-feature: #46454aaa;   /* Violeta oscuro translúcido */
-  --card-feature-border: #7860ff;
+    --card-feature: #46454aaa;   /* Violeta oscuro translúcido */
+    --card-feature-border: #7860ff;
+    --card-feature-title: #E3D8FF;     /* Violeta claro para títulos en oscuro */
+    --card-feature-desc: #A9A9BC;      /* Gris suave para descripciones */
 
     --primary: #7B61FF;
     --primary-foreground: #fff;

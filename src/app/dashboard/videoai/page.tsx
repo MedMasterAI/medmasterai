@@ -19,6 +19,8 @@ import { PLAN_LIMITS } from '@/lib/plans'
 import { Loader2 } from "lucide-react"
 import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore"
 
+const DEBUG = process.env.NODE_ENV !== 'production'
+
 type JobStatus =
   | "idle"
   | "validating"
@@ -103,27 +105,27 @@ export default function Page() {
       default: return 0
     }
   }
-  console.log("Usuario Firebase actual:", user);
+  if (DEBUG) console.log("Usuario Firebase actual:", user);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatusDetail("")
     setDownloadUrl("")
 
     // ---- DEBUG LOGS ----
-    console.log('[DEBUG] ======== SUBMIT ========')
+    if (DEBUG) console.log('[DEBUG] ======== SUBMIT ========')
 
-    console.log('[DEBUG] user:', user)
+    if (DEBUG) console.log('[DEBUG] user:', user)
     if (user) {
-      console.log('[DEBUG] user.uid:', user.uid)
-      console.log('[DEBUG] user.getIdToken exists?', typeof user.getIdToken === "function")
+      if (DEBUG) console.log('[DEBUG] user.uid:', user.uid)
+      if (DEBUG) console.log('[DEBUG] user.getIdToken exists?', typeof user.getIdToken === "function")
       user.getIdToken().then(tk => {
-        console.log('[DEBUG] user.getIdToken:', tk.slice(0, 40) + '...')
+        if (DEBUG) console.log('[DEBUG] user.getIdToken:', tk.slice(0, 40) + '...')
       })
     }
-    console.log('[DEBUG] plan:', plan)
-    console.log('[DEBUG] canVideo:', canVideo)
-    console.log('[DEBUG] videoUrl:', videoUrl)
-    console.log('[DEBUG] jobNoteId:', jobNoteId)
+    if (DEBUG) console.log('[DEBUG] plan:', plan)
+    if (DEBUG) console.log('[DEBUG] canVideo:', canVideo)
+    if (DEBUG) console.log('[DEBUG] videoUrl:', videoUrl)
+    if (DEBUG) console.log('[DEBUG] jobNoteId:', jobNoteId)
     // ---- DEBUG LOGS ----
 
     
@@ -154,7 +156,7 @@ export default function Page() {
       setProgress(20)
       setJobStatus("saving_firestore")
       setStatusDetail("Guardando registro en Firestore...")
-      console.log("Subiendo PDF al storage...")
+      if (DEBUG) console.log("Subiendo PDF al storage...")
       const db = getFirestore()
       await setDoc(doc(db, "users", user.uid, "notes", noteId), {
         videoUrl,
@@ -164,9 +166,9 @@ export default function Page() {
         plan,
       })
       // ---- MÁS LOGS ANTES DE CALLABLE ----
-      console.log('[DEBUG] Antes de llamar httpsCallable')
-      console.log('[DEBUG] functions:', functions)
-      console.log('[DEBUG] noteId:', noteId)
+      if (DEBUG) console.log('[DEBUG] Antes de llamar httpsCallable')
+      if (DEBUG) console.log('[DEBUG] functions:', functions)
+      if (DEBUG) console.log('[DEBUG] noteId:', noteId)
       // ---- MÁS LOGS ANTES DE CALLABLE ----
 
       // 2️⃣ Llamar función Cloud Function
@@ -180,7 +182,7 @@ export default function Page() {
         videoUrl,
         fileName: "Apunte-Video.pdf"
       }).then(r => {
-        console.log('[DEBUG] Response función:', r)
+        if (DEBUG) console.log('[DEBUG] Response función:', r)
       }).catch(err => {
         console.error('[DEBUG] ERROR FUNCIÓN:', err)
       })

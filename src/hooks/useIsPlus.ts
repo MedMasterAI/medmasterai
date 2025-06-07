@@ -16,6 +16,12 @@ interface PlusStatus {
   isNearExpiration: boolean
 }
 
+/**
+ * Check if a user currently has an active Plus subscription.
+ *
+ * @param uid User ID to query subscriptions for.
+ * @returns Subscription status including remaining days and expiration flag.
+ */
 export function useIsPlus(uid: string | null): PlusStatus {
   const [status, setStatus] = useState<PlusStatus>({
     isPlus: false,

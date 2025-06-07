@@ -11,7 +11,9 @@ import {
 import type { User as FirebaseUser } from "firebase/auth"
 
 /**
- * useAuth hook: mantiene el usuario autenticado y el estado de suscripción "Plus".
+ * Manage Firebase authentication state and Plus subscription status.
+ *
+ * @returns Current user, loading state and a flag indicating an active Plus plan.
  */
 export function useAuth() {
   const [user, setUser] = useState<FirebaseUser | null>(null)

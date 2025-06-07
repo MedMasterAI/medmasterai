@@ -6,6 +6,11 @@ import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { app } from '@/lib/firebase'
 
+/**
+ * Redirect authenticated users to the dashboard page.
+ *
+ * @returns Nothing. The hook only performs navigation side effects.
+ */
 export function useAuthRedirect() {
   const router = useRouter()
   useEffect(() => {

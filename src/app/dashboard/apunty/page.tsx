@@ -20,6 +20,8 @@ import { getStorage, ref, uploadBytes } from "firebase/storage"
 import { httpsCallable } from "firebase/functions"
 import { functions } from "@/lib/firebase"
 
+const DEBUG = process.env.NODE_ENV !== 'production'
+
 type JobStatus =
   | "idle"
   | "validating"
@@ -111,7 +113,7 @@ export default function Page() {
     }
   }
 // Justo antes de llamar httpsCallable
-console.log("Usuario Firebase actual:", user);
+if (DEBUG) console.log("Usuario Firebase actual:", user);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -141,7 +143,7 @@ console.log("Usuario Firebase actual:", user);
       setProgress(20)
       setJobStatus("uploading_pdf")
       setStatusDetail("Subiendo archivo PDF a Cloud Storage...")
-      console.log("Subiendo PDF al storage...")
+      if (DEBUG) console.log("Subiendo PDF al storage...")
       const storage = getStorage()
       const storageRef = ref(storage, `temp_uploads/${user.uid}/${noteId}/${file.name}`)
       await uploadBytes(storageRef, file)
@@ -150,7 +152,7 @@ console.log("Usuario Firebase actual:", user);
       setProgress(30)
       setJobStatus("saving_firestore")
       setStatusDetail("Guardando registro del apunte en Firestore...")
-      console.log("Guardando en Firestore...")
+      if (DEBUG) console.log("Guardando en Firestore...")
       const db = getFirestore()
       await setDoc(doc(db, "users", user.uid, "notes", noteId), {
         fileName: file.name,
@@ -163,7 +165,7 @@ console.log("Usuario Firebase actual:", user);
       setProgress(35)
       setJobStatus("calling_function")
       setStatusDetail("Llamando función Cloud Function (IA)...")
-      console.log("Llamando Cloud Function: generateNoteFromPdf")
+      if (DEBUG) console.log("Llamando Cloud Function: generateNoteFromPdf")
       const generateNoteFromPdf = httpsCallable(functions, "generateNoteFromPdf")
       await generateNoteFromPdf({
         noteId,

@@ -5,6 +5,8 @@ import admin from "firebase-admin"
 import mercadopago from "@/lib/mercadopago"
 import serviceAccount from "@/lib/frontedwebmedmaster-firebase-adminsdk-fbsvc-1e8dfbf46f.json"
 
+const DEBUG = process.env.NODE_ENV !== 'production'
+
 // Inicializa Admin SDK con la clave del JSON
 if (!admin.apps.length) {
   admin.initializeApp({
@@ -19,7 +21,7 @@ export async function POST(request: Request) {
       type: string
       data: { id: string }
     }
-    console.log("🔔 Webhook MP recibido:", { type, data })
+    if (DEBUG) console.log("🔔 Webhook MP recibido:", { type, data })
 
     if (type !== "payment") {
       return NextResponse.json({}, { status: 200 })
@@ -27,7 +29,7 @@ export async function POST(request: Request) {
 
     const paymentId = data.id
     const payment = await mercadopago.payment.findById(paymentId)
-    console.log("⚡️ Payment completo:", payment.body)
+    if (DEBUG) console.log("⚡️ Payment completo:", payment.body)
 
     const uid = payment.body.external_reference
     const status = payment.body.status
@@ -69,9 +71,11 @@ export async function POST(request: Request) {
         { merge: true }
       )
 
-    console.log(
-      `✅ Suscripción ${paymentId} guardada para usuario ${uid} y plan actualizado`
-    )
+    if (DEBUG) {
+      console.log(
+        `✅ Suscripción ${paymentId} guardada para usuario ${uid} y plan actualizado`
+      )
+    }
     return NextResponse.json({}, { status: 200 })
   } catch (err: any) {
     console.error("❌ Error en webhook-mp:", err)

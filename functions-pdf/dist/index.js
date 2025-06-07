@@ -1,4 +1,8 @@
-app.use((0, cors_1.default)({ origin: "*" }));
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+app.use((0, cors_1.default)({ origin: allowedOrigins }));
 app.use(express_1.default.json({ limit: "20mb" }));
 
 // Solo UNA ruta /generate-pdf:

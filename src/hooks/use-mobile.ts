@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react"
 
-// Retorna true si el ancho de pantalla es menor a 768px (tailwind "md")
+/**
+ * Detect if the viewport width is below the given breakpoint.
+ *
+ * @param breakpoint Pixel width that marks the mobile cutoff. Defaults to 768.
+ * @returns `true` when the window width is smaller than the breakpoint.
+ */
 export function useIsMobile(breakpoint = 768): boolean {
   const [isMobile, setIsMobile] = useState(false)
 

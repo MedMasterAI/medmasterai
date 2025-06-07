@@ -34,6 +34,13 @@ interface GenerateNoteResponseData {
 
 const CHUNK_TOKEN_SIZE = 10000;
 
+/**
+ * Split a large text into token-sized chunks.
+ *
+ * @param text The text to divide into pieces.
+ * @param maxTokens Maximum token count per chunk. Defaults to `CHUNK_TOKEN_SIZE`.
+ * @returns Array of chunked strings.
+ */
 function chunkTextByTokens(text: string, maxTokens = CHUNK_TOKEN_SIZE): string[] {
   const maxChars = maxTokens * 4;
   const chunks: string[] = [];
@@ -60,6 +67,12 @@ const db = getFirestore();
 const storage = getStorage();
 const PDF_EXTENSION_REGEX = /\.pdf$/;
 
+/**
+ * Generate a summarized note from a PDF uploaded by the client.
+ *
+ * @param request Callable request containing authentication and file metadata.
+ * @returns Result with success flag, note ID and a signed URL to the final file.
+ */
 export const generateNoteFromPdf = functions.https.onCall(
   async (
     request: functions.https.CallableRequest<GenerateNoteRequestData>
@@ -237,6 +250,12 @@ export const generateNoteFromPdf = functions.https.onCall(
     }
   }
 );
+/**
+ * Generate a summarized note from a YouTube video URL.
+ *
+ * @param request Callable request containing auth info, video URL and note details.
+ * @returns Object with success flag, note ID and the public URL to the generated PDF.
+ */
 export const generateNoteFromVideo = functions.https.onCall(
   async (
     request: functions.https.CallableRequest<

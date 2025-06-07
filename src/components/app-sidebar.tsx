@@ -41,7 +41,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
     <Sidebar
     className="
     w-64 min-h-screen flex flex-col justify-between
-    bg-[#21194D] border-r border-[#2D2D53]
+    bg-[var(--sidebar)] border-r border-[var(--sidebar-border)]
     shadow-xl z-20
     text-white font-poppins
     transition-colors

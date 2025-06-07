@@ -1,7 +1,11 @@
 import { google } from "googleapis";
 import { JWT } from "google-auth-library";
 // Importa las credenciales del service account (asegúrate de que las rutas sean correctas)
-import credentials from "../credentials/vision-service-account.js";
+const credentialsBase64 = process.env.VISION_SERVICE_ACCOUNT_BASE64;
+if (!credentialsBase64) {
+    throw new Error("VISION_SERVICE_ACCOUNT_BASE64 env var is not set");
+}
+const credentials = JSON.parse(Buffer.from(credentialsBase64, "base64").toString("utf8"));
 const documentai = google.documentai("v1");
 const authClient = new JWT({
     email: credentials.client_email,

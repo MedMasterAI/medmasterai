@@ -42,6 +42,7 @@ module.exports = {
     "no-trailing-spaces": "error",
     "eol-last": ["error", "always"],
     "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/explicit-module-boundary-types": "error",
     "import/no-duplicates": "warn",
     "padded-blocks": ["error", "never"]
   },

@@ -25,6 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Separator } from "@/components/ui/separator"
 
 const data = [
   [
@@ -118,7 +119,22 @@ export function NavActions() {
           className="w-56 overflow-hidden rounded-lg p-0"
           align="end"
         >
-          
+          {data.map((group, i) => (
+            <React.Fragment key={i}>
+              <div className="grid gap-1 p-1">
+                {group.map((item) => (
+                  <button
+                    key={item.label}
+                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground"
+                  >
+                    <item.icon className="size-4 text-muted-foreground" />
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+              {i < data.length - 1 && <Separator />}
+            </React.Fragment>
+          ))}
         </PopoverContent>
       </Popover>
     </div>

@@ -13,6 +13,12 @@ interface UserPlanStatus {
   loading: boolean // 👈 agregado
 }
 
+/**
+ * Obtain the current subscription plan of a user.
+ *
+ * @param uid User ID whose plan should be fetched.
+ * @returns Plan status information including expiration and loading state.
+ */
 export function useUserPlan(uid: string | null): UserPlanStatus {
   const [status, setStatus] = useState<UserPlanStatus>({
     plan: "free",

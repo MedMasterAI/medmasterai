@@ -12,6 +12,12 @@ import {
 } from "firebase/firestore"
 import { app } from "@/lib/firebase"
 
+/**
+ * Subscribe to the notes collection of a user and keep it in state.
+ *
+ * @param uid User identifier whose notes should be loaded.
+ * @returns Object containing an array of notes and a loading flag.
+ */
 export function useUserNotes(uid: string | null) {
   const [notes, setNotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
