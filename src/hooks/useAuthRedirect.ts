@@ -4,7 +4,7 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { app } from '@/lib/firebase'
+import { getFirebaseApp } from '@/lib/firebase'
 
 /**
  * Redirect authenticated users to the dashboard page.
@@ -14,7 +14,7 @@ import { app } from '@/lib/firebase'
 export function useAuthRedirect() {
   const router = useRouter()
   useEffect(() => {
-    const auth = getAuth(app)
+    const auth = getAuth(getFirebaseApp())
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         router.replace('/dashboard')

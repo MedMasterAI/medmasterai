@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
-import { onUserChanged } from "@/lib/firebase"
-import { db } from "@/lib/firebase"
+import { onUserChanged, getFirestoreDb } from "@/lib/firebase"
 import {
   collection,
   query,
@@ -37,7 +36,7 @@ export function useAuth() {
     }
 
     // Colección "subscriptions" filtrando estado y expiración
-    const subsRef = collection(db, "users", user.uid, "subscriptions")
+    const subsRef = collection(getFirestoreDb(), "users", user.uid, "subscriptions")
     const q = query(
       subsRef,
       where("status", "==", "approved"),

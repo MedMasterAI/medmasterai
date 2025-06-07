@@ -8,7 +8,7 @@ import {
   getDocs,
   Timestamp,
 } from "firebase/firestore"
-import { app } from "@lib/firebase"
+import { getFirebaseApp } from "@lib/firebase"
 
 interface PlusStatus {
   isPlus: boolean
@@ -34,7 +34,7 @@ export function useIsPlus(uid: string | null): PlusStatus {
 
     const checkPlusStatus = async () => {
       try {
-        const db = getFirestore(app)
+        const db = getFirestore(getFirebaseApp())
         const ref = collection(db, `users/${uid}/subscriptions`)
         const q = query(ref, orderBy("expiresAt", "desc"), limit(1))
         const snap = await getDocs(q)

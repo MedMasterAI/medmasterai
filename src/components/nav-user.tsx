@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { onAuthStateChanged } from "firebase/auth"
-import { auth } from "@/lib/firebase"
+import { getFirebaseAuth } from "@/lib/firebase"
 
 import {
   Bell,
@@ -40,7 +40,7 @@ export function NavUser() {
   const [user, setUser] = useState<{ name: string; email: string; avatar: string } | null>(null)
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
+    const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (u) => {
       if (u) {
         setUser({
           name:   u.displayName ?? "Sin nombre",
@@ -55,7 +55,7 @@ export function NavUser() {
   }, [])
 
   const handleLogout = useCallback(async () => {
-    await auth.signOut()
+    await getFirebaseAuth().signOut()
     router.push("/login")
   }, [router])
 

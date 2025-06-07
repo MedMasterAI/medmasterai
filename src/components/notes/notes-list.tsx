@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { deleteDoc, doc, getFirestore } from "firebase/firestore"
-import { app } from "@/lib/firebase"
+import { getFirebaseApp } from "@/lib/firebase"
 
 interface Note {
   id: string
@@ -15,7 +15,7 @@ interface Note {
 
 export function NotesList({ notes }: { notes: Note[] }) {
   const router = useRouter()
-  const db = getFirestore(app)
+  const db = getFirestore(getFirebaseApp())
 
   const handleDelete = async (noteId: string) => {
     const confirm = window.confirm("¿Estás seguro de que querés eliminar este apunte?")

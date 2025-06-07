@@ -4,7 +4,7 @@ import { ensureUserDocWithFreePlan } from "@/lib/ensureUserDocWithFreePlan"
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { signInWithGoogle, signInWithApple, auth } from '@/lib/firebase'
+import { signInWithGoogle, signInWithApple, getFirebaseAuth } from '@/lib/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -76,7 +76,7 @@ export function LoginForm({
     e.preventDefault()
     setLoading(true)
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const userCredential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
       const user = userCredential.user
       if (!user.uid) throw new Error("No se pudo obtener el UID")
       await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined)

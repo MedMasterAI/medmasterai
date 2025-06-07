@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { getAuth, onAuthStateChanged, User } from 'firebase/auth'
-import { app } from '@/lib/firebase'
+import { getFirebaseApp } from '@/lib/firebase'
 
 /**
  * Ensure a user is authenticated before accessing a page.
@@ -16,7 +16,7 @@ export function useRequireAuth() {
   const router = useRouter()
 
   useEffect(() => {
-    const auth = getAuth(app)
+    const auth = getAuth(getFirebaseApp())
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user)
       if (!user) {

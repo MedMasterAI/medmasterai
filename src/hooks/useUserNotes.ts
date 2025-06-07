@@ -10,7 +10,7 @@ import {
   onSnapshot,
   Unsubscribe
 } from "firebase/firestore"
-import { app } from "@/lib/firebase"
+import { getFirebaseApp } from "@/lib/firebase"
 
 /**
  * Subscribe to the notes collection of a user and keep it in state.
@@ -25,7 +25,7 @@ export function useUserNotes(uid: string | null) {
   useEffect(() => {
     if (!uid) return
 
-    const db = getFirestore(app)
+    const db = getFirestore(getFirebaseApp())
     const notesRef = collection(db, `users/${uid}/notes`)
     const q = query(notesRef, orderBy("createdAt", "desc"))
 

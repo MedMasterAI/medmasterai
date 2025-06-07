@@ -1,6 +1,6 @@
 'use client'
 import { httpsCallable } from "firebase/functions";
-import { functions } from "@/lib/firebase";
+import { getFirebaseFunctions } from "@/lib/firebase";
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { AppSidebar } from '@/components/app-sidebar'
@@ -167,7 +167,7 @@ export default function Page() {
       })
       // ---- MÁS LOGS ANTES DE CALLABLE ----
       if (DEBUG) console.log('[DEBUG] Antes de llamar httpsCallable')
-      if (DEBUG) console.log('[DEBUG] functions:', functions)
+      if (DEBUG) console.log('[DEBUG] functions:', getFirebaseFunctions())
       if (DEBUG) console.log('[DEBUG] noteId:', noteId)
       // ---- MÁS LOGS ANTES DE CALLABLE ----
 
@@ -175,7 +175,7 @@ export default function Page() {
       setProgress(30)
       setJobStatus("calling_function")
       setStatusDetail("Llamando función Cloud Function (IA)...")
-      const generateNoteFromVideo = httpsCallable(functions, "generateNoteFromVideo")
+      const generateNoteFromVideo = httpsCallable(getFirebaseFunctions(), "generateNoteFromVideo")
       await generateNoteFromVideo({
         noteId,
         plan,

@@ -1,5 +1,44 @@
 # medmasterai
 
+## Instalación
+
+Instala las dependencias del proyecto con:
+
+```bash
+npm install
+```
+
+## Servidor de desarrollo
+
+Inicia el entorno de desarrollo con:
+
+```bash
+npm run dev
+```
+
+## Producción
+
+Compila la aplicación e inicia el servidor en modo producción:
+
+```bash
+npm run build && npm start
+```
+
+## Funciones
+
+Las funciones de Firebase se encuentran en la carpeta `functions`. Para
+probarlas localmente utiliza:
+
+```bash
+npm run --prefix functions serve
+```
+
+Y para desplegarlas en tu proyecto ejecuta:
+
+```bash
+npm run --prefix functions deploy
+```
+
 ## Configuración del entorno y CORS
 
 El proyecto utiliza varias credenciales que se definen como variables de entorno. Guárdalas en un archivo `.env` o en tu gestor de secretos antes de ejecutar la aplicación o desplegar las funciones.
@@ -50,3 +89,7 @@ ALLOWED_ORIGINS=https://ejemplo.com,https://otro.com
 ```
 Al desplegar, establece `ALLOWED_ORIGINS` con los dominios autorizados a invocar la función PDF.
 Si Puppeteer no encuentra Chrome, define también `CHROME_PATH` con la ruta al ejecutable.
+
+## License
+
+This project is licensed under the MIT License.

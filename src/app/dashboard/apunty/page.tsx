@@ -18,7 +18,7 @@ import Link from "next/link"
 import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore"
 import { getStorage, ref, uploadBytes } from "firebase/storage"
 import { httpsCallable } from "firebase/functions"
-import { functions } from "@/lib/firebase"
+import { getFirebaseFunctions } from "@/lib/firebase"
 
 const DEBUG = process.env.NODE_ENV !== 'production'
 
@@ -166,7 +166,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
       setJobStatus("calling_function")
       setStatusDetail("Llamando función Cloud Function (IA)...")
       if (DEBUG) console.log("Llamando Cloud Function: generateNoteFromPdf")
-      const generateNoteFromPdf = httpsCallable(functions, "generateNoteFromPdf")
+      const generateNoteFromPdf = httpsCallable(getFirebaseFunctions(), "generateNoteFromPdf")
       await generateNoteFromPdf({
         noteId,
         plan,

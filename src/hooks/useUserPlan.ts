@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { getFirestore, doc, getDoc, Timestamp } from "firebase/firestore"
-import { app } from "@/lib/firebase"
+import { getFirebaseApp } from "@/lib/firebase"
 
 interface UserPlanStatus {
   plan: "free" | "pro" | "unlimited"
@@ -46,7 +46,7 @@ export function useUserPlan(uid: string | null): UserPlanStatus {
 
     const fetchPlan = async () => {
       try {
-        const db = getFirestore(app)
+        const db = getFirestore(getFirebaseApp())
         const userRef = doc(db, `users/${uid}`)
         const userSnap = await getDoc(userRef)
 

@@ -1,9 +1,9 @@
 import { getFirestore, doc, getDoc, setDoc, Timestamp } from "firebase/firestore"
-import { app } from "./firebase"
+import { getFirebaseApp } from "./firebase"
 
 // Asegura que el usuario tenga un doc en Firestore con plan "free"
 export async function ensureUserDocWithFreePlan(uid: string, email?: string) {
-  const db = getFirestore(app)
+  const db = getFirestore(getFirebaseApp())
   const userRef = doc(db, "users", uid)
   const userSnap = await getDoc(userRef)
 
