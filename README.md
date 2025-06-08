@@ -39,6 +39,11 @@ Y para desplegarlas en tu proyecto ejecuta:
 npm run --prefix functions deploy
 ```
 
+El comando anterior utiliza los archivos `firebase.json` y `.firebaserc`
+ubicados en la raíz del proyecto. `firebase.json` define la configuración
+básica de *hosting* y funciones, mientras que `.firebaserc` indica el
+proyecto de Firebase por defecto.
+
 ## Configuración del entorno y CORS
 
 El proyecto utiliza varias credenciales que se definen como variables de entorno. Guárdalas en un archivo `.env` o en tu gestor de secretos antes de ejecutar la aplicación o desplegar las funciones.

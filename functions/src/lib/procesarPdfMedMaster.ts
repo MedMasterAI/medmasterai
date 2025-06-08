@@ -1,13 +1,13 @@
 // src/lib/procesarPdfMedMaster.ts
 import { html as beautifyHtml } from 'js-beautify'
-import { pdfExtract } from '@lib/ingesta/pdfExtractPdfReader'
-import { generarEsquemaJSON } from '@lib/structura/generarEsquemaJSON'
-import { generarHTMLMedMaster } from '@lib/html/generarHTMLMedMaster'
-import { sanitizeHtmlContent } from '@lib/validator/htmlSanitizer'
-import { checkHtmlRules } from '@lib/validator/ruleChecker'
-import { htmlToPdf } from '@lib/pdf/htmlToPdf'
-import { ocrConDocumentAI } from '@/lib/ocr/ocrConDocumentAI'
-import { splitPdfByPageCount } from '@/lib/pdf/splitPdfBuffer'
+import { pdfExtract } from '@lib/ingesta/pdfExtractPdfReader.js'
+import { generarEsquemaJSON } from '@lib/structura/generarEsquemaJSON.js'
+import { generarHTMLMedMaster } from '@lib/html/generarHTMLMedMaster.js'
+import { sanitizeHtmlContent } from '@lib/validator/htmlSanitizer.js'
+import { checkHtmlRules } from '@lib/validator/ruleChecker.js'
+import { htmlToPdf } from '@lib/pdf/htmlToPdf.js'
+import { ocrConDocumentAI } from '@/ocr/ocrConDocumentAI.js'
+import { splitPdfByPageCount } from '@/pdfsplit/splitPdfBuffer.js'
 
 const CHUNK_TOKEN_SIZE = 10000
 

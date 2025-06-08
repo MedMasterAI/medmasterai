@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { htmlToPdf } from "./lib/htmlToPdf";
 import cors from "cors";
+import { logger } from "./logger";
 
 const app = express();
 
@@ -18,11 +19,11 @@ app.use(express.json({ limit: "20mb" }));
 
 app.post("/generate-pdf", async (req: Request, res: Response) => {
   // LOGGING para depuración robusta
-  console.log("HEADERS:", req.headers);
-  console.log("REQ.BODY (entero):", req.body);
-  console.log("Tipo recibido:", typeof req.body.html);
-  console.log("Largo recibido:", req.body.html?.length);
-  console.log("Preview recibido:", req.body.html?.slice(0, 200));
+  logger.log("HEADERS:", req.headers);
+  logger.log("REQ.BODY (entero):", req.body);
+  logger.log("Tipo recibido:", typeof req.body.html);
+  logger.log("Largo recibido:", req.body.html?.length);
+  logger.log("Preview recibido:", req.body.html?.slice(0, 200));
 
   try {
     const html = req.body?.html;
@@ -42,11 +43,11 @@ app.post("/generate-pdf", async (req: Request, res: Response) => {
     if (!res.headersSent) {
       res.status(500).json({ error: error.message || "Internal server error" });
     }
-    console.error("Error en /generate-pdf:", error);
+    logger.error("Error en /generate-pdf:", error);
   }
 });
 
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Servidor PDF corriendo en puerto ${PORT}`);
+  logger.log(`Servidor PDF corriendo en puerto ${PORT}`);
 });
