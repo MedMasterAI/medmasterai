@@ -15,7 +15,7 @@ import { useUserPlan } from '@/hooks/useUserPlan'
 import { useMonthlyUsage } from '@/hooks/useMonthlyUsage'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ProgressTracker } from '@/components/ProgressTracker'
-import { JobStatus } from '@/lib/statusMessages'
+import { JobStatus, statusMessages } from '@/lib/statusMessages'
 import { VideoIcon, Info, CheckCircle } from 'lucide-react'
 import { PLAN_LIMITS } from '@/lib/plans'
 import { Loader2 } from "lucide-react"
@@ -201,12 +201,12 @@ export default function Page() {
             </motion.div>
           </SidebarInset>
         ) : (
-          <SidebarInset className="relative flex-1 min-h-screen w-full flex flex-col items-center justify-center px-2 sm:px-4 md:px-0 pt-10">
+          <SidebarInset className="relative flex-1 min-h-screen w-full flex flex-col items-center px-2 sm:px-6 md:px-12 py-10">
             <motion.section
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="w-full max-w-lg sm:max-w-xl space-y-10 mx-auto"
+              className="w-full max-w-3xl space-y-10 mx-auto"
             >
               {/* Hero */}
               <div className="text-center">
@@ -221,7 +221,7 @@ export default function Page() {
                   </span>
                   <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Transcribí Videos</span>
                 </motion.h1>
-                <p className="text-base text-muted-foreground mt-2 max-w-lg sm:max-w-xl mx-auto font-medium">
+                <p className="text-base text-muted-foreground mt-2 max-w-2xl mx-auto font-medium">
                   Convertí cualquier clase, seminario o video educativo de YouTube en un apunte PDF profesional, limpio y organizado.
                 </p>
               </div>
@@ -234,7 +234,7 @@ export default function Page() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 8 }}
-                    className="w-full max-w-lg sm:max-w-xl flex flex-col gap-2 items-center py-2"
+                    className="w-full max-w-3xl flex flex-col gap-2 items-center py-2"
                   >
                     <div className="w-full h-3 bg-softLila rounded-xl overflow-hidden border border-primary/20">
                       <motion.div
@@ -264,7 +264,7 @@ export default function Page() {
                 )}
               </AnimatePresence>
 
-              <div className="w-full grid gap-6 lg:grid-cols-2">
+              <div className="w-full max-w-5xl grid gap-8 lg:grid-cols-2">
                 {/* Card principal */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
