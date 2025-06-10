@@ -5,6 +5,8 @@ import { FileText, Clapperboard, Files } from "lucide-react"
 import { motion } from "framer-motion"
 import { useAuth } from "@/hooks/useAuth"
 import { useUserNotes } from "@/hooks/useUserNotes"
+import { useUserPlan } from "@/hooks/useUserPlan"
+import { useMonthlyUsage } from "@/hooks/useMonthlyUsage"
 import CardItem from "@/components/dashboard/CardItem"
 import {
   Card,
@@ -15,10 +17,13 @@ import {
 } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
+import { PLAN_LIMITS } from "@/lib/plans"
 
 export default function DashboardPage() {
   const { user } = useAuth()
   const { notes } = useUserNotes(user?.uid ?? null)
+  const { plan } = useUserPlan(user?.uid ?? null)
+  const { pdfCount, videoCount } = useMonthlyUsage(user?.uid ?? null, plan)
 
   const weeklyProgress = notes.reduce((acc: Record<string, number>, note) => {
     const date = new Date(note.createdAt?.toDate?.() || note.createdAt)
@@ -43,9 +48,9 @@ export default function DashboardPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
       className="w-full px-4 py-10 md:px-8 mx-auto max-w-6xl space-y-10"
-    >
+      >
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-3xl font-extrabold text-[#a990ff]">
           Bienvenido, {user?.displayName ?? "MedMaster"}
         </h1>
         <p className="text-muted-foreground">
@@ -75,7 +80,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="bg-background/70 backdrop-blur shadow-md">
+        <Card className="bg-[var(--card)]/80 dark:bg-[var(--card-dark)]/80 backdrop-blur-lg shadow-card rounded-card border border-[var(--border)]">
           <CardHeader>
             <CardTitle>Tu progreso esta semana</CardTitle>
             <CardDescription>Apuntes generados por día</CardDescription>
@@ -93,7 +98,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card className="bg-background/70 backdrop-blur shadow-md">
+        <Card className="bg-[var(--card)]/80 dark:bg-[var(--card-dark)]/80 backdrop-blur-lg shadow-card rounded-card border border-[var(--border)]">
           <CardHeader>
             <CardTitle>Últimos Apuntes Generados</CardTitle>
             <CardDescription>Mostrando tus apuntes más recientes</CardDescription>
@@ -126,6 +131,31 @@ export default function DashboardPage() {
             ) : (
               <p className="text-muted-foreground">Aún no generaste apuntes.</p>
             )}
+          </CardContent>
+        </Card>
+
+        <Card className="bg-background/70 backdrop-blur shadow-md">
+          <CardHeader>
+            <CardTitle>Tu Plan Actual</CardTitle>
+            <CardDescription>Uso de este mes</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm">
+            <p>
+              Plan: <span className="font-semibold uppercase">{plan}</span>
+            </p>
+            <p>
+              PDFs usados: <b>{pdfCount}</b> /{' '}
+              {PLAN_LIMITS[plan].pdf === Infinity ? '∞' : PLAN_LIMITS[plan].pdf}
+            </p>
+            <p>
+              Videos usados: <b>{videoCount}</b> /{' '}
+              {PLAN_LIMITS[plan].video === Infinity
+                ? '∞'
+                : PLAN_LIMITS[plan].video}
+            </p>
+            <Button asChild className="w-full">
+              <Link href="/pagos">Cambiar plan</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { useRouter } from "next/navigation"
-import { onAuthStateChanged } from "firebase/auth"
-import { getFirebaseAuth } from "@/lib/firebase"
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
+import { getFirebaseAuth } from "@/lib/firebase";
+import { toast } from "sonner";
 
 import {
   Bell,
@@ -11,12 +12,8 @@ import {
   CreditCard,
   LogOut as LogOutIcon,
   Sparkles,
-} from "lucide-react"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,47 +21,57 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export function NavUser() {
-  const { isMobile } = useSidebar()
-  const router = useRouter()
+  const { isMobile } = useSidebar();
+  const router = useRouter();
 
   // Estado local para usuario autenticado
-  const [user, setUser] = useState<{ name: string; email: string; avatar: string } | null>(null)
+  const [user, setUser] = useState<{
+    name: string;
+    email: string;
+    avatar: string;
+  } | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(getFirebaseAuth(), (u) => {
       if (u) {
         setUser({
-          name:   u.displayName ?? "Sin nombre",
-          email:  u.email ?? "",
+          name: u.displayName ?? "Sin nombre",
+          email: u.email ?? "",
           avatar: u.photoURL ?? "",
-        })
+        });
       } else {
-        setUser(null)
+        setUser(null);
       }
-    })
-    return () => unsubscribe()
-  }, [])
+    });
+    return () => unsubscribe();
+  }, []);
 
   const handleLogout = useCallback(async () => {
-    await getFirebaseAuth().signOut()
-    router.push("/login")
-  }, [router])
+    try {
+      await getFirebaseAuth().signOut();
+      toast.success("Sesión cerrada");
+      router.push("/login");
+    } catch (err) {
+      console.error(err);
+      toast.error("Error al cerrar sesión");
+    }
+  }, [router]);
 
   const goToPayments = useCallback(() => {
-    router.push("/pagos")
-  }, [router])
+    router.push("/pagos");
+  }, [router]);
 
   // Si no hay usuario logueado, no renderiza nada
-  if (!user) return null
+  if (!user) return null;
 
   return (
     <SidebarMenu>
@@ -77,24 +84,23 @@ export function NavUser() {
               aria-label="Abrir menú de usuario"
             >
               <Avatar className="h-8 w-8 rounded-lg border-2 border-[#7b61ff] shadow-md">
-                {user.avatar
-                  ? (
-                    <AvatarImage
-                      src={user.avatar}
-                      alt={user.name}
-                      onError={e => e.currentTarget.style.display = 'none'}
-                    />
-                  )
-                  : (
-                    <AvatarFallback>
-                      {user.name?.[0]?.toUpperCase() || "?"}
-                    </AvatarFallback>
-                  )
-                }
+                {user.avatar ? (
+                  <AvatarImage
+                    src={user.avatar}
+                    alt={user.name}
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
+                ) : (
+                  <AvatarFallback>
+                    {user.name?.[0]?.toUpperCase() || "?"}
+                  </AvatarFallback>
+                )}
               </Avatar>
               <div className="ml-2 flex-1 text-left text-sm leading-tight">
                 <div className="truncate font-medium">{user.name}</div>
-                <div className="truncate text-xs text-muted-foreground">{user.email}</div>
+                <div className="truncate text-xs text-muted-foreground">
+                  {user.email}
+                </div>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -136,5 +142,5 @@ export function NavUser() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  )
+  );
 }
