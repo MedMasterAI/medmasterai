@@ -190,7 +190,6 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
   return (
     <SidebarProvider className="flex flex-col">
       <div className="flex flex-1 ">
-        <AppSidebar />
         <SidebarInset className="px-2 sm:px-6 md:px-12 py-10">
           <div className="flex flex-col items-center w-full">
             {/* Header hero */}

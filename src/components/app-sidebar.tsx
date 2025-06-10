@@ -4,7 +4,6 @@ import Image from "next/image"
 import { FileText, Clapperboard, Files, LayoutDashboard, DollarSign, Gauge } from "lucide-react"
 import Link from "next/link"
 import {
-  Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
@@ -30,9 +29,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       url: "#",
       icon: LayoutDashboard,
       items: [
-        
         { title: "Pagos", url: "/pagos", icon: DollarSign },
-       
       ],
     },
   ];

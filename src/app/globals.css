@@ -31,8 +31,6 @@
     --card-inner: #F1EDFF;            /* Lila grisáceo, sutilmente más fuerte */
     --card-feature: #E3D8FF;          /* Lila pastel, para destacar cards feature */
     --card-feature-border: #C7B8FA;
-    --card-feature-title: #57409E;    /* Títulos de cards feature en violeta */
-    --card-feature-desc: #86859A;     /* Descripciones en gris liloso */
   
     /* Colores principales */
     --primary: #7B61FF;               /* Violeta marca */
