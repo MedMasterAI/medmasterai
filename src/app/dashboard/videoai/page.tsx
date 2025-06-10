@@ -14,7 +14,6 @@ import { useAuth } from '@/hooks/useAuth'
 import { useUserPlan } from '@/hooks/useUserPlan'
 import { useMonthlyUsage } from '@/hooks/useMonthlyUsage'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ProgressTracker } from '@/components/ProgressTracker'
 import { JobStatus, statusMessages } from '@/lib/statusMessages'
 import { VideoIcon, Info, CheckCircle } from 'lucide-react'
 import { PLAN_LIMITS } from '@/lib/plans'
@@ -31,7 +30,6 @@ export default function Page() {
   const { videoCount, canVideo, increment } = useMonthlyUsage(user?.uid ?? null, plan)
 
   const [videoUrl, setVideoUrl] = useState('')
-  const [loadingForm, setLoading] = useState(false)
   const [progress, setProgress] = useState(0)
   const [jobStatus, setJobStatus] = useState<JobStatus>("idle")
   const [statusDetail, setStatusDetail] = useState<string>("")
@@ -118,7 +116,6 @@ export default function Page() {
       return
     }
 
-    setLoading(true)
     setProgress(10)
     setJobStatus("validating")
     setStatusDetail("Validando datos y usuario...")
@@ -174,8 +171,6 @@ export default function Page() {
       console.error("ERROR:", err)
       toast.error("🔌 Problema de conexión o permisos.")
       setProgress(0)
-    } finally {
-      setLoading(false)
     }
   }
 

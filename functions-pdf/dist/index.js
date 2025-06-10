@@ -4,8 +4,6 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
     .filter(Boolean);
 app.use((0, cors_1.default)({ origin: allowedOrigins }));
 app.use(express_1.default.json({ limit: "20mb" }));
-
-// Solo UNA ruta /generate-pdf:
 app.post("/generate-pdf", async (req, res) => {
     // Logging completo para depuración:
     console.log("HEADERS:", req.headers);
