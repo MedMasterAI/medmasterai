@@ -4,13 +4,10 @@
 /* ========== BASE VARIABLES ========== */
 @layer base {
   :root {
-    
-    /* Radios y tipografía */
     --radius: 0.75rem;
     font-family: 'Poppins', 'Inter', sans-serif;
   
     /* Fondo principal */
-    --background: #F8F7FC;            /* Gris lila muuy claro (no blanco puro) */
     --foreground: #191936;            /* Gris ultra oscuro, elegante */
   
     /* Sidebar */
