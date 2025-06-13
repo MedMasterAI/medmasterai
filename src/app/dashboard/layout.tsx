@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/toaster"
 import { AppSidebar } from "@/components/app-sidebar"
+import { ThemeToggle } from "@/components/theme-toggle"
 import {
   Sheet,
   SheetContent,
@@ -65,6 +66,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           style={{ marginLeft: sidebarWidth }}
         >
           {children}
+          <div className="fixed top-4 right-4 md:top-6 md:right-6">
+            <ThemeToggle />
+          </div>
         </SidebarInset>
 
         <Toaster />

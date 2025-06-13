@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
 import { motion } from 'framer-motion'
 
-export const ThemeToggle = () => {
+export const ThemeToggle = ({ className = "" }: { className?: string }) => {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -20,7 +20,7 @@ export const ThemeToggle = () => {
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="relative w-16 h-8 rounded-full bg-muted transition-colors flex items-center px-1"
+      className={`relative w-16 h-8 rounded-full bg-muted transition-colors flex items-center px-1 ${className}`}
     >
       <motion.div
         className="absolute left-1 top-1 w-6 h-6 bg-background rounded-full shadow-md z-10"

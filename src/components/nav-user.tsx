@@ -76,7 +76,7 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               aria-label="Abrir menú de usuario"
             >
-              <Avatar className="h-8 w-8 rounded-lg border-2 border-[#7b61ff] shadow-md">
+              <Avatar className="h-8 w-8 rounded-lg border-2 border-sidebar-primary shadow-md">
                 {user.avatar
                   ? (
                     <AvatarImage

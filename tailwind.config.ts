@@ -16,14 +16,15 @@ module.exports = {
         'card-foreground': 'var(--card-foreground)',
         'card-border': 'var(--card-border)',
 
+        
         sidebar: 'var(--sidebar)',
-        'sidebar-foreground': 'var(--sidebar-foreground)',
-        'sidebar-primary': 'var(--sidebar-primary)',
-        'sidebar-primary-foreground': 'var(--sidebar-primary-foreground)',
-        'sidebar-accent': 'var(--sidebar-accent)',
-        'sidebar-accent-foreground': 'var(--sidebar-accent-foreground)',
-        'sidebar-border': 'var(--sidebar-border)',
-
+          'sidebar-foreground': 'var(--sidebar-foreground)',
+          'sidebar-primary': 'var(--sidebar-primary)',
+          'sidebar-primary-foreground': 'var(--sidebar-primary-foreground)',
+          'sidebar-accent': 'var(--sidebar-accent)',
+          'sidebar-accent-foreground': 'var(--sidebar-accent-foreground)',
+          'sidebar-border': 'var(--sidebar-border)',
+        
         primary: 'var(--primary)',
         'primary-foreground': 'var(--primary-foreground)',
 
@@ -60,8 +61,8 @@ module.exports = {
       },
 
       boxShadow: {
-        card: '0 4px 20px rgba(126, 87, 194, 0.07)',
-        cardHover: '0 6px 24px rgba(126, 87, 194, 0.12)',
+        card: '0 4px 24px rgba(126, 87, 194, 0.07)',
+        cardHover: '0 6px 32px rgba(126, 87, 194, 0.12)',
         button: '0 2px 8px rgba(126, 87, 194, 0.12)',
         xs: '0 1px 2px rgba(0,0,0,0.04)',
         sm: '0 1px 3px rgba(0,0,0,0.06)',

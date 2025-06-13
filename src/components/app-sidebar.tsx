@@ -68,7 +68,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         min-h-screen flex flex-col justify-between
         bg-[var(--sidebar)] border-r border-[var(--sidebar-border)]
         shadow-xl z-20
-        text-white font-poppins
+        text-sidebar-foreground font-poppins
         transition-all
         duration-300
         ${collapsed ? "w-[4.5rem]" : "w-64"}
@@ -91,7 +91,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
       >
         <Menu
           className={`
-            text-[#e6daef] transition-transform duration-200
+            text-muted-foreground transition-transform duration-200
             ${collapsed ? "rotate-180" : ""}
           `}
           size={22}
@@ -111,10 +111,10 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
           />
           {!collapsed && (
             <>
-              <span className="text-xl font-extrabold text-[#a990ff] group-hover:text-[#7b61ff] transition">
+              <span className="text-xl font-extrabold text-sidebar-primary group-hover:text-primary transition">
                 MedMasterAI
               </span>
-              <span className="text-xs text-[#bcb9ec] font-medium">Study</span>
+              <span className="text-xs text-muted-foreground font-medium">Study</span>
             </>
           )}
         </Link>
@@ -126,7 +126,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
       </SidebarContent>
 
       {/* Footer: usuario */}
-      <SidebarFooter className="py-8 flex flex-col items-center gap-2 border-t border-[#23243A]">
+      <SidebarFooter className="py-8 flex flex-col items-center gap-2 border-t border-[var(--sidebar-border)]">
         <NavUser />
       </SidebarFooter>
     </aside>

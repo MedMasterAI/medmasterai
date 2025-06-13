@@ -49,17 +49,20 @@ export default function MisApuntesPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="w-full max-w-2xl text-center mb-10"
+            className="w-full max-w-3xl text-center mb-10 p-8 md:p-12 rounded-3xl relative overflow-hidden bg-card border border-border shadow-lg bg-[url('/ggr.PNG')] bg-cover bg-center"
           >
-            <div className="bg-primary/10 rounded-full p-3 mx-auto mb-4 w-fit">
-              <FileTextIcon className="w-7 h-7 text-primary" />
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+            <div className="relative z-10 flex flex-col items-center gap-3">
+              <div className="bg-primary/10 rounded-full p-4 mx-auto">
+                <FileTextIcon className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Tus Apuntes Generados
+              </h1>
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                Accedé a tu historial de apuntes generados por IA, descargá tus PDFs y creá flashcards inteligentes.
+              </p>
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-2">
-              Tus Apuntes Generados
-            </h1>
-            <p className="text-muted-foreground">
-              Accedé a tu historial de apuntes generados por IA, descargá tus PDFs y creá flashcards inteligentes.
-            </p>
           </motion.div>
 
           {/* Estado de carga */}
@@ -83,14 +86,14 @@ export default function MisApuntesPage() {
 
           {/* Lista de apuntes */}
           {!loading && notes.length > 0 && (
-            <div className="w-full max-w-3xl space-y-8">
+            <div className="w-full max-w-3xl grid grid-cols-1 sm:grid-cols-2 gap-6">
               {notes.map((note) => (
                 <motion.div
                   key={note.id}
                   initial={{ opacity: 0, scale: 0.98 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.25 }}
-                  className="bg-card border border-border rounded-2xl p-6 shadow-card transition-all"
+                  className="bg-card border border-border rounded-2xl p-6 shadow-card transition-all flex flex-col h-full"
                 >
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>

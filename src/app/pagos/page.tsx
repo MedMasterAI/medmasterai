@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { onUserChanged, signOut } from "@/lib/firebase"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import { SubscriptionPlans } from "@/components/SubscriptionPlans"
 import { CheckCircle, AlertTriangle, XCircle, LogOut, Star } from "lucide-react"
 import { useUserPlan } from "@/hooks/useUserPlan"
@@ -41,8 +42,23 @@ export default function PagosPage() {
   }
 
   return (
-    <main className="p-6 md:p-10 max-w-4xl mx-auto space-y-6">
-      <Card>
+    <main className="min-h-screen flex flex-col">
+      {/* Encabezado con fondo atractivo */}
+      <div className="relative h-40 md:h-52 w-full flex items-center justify-center text-white mb-6">
+        <Image
+          src="/ggr.PNG"
+          alt="Fondo decorativo"
+          fill
+          className="absolute inset-0 object-cover opacity-40"
+        />
+        <div className="relative z-10 text-center space-y-1 px-4">
+          <h1 className="text-3xl md:text-4xl font-bold">Planes y facturación</h1>
+          <p className="text-sm md:text-base text-white/90 max-w-xl mx-auto">
+            Gestioná tus pagos y elegí el plan que mejor se adapte a tu estudio.
+          </p>
+        </div>
+      </div>
+      <Card className="mx-auto w-full max-w-4xl">
         <CardHeader>
           <CardTitle className="text-2xl">Facturación</CardTitle>
           <CardDescription>

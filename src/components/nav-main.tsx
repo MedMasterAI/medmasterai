@@ -87,7 +87,7 @@ export function NavMain({
                       }`}
                     >
                       <item.icon
-                        className="text-[#a990ff] transition-all duration-200"
+                        className="text-sidebar-primary transition-all duration-200"
                         size={isCollapsed ? 24 : 20}
                       />
                       {!isCollapsed && (
