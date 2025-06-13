@@ -182,7 +182,6 @@ export default function Page() {
   return (
     <SidebarProvider className="flex flex-col min-h-screen">
       <div className="flex-1 min-h-screen flex">
-        <AppSidebar />
         {loading ? (
           <SidebarInset className="flex-1 min-h-screen w-full flex items-center justify-center px-2 sm:px-4">
             <motion.div

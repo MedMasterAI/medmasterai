@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { useAuth } from "@/hooks/useAuth"
+import { useRequireAuth } from "@/hooks/useRequireAuth"
 import { useMonthlyUsage } from "@/hooks/useMonthlyUsage"
 import { useUserPlan } from "@/hooks/useUserPlan"
 import { FileTextIcon, Sparkles, Info, CheckCircle, XCircle } from "lucide-react"
@@ -22,11 +22,26 @@ import { httpsCallable } from "firebase/functions"
 import { getFirebaseFunctions } from "@/lib/firebase"
 
 const DEBUG = process.env.NODE_ENV !== 'production'
-
+const statusMessages: Record<JobStatus, string> = {
+  idle: "Esperando acción del usuario.",
+  validating: "Validando datos y permisos...",
+  uploading_pdf: "Subiendo PDF al almacenamiento...",
+  saving_firestore: "Guardando registro en Firestore...",
+  calling_function: "Iniciando procesamiento con IA...",
+  pending: "En cola...",
+  processing: "Procesando PDF...",
+  extracting_text: "Extrayendo texto del PDF...",
+  generating_schema: "Generando esquema del apunte...",
+  formatting_html: "Formateando HTML...",
+  uploading_final_pdf: "Subiendo PDF final...",
+  completed: "¡Apunte generado exitosamente!",
+  failed: "Error durante la generación.",
+}
 
 export default function Page() {
   const router = useRouter()
-  const { user, loading } = useAuth()
+  const user = useRequireAuth()
+  const loading = user === undefined
   const { plan } = useUserPlan(user?.uid ?? null)
   const { pdfCount, canPdf, increment } = useMonthlyUsage(user?.uid ?? null, plan)
 
@@ -38,12 +53,7 @@ export default function Page() {
   const [downloadUrl, setDownloadUrl] = useState<string>("")
   const [jobNoteId, setJobNoteId] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/login")
-    }
-  }, [loading, user, router])
-
+  
   // Listener para Firestore en tiempo real
   useEffect(() => {
     if (!user?.uid || !jobNoteId) return
@@ -246,7 +256,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
               )}
             </AnimatePresence>
 
-            <div className="w-full max-w-5xl grid gap-8 lg:grid-cols-2">
+            <div className="w-full flex flex-col gap-8">
               {/* Card principal */}
               <motion.div
                 initial={{ opacity: 0, scale: 0.97 }}
@@ -254,7 +264,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                 transition={{ duration: 0.3 }}
                 className="w-full"
               >
-              <Card className="shadow-card border border-border/30 bg-card dark:bg-card-dark rounded-card w-full">
+              <Card className="bg-card dark:bg-card-dark border border-border rounded-xl shadow-md hover:shadow-lg transition">
                 <CardHeader className="text-center flex flex-col items-center gap-2">
                   <CardTitle className="text-2xl flex items-center gap-2">
                     <FileTextIcon className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />

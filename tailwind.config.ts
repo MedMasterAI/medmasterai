@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ['class'],
+  darkMode: 'class',
   content: [
     './src/app/**/*.{ts,tsx,js,jsx}',
     './src/components/**/*.{ts,tsx,js,jsx}',
@@ -8,40 +8,63 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Paleta oficial MedMasterAI
-        primary: "#7B61FF",                   // Violeta principal
-        'primary-dark': "#7B61FF",            // Igual en dark, por si querés diferencia futuro
-        digitalBlue: "#3252FF",               // Azul digital para detalles/acciones
-        softLila: "#E3D8FF",                  // Lila sidebar/light
-        background: "#F7F7FA",                // Fondo claro global
-        'background-dark': "#181925",         // Fondo dark
-        card: "#FFFFFF",                      // Fondo tarjeta light
-        'card-dark': "#23243A",               // Fondo tarjeta dark
+        // Variables conectadas al sistema CSS
+        background: 'var(--background)',
+        foreground: 'var(--foreground)',
 
-        // ---- AQUI EL CAMBIO GLASSY ----
-        sidebar: "#E3D8FF",                   // Sidebar light
-        'sidebar-dark': "rgba(33,25,77,0.92)", // Sidebar dark GLASSY (translúcido, verás la imagen de fondo)
-        // Alternativa hexadecimal: "#21194DEB"  (EB ~ 92% opacidad)
-        //----------------------------------
+        card: 'var(--card)',
+        'card-foreground': 'var(--card-foreground)',
+        'card-border': 'var(--card-border)',
 
-        text: "#1A1B22",                      // Texto principal claro
-        'text-dark': "#FFFFFF",               // Texto principal oscuro
-        'text-secondary': "#A9A9BC",          // Texto secundario
-        border: "#EDEDF7",                    // Bordes
-        accent: "#FFE066",                    // Acento/warning
+        sidebar: 'var(--sidebar)',
+        'sidebar-foreground': 'var(--sidebar-foreground)',
+        'sidebar-primary': 'var(--sidebar-primary)',
+        'sidebar-primary-foreground': 'var(--sidebar-primary-foreground)',
+        'sidebar-accent': 'var(--sidebar-accent)',
+        'sidebar-accent-foreground': 'var(--sidebar-accent-foreground)',
+        'sidebar-border': 'var(--sidebar-border)',
+
+        primary: 'var(--primary)',
+        'primary-foreground': 'var(--primary-foreground)',
+
+        secondary: 'var(--secondary)',
+        'secondary-foreground': 'var(--secondary-foreground)',
+
+        muted: 'var(--muted)',
+        'muted-foreground': 'var(--muted-foreground)',
+
+        accent: 'var(--accent)',
+        'accent-foreground': 'var(--accent-foreground)',
+
+        text: 'var(--text)',
+        'text-secondary': 'var(--text-secondary)',
+
+        input: 'var(--input)',
+        ring: 'var(--ring)',
+
+        destructive: 'var(--destructive)', // si lo tenés en tus vars
       },
+
       borderRadius: {
-        card: "18px",
-        xl: "1rem",
-        full: "9999px",
+        sm: '0.375rem',
+        md: '0.5rem',
+        lg: '0.75rem',
+        xl: '1rem',
+        card: '1.25rem',
+        full: '9999px',
+        DEFAULT: '0.75rem',
       },
+
       fontFamily: {
-        poppins: ["Poppins", "Inter", "sans-serif"],
+        sans: ['Poppins', 'Inter', 'sans-serif'],
       },
+
       boxShadow: {
-        card: "0 4px 32px 0 rgba(123, 97, 255, 0.07)",
-        cardHover: "0 8px 32px 0 rgba(123, 97, 255, 0.18)",
-        button: "0 2px 8px 0 rgba(123, 97, 255, 0.18)",
+        card: '0 4px 20px rgba(126, 87, 194, 0.07)',
+        cardHover: '0 6px 24px rgba(126, 87, 194, 0.12)',
+        button: '0 2px 8px rgba(126, 87, 194, 0.12)',
+        xs: '0 1px 2px rgba(0,0,0,0.04)',
+        sm: '0 1px 3px rgba(0,0,0,0.06)',
       },
     },
   },

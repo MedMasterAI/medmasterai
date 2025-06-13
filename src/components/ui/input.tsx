@@ -11,19 +11,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         type={type}
         ref={ref}
         className={cn(
-          // Efecto glassy, transiciones y focus ring pro
-          `
-          flex h-10 w-full rounded-lg border border-input
-          bg-background/80 dark:bg-[#23243ab8] shadow-sm
-          px-3 py-2 text-sm transition-all
-          placeholder:text-muted-foreground
-          focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
-          focus:ring-offset-background
-          disabled:cursor-not-allowed disabled:opacity-50
-          file:border-0 file:bg-transparent file:text-sm file:font-medium
-          backdrop-blur-[2px]
-          hover:shadow-md
-          `,
+          "flex h-10 w-full rounded-[var(--radius)] border border-input bg-card text-foreground px-3 py-2 text-sm shadow-sm transition-all placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:border-ring disabled:cursor-not-allowed disabled:opacity-50 backdrop-blur-[2px] hover:shadow-md",
           className
         )}
         {...props}

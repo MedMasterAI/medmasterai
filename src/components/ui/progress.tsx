@@ -1,6 +1,5 @@
 // src/components/ui/progress.tsx
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
 export interface ProgressProps
@@ -10,22 +9,36 @@ export interface ProgressProps
 }
 
 const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
-  ({ className, value, max = 100, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "relative h-2 w-full overflow-hidden rounded-full bg-muted",
-        className
-      )}
-      {...props}
-    >
+  ({ className, value = 0, max = 100, ...props }, ref) => {
+    const percentage = Math.min((value / max) * 100, 100)
+
+    return (
       <div
-        className="h-full bg-gradient-to-r from-primary via-[#9270ff] to-[#6147f9] transition-all"
-        style={{ width: `${(value ?? 0) / max * 100}%` }}
-      />
-    </div>
-  )
+        ref={ref}
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        className={cn(
+          "relative h-2 w-full overflow-hidden rounded-full bg-muted",
+          "shadow-sm transition-all duration-300 ease-in-out",
+          className
+        )}
+        {...props}
+      >
+        <div
+          className={cn(
+            "absolute left-0 top-0 h-full rounded-full bg-gradient-to-r",
+            "from-primary via-[#9270ff] to-[#6147f9]",
+            "transition-[width] duration-500 ease-in-out"
+          )}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+    )
+  }
 )
+
 Progress.displayName = "Progress"
 
 export { Progress }

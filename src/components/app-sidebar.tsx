@@ -1,9 +1,19 @@
 "use client"
 
 import Image from "next/image"
-import { FileText, Clapperboard, Files, LayoutDashboard, DollarSign, Gauge } from "lucide-react"
+import { Menu } from "lucide-react"
+import {
+  BookOpen,
+  Bot,
+  Video,
+  FileTextIcon,
+  LayoutDashboard,
+  CreditCard,
+  LucideIcon,
+} from "lucide-react"
 import Link from "next/link"
 import {
+  Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
@@ -11,17 +21,35 @@ import {
 import { NavMain } from "@/components/nav-main"
 import { NavUser } from "@/components/nav-user"
 
-export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
-  const navMain = [
+interface AppSidebarProps {
+  collapsed: boolean
+  setCollapsed: (collapsed: boolean) => void
+  className?: string
+}
+
+interface NavItem {
+  title: string
+  url: string
+  icon: LucideIcon
+  isActive?: boolean
+  items?: {
+    title: string
+    url: string
+    icon?: LucideIcon
+  }[]
+}
+
+export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSidebarProps) {
+  const navMain: NavItem[] = [
     {
       title: "ApuntyApps",
       url: "#",
-      icon: FileText,
+      icon: BookOpen,
       isActive: true,
       items: [
-        { title: "ApuntyAI", url: "/dashboard/apunty", icon: FileText },
-        { title: "VideoAI", url: "/dashboard/videoai", icon: Clapperboard },
-        { title: "Mis Apuntes", url: "/dashboard/mis-apuntes", icon: Files },
+        { title: "ApuntyAI", url: "/dashboard/apunty", icon: Bot },
+        { title: "VideoAI", url: "/dashboard/videoai", icon: Video },
+        { title: "Mis Apuntes", url: "/dashboard/mis-apuntes", icon: FileTextIcon },
       ],
     },
     {
@@ -29,49 +57,78 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
       url: "#",
       icon: LayoutDashboard,
       items: [
-        { title: "Pagos", url: "/pagos", icon: DollarSign },
+        { title: "Pagos", url: "/pagos", icon: CreditCard },
       ],
     },
-  ];
+  ]
 
   return (
-    <Sidebar
-    className="
-    w-64 min-h-screen flex flex-col justify-between
-    bg-[var(--sidebar)] border-r border-[var(--sidebar-border)]
-    shadow-xl z-20
-    text-white font-poppins
-    transition-colors
-  "
-      {...props}
+    <aside
+      className={`
+        min-h-screen flex flex-col justify-between
+        bg-[var(--sidebar)] border-r border-[var(--sidebar-border)]
+        shadow-xl z-20
+        text-white font-poppins
+        transition-all
+        duration-300
+        ${collapsed ? "w-[4.5rem]" : "w-64"}
+        ${className}
+        relative
+      `}
     >
+      {/* Botón trigger colapsar/expandir */}
+      <button
+        type="button"
+        aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+        onClick={() => setCollapsed(!collapsed)}
+        className={`
+          absolute right-[-18px] top-4 z-30
+          border border-[var(--sidebar-border)] shadow-lg bg-[var(--sidebar)]
+          transition-all duration-300 rounded-full p-1 hover:bg-[var(--sidebar-accent)]
+          flex items-center justify-center
+        `}
+        tabIndex={0}
+      >
+        <Menu
+          className={`
+            text-[#e6daef] transition-transform duration-200
+            ${collapsed ? "rotate-180" : ""}
+          `}
+          size={22}
+        />
+      </button>
+
       {/* Header: Logo */}
-      <SidebarHeader className="flex flex-col items-center gap-4 pt-8 pb-4">
+      <SidebarHeader className={`flex flex-col items-center gap-4 pt-8 pb-4 transition-all duration-300 ${collapsed ? "px-0" : ""}`}>
         <Link href="/dashboard" className="flex flex-col items-center gap-2 group">
           <Image
             src="/logo2.PNG"
             alt="Logo MedMasterAI"
-            width={66}
-            height={66}
-            className="rounded-2xl shadow-md transition group-hover:scale-105"
+            width={collapsed ? 36 : 66}
+            height={collapsed ? 36 : 66}
+            className="rounded-2xl shadow-md transition-all duration-300 group-hover:scale-105"
             priority
           />
-          <span className="text-xl font-extrabold text-[#a990ff] group-hover:text-[#7b61ff] transition">
-            MedMasterAI
-          </span>
-          <span className="text-xs text-[#bcb9ec] font-medium">Study</span>
+          {!collapsed && (
+            <>
+              <span className="text-xl font-extrabold text-[#a990ff] group-hover:text-[#7b61ff] transition">
+                MedMasterAI
+              </span>
+              <span className="text-xs text-[#bcb9ec] font-medium">Study</span>
+            </>
+          )}
         </Link>
       </SidebarHeader>
 
       {/* Menú principal */}
-      <SidebarContent className="flex-1 flex flex-col gap-6 px-4">
-        <NavMain items={navMain} />
+      <SidebarContent className="flex-1 flex flex-col gap-6 px-2 transition-all duration-300">
+        <NavMain items={navMain} collapsed={collapsed} />
       </SidebarContent>
 
-      {/* Footer PRO: NavUser con menú */}
+      {/* Footer: usuario */}
       <SidebarFooter className="py-8 flex flex-col items-center gap-2 border-t border-[#23243A]">
         <NavUser />
       </SidebarFooter>
-    </Sidebar>
+    </aside>
   )
 }

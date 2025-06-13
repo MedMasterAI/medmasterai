@@ -1,5 +1,46 @@
-import * as React from "react"
+// src/components/dashboard/CardItem.tsx
+"use client"
+
+import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { LucideIcon } from "lucide-react"
+
+interface CardItemProps {
+  href: string
+  icon: LucideIcon
+  title: string
+  description: string
+  className?: string
+}
+
+export default function CardItem({
+  href,
+  icon: Icon,
+  title,
+  description,
+  className,
+}: CardItemProps) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "group bg-card border border-card-border shadow-card rounded-2xl p-6 flex flex-col items-start gap-4 transition-all hover:shadow-cardHover hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-ring",
+        className
+      )}
+    >
+      {/* Icon container con color suave */}
+      <div className="bg-primary/10 dark:bg-primary/20 p-3 rounded-xl">
+        <Icon className="w-6 h-6 text-primary" />
+      </div>
+
+      {/* Título y descripción */}
+      <div className="space-y-1">
+        <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+    </Link>
+  )
+}
 
 function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (

@@ -35,130 +35,133 @@ export default function DashboardPage() {
   const diasSemana = ["lunes", "martes", "miércoles", "jueves", "viernes"]
 
   const ultimosApuntes = [...notes]
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt?.toDate?.() || b.createdAt).getTime() -
-        new Date(a.createdAt?.toDate?.() || a.createdAt).getTime()
+    .sort((a, b) =>
+      new Date(b.createdAt?.toDate?.() || b.createdAt).getTime() -
+      new Date(a.createdAt?.toDate?.() || a.createdAt).getTime()
     )
     .slice(0, 3)
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="w-full px-4 py-10 md:px-8 mx-auto max-w-6xl space-y-10"
+    <div className="min-h-screen bg-background text-foreground transition-colors">
+      <motion.section
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full px-4 py-10 md:px-8 max-w-6xl mx-auto space-y-10"
       >
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-extrabold text-[#a990ff]">
-          Bienvenido, {user?.displayName ?? "MedMaster"}
-        </h1>
-        <p className="text-muted-foreground">
-          Accedé rápidamente a tus herramientas de estudio
-        </p>
-      </div>
+        {/* Mensaje de bienvenida */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-extrabold text-primary">
+            Bienvenido, {user?.displayName ?? "MedMaster"}
+          </h1>
+          <p className="text-muted-foreground">
+            Accedé rápidamente a tus herramientas de estudio
+          </p>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        <CardItem
-          href="/dashboard/apunty"
-          icon={FileText}
-          title="Apunty PDF"
-          description="Resúmenes desde PDF"
-        />
-        <CardItem
-          href="/dashboard/videoai"
-          icon={Clapperboard}
-          title="VideoAI"
-          description="Transcripciones desde video"
-        />
-        <CardItem
-          href="/dashboard/mis-apuntes"
-          icon={Files}
-          title="Mis Apuntes"
-          description="Historial generado"
-        />
-      </div>
+        {/* Tarjetas de acceso rápido */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          <CardItem
+            href="/dashboard/apunty"
+            icon={FileText}
+            title="Apunty PDF"
+            description="Resúmenes desde PDF"
+          />
+          <CardItem
+            href="/dashboard/videoai"
+            icon={Clapperboard}
+            title="VideoAI"
+            description="Transcripciones desde video"
+          />
+          <CardItem
+            href="/dashboard/mis-apuntes"
+            icon={Files}
+            title="Mis Apuntes"
+            description="Historial generado"
+          />
+        </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card className="bg-[var(--card)]/80 dark:bg-[var(--card-dark)]/80 backdrop-blur-lg shadow-card rounded-card border border-[var(--border)]">
-          <CardHeader>
-            <CardTitle>Tu progreso esta semana</CardTitle>
-            <CardDescription>Apuntes generados por día</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {diasSemana.map((day) => (
-              <div key={day}>
-                <div className="flex justify-between text-sm mb-1 capitalize">
-                  <span>{day}</span>
-                  <span>{weeklyProgress[day] || 0} apuntes</span>
+        {/* Sección inferior */}
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {/* Progreso semanal */}
+          <Card className="backdrop-blur-xl shadow-card">
+            <CardHeader>
+              <CardTitle className="text-xl">Tu progreso esta semana</CardTitle>
+              <CardDescription>Apuntes generados por día</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {diasSemana.map((day) => (
+                <div key={day}>
+                  <div className="flex justify-between text-sm mb-1 capitalize">
+                    <span>{day}</span>
+                    <span>{weeklyProgress[day] || 0} apuntes</span>
+                  </div>
+                  <Progress value={Math.min((weeklyProgress[day] || 0) * 10, 100)} />
                 </div>
-                <Progress value={Math.min((weeklyProgress[day] || 0) * 10, 100)} />
-              </div>
-            ))}
-          </CardContent>
-        </Card>
+              ))}
+            </CardContent>
+          </Card>
 
-        <Card className="bg-[var(--card)]/80 dark:bg-[var(--card-dark)]/80 backdrop-blur-lg shadow-card rounded-card border border-[var(--border)]">
-          <CardHeader>
-            <CardTitle>Últimos Apuntes Generados</CardTitle>
-            <CardDescription>Mostrando tus apuntes más recientes</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm">
-            {ultimosApuntes.length > 0 ? (
-              <ul className="space-y-2">
-                {ultimosApuntes.map((note) => (
-                  <li key={note.id} className="flex flex-col border-b pb-2">
-                    <span className="font-medium">{note.title}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(
-                        note.createdAt?.toDate?.() || note.createdAt
-                      ).toLocaleString()}
-                    </span>
-                    {note.url && (
-                      <Button variant="link" size="sm" asChild>
-                        <Link
-                          href={note.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Ver Apunte
-                        </Link>
-                      </Button>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-muted-foreground">Aún no generaste apuntes.</p>
-            )}
-          </CardContent>
-        </Card>
+          {/* Últimos apuntes */}
+          <Card className="backdrop-blur-xl shadow-card">
+            <CardHeader>
+              <CardTitle className="text-xl">Últimos Apuntes Generados</CardTitle>
+              <CardDescription>Mostrando tus apuntes más recientes</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              {ultimosApuntes.length > 0 ? (
+                <ul className="space-y-2">
+                  {ultimosApuntes.map((note) => (
+                    <li key={note.id} className="flex flex-col border-b pb-2 border-border">
+                      <span className="font-medium">{note.title}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {new Date(note.createdAt?.toDate?.() || note.createdAt).toLocaleString()}
+                      </span>
+                      {note.url && (
+                        <Button variant="link" size="sm" asChild>
+                          <Link
+                            href={note.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Ver Apunte
+                          </Link>
+                        </Button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-muted-foreground">Aún no generaste apuntes.</p>
+              )}
+            </CardContent>
+          </Card>
 
-        <Card className="bg-background/70 backdrop-blur shadow-md">
-          <CardHeader>
-            <CardTitle>Tu Plan Actual</CardTitle>
-            <CardDescription>Uso de este mes</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 text-sm">
-            <p>
-              Plan: <span className="font-semibold uppercase">{plan}</span>
-            </p>
-            <p>
-              PDFs usados: <b>{pdfCount}</b> /{' '}
-              {PLAN_LIMITS[plan].pdf === Infinity ? '∞' : PLAN_LIMITS[plan].pdf}
-            </p>
-            <p>
-              Videos usados: <b>{videoCount}</b> /{' '}
-              {PLAN_LIMITS[plan].video === Infinity
-                ? '∞'
-                : PLAN_LIMITS[plan].video}
-            </p>
-            <Button asChild className="w-full">
-              <Link href="/pagos">Cambiar plan</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </motion.section>
+          {/* Estado del plan */}
+          <Card className="backdrop-blur-xl shadow-card">
+            <CardHeader>
+              <CardTitle className="text-xl">Tu Plan Actual</CardTitle>
+              <CardDescription>Uso de este mes</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <p>
+                Plan: <span className="font-semibold uppercase">{plan}</span>
+              </p>
+              <p>
+                PDFs usados: <b>{pdfCount}</b> /{" "}
+                {PLAN_LIMITS[plan].pdf === Infinity ? "∞" : PLAN_LIMITS[plan].pdf}
+              </p>
+              <p>
+                Videos usados: <b>{videoCount}</b> /{" "}
+                {PLAN_LIMITS[plan].video === Infinity ? "∞" : PLAN_LIMITS[plan].video}
+              </p>
+              <Button asChild className="w-full">
+                <Link href="/pagos">Cambiar plan</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </motion.section>
+    </div>
   )
 }
