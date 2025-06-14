@@ -230,7 +230,8 @@ export default function Page() {
                     exit={{ opacity: 0, y: 8 }}
                     className="w-full max-w-3xl flex flex-col gap-2 items-center py-2"
                   >
-                    <div className="w-full h-3 bg-softLila rounded-xl overflow-hidden border border-primary/20">
+                       <div className="w-full h-3 bg-accent-2 rounded-xl overflow-hidden border border-primary/20">
+                    
                       <motion.div
                         style={{ width: `${progress}%` }}
                         className="h-full bg-primary shadow-lg transition-all"
@@ -288,14 +289,15 @@ export default function Page() {
                           URL del Video (YouTube)
                         </Label>
                         <Input
-                          id="videoUrl"
-                          type="url"
-                          placeholder="https://www.youtube.com/watch?v=..."
-                          value={videoUrl}
-                          onChange={(e) => setVideoUrl(e.target.value)}
-                          required
-                          className="bg-[var(--input)] border border-[var(--card-border)] rounded-lg"
-                        />
+  id="videoUrl"
+  type="url"
+  placeholder="https://www.youtube.com/watch?v=..."
+  value={videoUrl}
+  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVideoUrl(e.target.value)}
+  required
+  className="bg-[var(--input)] border border-[var(--card-border)] rounded-lg"
+/>
+
                       </div>
                       <Button
                         type="submit"

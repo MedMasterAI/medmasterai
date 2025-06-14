@@ -190,7 +190,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
       desc: "Subí, esperá unos segundos y recibí tu apunte al instante."
     },
     {
-      icon: <FileTextIcon className="text-digitalBlue w-5 h-5 sm:w-6 sm:h-6" />,
+      icon: <FileTextIcon className="text-primary w-5 h-5 sm:w-6 sm:h-6" />,
       title: "Archivos 100% tuyos",
       desc: "Tus apuntes son privados y los podés usar cuando quieras."
     },
@@ -227,7 +227,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                   exit={{ opacity: 0, y: 8 }}
                   className="w-full max-w-3xl flex flex-col gap-2 items-center py-2"
                 >
-                  <div className="w-full h-3 bg-softLila rounded-xl overflow-hidden border border-primary/20">
+                  <div className="w-full h-3 bg-accent-2 rounded-xl overflow-hidden border border-primary/20">
                     <motion.div
                       style={{ width: `${progress}%` }}
                       className="h-full bg-primary shadow-lg transition-all"
@@ -297,7 +297,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                         accept="application/pdf"
                         required
                         disabled={!canPdf}
-                        className="bg-softLila/50 dark:bg-card-dark focus:border-primary"
+                        className="bg-accent-2/50 dark:bg-card-dark focus:border-primary"
                         onChange={(e) => {
                           setFile(e.target.files?.[0] || null)
                           setProgress(0)
@@ -306,7 +306,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                         }}
                       />
                       {file && (
-                        <p className="text-xs text-digitalBlue mt-1 font-semibold flex items-center gap-1">
+                        <p className="text-xs text-primary mt-1 font-semibold flex items-center gap-1">
                           <FileTextIcon className="w-4 h-4" /> {file.name}
                         </p>
                       )}
@@ -315,7 +315,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                     <Button
                       type="submit"
                       disabled={loadingForm || !canPdf}
-                      className="w-full bg-primary hover:bg-digitalBlue text-white font-bold py-3 rounded-lg shadow-button hover:shadow-cardHover transition-all flex items-center justify-center gap-2 text-lg"
+                      className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold py-3 rounded-lg shadow-button hover:shadow-cardHover transition-all flex items-center justify-center gap-2 text-lg"
                     >
                       {loadingForm ? (
                         <>
@@ -349,7 +349,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
 
                   <div className="text-xs text-text-secondary text-center pt-2">
                     Funciona mejor con PDFs legibles o subrayados.<br />
-                    ¿Problemas? <Link href="/ayuda" className="underline text-digitalBlue hover:text-primary transition">Ir a la ayuda</Link>
+                  ¿Problemas? <Link href="/ayuda" className="underline text-primary hover:text-primary-dark transition">Ir a la ayuda</Link>
                   </div>
                 </CardContent>
               </Card>
@@ -401,7 +401,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
               >
               <Card className="w-full bg-[var(--card)] dark:bg-[var(--card-dark)] border border-[var(--border)] shadow-card rounded-2xl">
                 <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                  <Info className="w-5 h-5 sm:w-6 sm:h-6 text-digitalBlue" />
+                  <Info className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   <CardTitle className="text-lg font-bold text-[var(--card-foreground)]">
                     ¿Cómo usar Apunty PDF?
                   </CardTitle>

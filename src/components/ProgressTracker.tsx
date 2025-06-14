@@ -28,7 +28,7 @@ export function ProgressTracker({ progress, status, statusDetail, downloadUrl, l
           exit={{ opacity: 0, y: 8 }}
           className="w-full max-w-xl flex flex-col gap-2 items-center py-2"
         >
-          <div className="w-full h-3 bg-softLila rounded-xl overflow-hidden border border-primary/20">
+            <div className="w-full h-3 bg-accent-2 rounded-xl overflow-hidden border border-primary/20">
             <motion.div
               style={{ width: `${progress}%` }}
               className="h-full bg-primary shadow-lg transition-all"

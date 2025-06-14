@@ -49,7 +49,8 @@ export default function HomePage() {
           initial={{ opacity: 0, y: -22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-6xl font-extrabold text-center tracking-tight leading-tight bg-gradient-to-r from-[#a990ff] via-[#3b316a] to-[#f3c9fa] bg-clip-text text-transparent drop-shadow-md"
+          className="text-4xl md:text-6xl font-extrabold text-center tracking-tight leading-tight bg-gradient-to-r from-[#a990ff] via-[#8c79e6] to-[#f3c9fa] bg-clip-text text-transparent drop-shadow-md"
+
         >
           Aprendé más rápido,<br /> como nunca antes.
         </motion.h1>

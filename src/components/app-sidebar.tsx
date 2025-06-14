@@ -1,5 +1,5 @@
 "use client"
-
+import { useTheme } from 'next-themes'
 import Image from "next/image"
 import { Menu } from "lucide-react"
 import {
@@ -40,6 +40,8 @@ interface NavItem {
 }
 
 export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSidebarProps) {
+  const { theme } = useTheme()
+
   const navMain: NavItem[] = [
     {
       title: "ApuntyApps",
@@ -98,27 +100,30 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         />
       </button>
 
-      {/* Header: Logo */}
-      <SidebarHeader className={`flex flex-col items-center gap-4 pt-8 pb-4 transition-all duration-300 ${collapsed ? "px-0" : ""}`}>
-        <Link href="/dashboard" className="flex flex-col items-center gap-2 group">
-          <Image
-            src="/logo2.PNG"
-            alt="Logo MedMasterAI"
-            width={collapsed ? 36 : 66}
-            height={collapsed ? 36 : 66}
-            className="rounded-2xl shadow-md transition-all duration-300 group-hover:scale-105"
-            priority
-          />
-          {!collapsed && (
-            <>
-              <span className="text-xl font-extrabold text-sidebar-primary group-hover:text-primary transition">
-                MedMasterAI
-              </span>
-              <span className="text-xs text-muted-foreground font-medium">Study</span>
-            </>
-          )}
-        </Link>
-      </SidebarHeader>
+    {/* Header: Logo */}
+<SidebarHeader className={`flex flex-col items-center gap-4 pt-8 pb-4 transition-all duration-300 ${collapsed ? "px-0" : ""}`}>
+  <Link href="/dashboard" className="flex flex-col items-center gap-2 group">
+    <Image
+      src={theme === 'dark' ? "/logo2.PNG" : "/logo1.png"}
+      alt="Logo MedMasterAI"
+      width={collapsed ? 36 : 66}
+      height={collapsed ? 36 : 66}
+      className="rounded-2xl shadow-md transition-all duration-300 group-hover:scale-105"
+      priority
+    />
+    {!collapsed && (
+      <>
+        <span className="text-xl font-extrabold text-[var(--sidebar-foreground)] group-hover:text-[var(--primary)] transition">
+          MedMasterAI
+        </span>
+        <span className="text-xs font-medium text-[var(--sidebar-foreground)]/70">
+          Study
+        </span>
+      </>
+    )}
+  </Link>
+</SidebarHeader>
+
 
       {/* Menú principal */}
       <SidebarContent className="flex-1 flex flex-col gap-6 px-2 transition-all duration-300">

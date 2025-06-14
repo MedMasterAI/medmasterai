@@ -47,15 +47,15 @@ export function SubscriptionPlans() {
           key={plan.key}
           className={`border-2 ${
             plan.highlight
-              ? "border-indigo-500 ring-2 ring-indigo-300"
-              : "border-gray-200"
+              ? "border-primary ring-2 ring-primary-light"
+              : "border-border"
           }`}
         >
           <CardHeader
             className={`${
               plan.highlight
-                ? "bg-indigo-500 text-white"
-                : "bg-gray-50 text-indigo-900"
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary-light text-foreground"
             }`}
           >
             <CardTitle className="text-2xl">{plan.title}</CardTitle>
@@ -68,7 +68,7 @@ export function SubscriptionPlans() {
                 <li key={feat} className="flex items-start">
                   <Check
                     className={`mt-[3px] mr-2 ${
-                      plan.highlight ? "text-indigo-200" : "text-indigo-500"
+                      plan.highlight ? "text-primary-foreground" : "text-primary-dark"
                     }`}
                     size={16}
                   />

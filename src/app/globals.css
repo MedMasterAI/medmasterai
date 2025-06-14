@@ -6,15 +6,15 @@
     /* General */
     --radius: 0.75rem;
     --font-family: 'Poppins', sans-serif;
-  
+
     /* Base UI */
-    --background: #f9f6ff;
+    --background: #f8f5ff;
     --foreground: #2a2a38;
-  
+
     --card: #ffffff;
     --card-foreground: #2a2a38;
-    --card-border: #e5dff5;
-  
+    --border: #e4def7;
+
     /* Sidebar */
     --sidebar: linear-gradient(180deg, #f5f1ff 0%, #ede1ff 100%);
     --sidebar-foreground: #40276c;
@@ -23,37 +23,34 @@
     --sidebar-accent: #f0e6ff;
     --sidebar-accent-foreground: #40276c;
     --sidebar-border: #d5c6f0;
-  
+
     /* Branding */
-    --primary: #6c4cff; /* Base violeta fuerte */
+    --primary: #a68cff;
     --primary-foreground: #ffffff;
-  
-    --secondary: #ede1ff;
-    --secondary-foreground: #442c7c;
-  
-    --muted: #f0e8fc;
-    --muted-foreground: #74698a;
-  
-    --accent: #d7fbf1;
-    --accent-foreground: #2a2a38;
-  
-    --text: #2a2a38;
-    --text-secondary: #72698c;
-  
-    --border: #e4d7f4;
-    --input: #f3ebff;
-    --ring: #a78bfa;
-  
-    --shadow-card: 0 4px 24px rgba(108, 76, 255, 0.08);
+    --primary-light: #cdbdff;
+    --primary-dark: #7153c9;
+
+    --secondary: #c0f1e8;
+    --secondary-foreground: #1a1a1a;
+    --secondary-light: #e0fbf7;
+    --secondary-dark: #84e1c8;
+
+    --accent-1: #ffccf2;
+    --accent-2: #f2e6ee;
+    --accent-3: #977dff;
+
+    --success: #4ade80;
+    --warning: #facc15;
+    --error: #ef4444;
   }
 
   .dark {
-    --background: #140f26;
-    --foreground: #f2f2f5;
+    --background: #121022;
+    --foreground: #f0f0f6;
 
-    --card: #1f162e;
+    --card: #1e1b2f;
     --card-foreground: #ffffff;
-    --card-border: #3e335c;
+    --border: #3a335c;
 
     --sidebar: #1a1228;
     --sidebar-foreground: #e6d3ff;
@@ -63,34 +60,29 @@
     --sidebar-accent-foreground: #e6d3ff;
     --sidebar-border: #3f3156;
 
-    --primary: #a68cff;
-    --primary-foreground: #ffffff;
+    --primary: #b5a7ff;
+    --primary-foreground: #2a2a38;
+    --primary-light: #d6cdff;
+    --primary-dark: #8f7bdf;
 
-    --secondary: #3c2a56;
-    --secondary-foreground: #f0e6ff;
+    --secondary: #7ed6c2;
+    --secondary-foreground: #1e1e2e;
+    --secondary-light: #9cecd7;
+    --secondary-dark: #56baa1;
 
-    --muted: #2a203e;
-    --muted-foreground: #c5b4dc;
+    --accent-1: #7f62b8;
+    --accent-2: #432f66;
+    --accent-3: #291c40;
 
-    --accent: #7ef8cf;
-    --accent-foreground: #14101f;
-
-    --text: #f2f2f5;
-    --text-secondary: #bdaed4;
-
-    --destructive: #ef5350;
-    --border: #3e335c;
-    --input: #2e2342;
-    --ring: #a68cff;
-    --shadow-card: 0 6px 24px rgba(159, 122, 234, 0.15);
+    --success: #4ade80;
+    --warning: #facc15;
+    --error: #ef4444;
   }
 
   body {
-    background: var(--background);
+    background-color: var(--background);
     color: var(--foreground);
     font-family: var(--font-family);
-    min-height: 100vh;
-    transition: background 0.25s ease, color 0.25s ease;
   }
 
   *, *::before, *::after {
@@ -114,30 +106,46 @@
     background: #2d1e44;
   }
 
-  /* Utilidades */
+  /* UTILIDADES DE COLOR */
+
   .bg-background    { background-color: var(--background) !important; }
   .bg-sidebar       { background-color: var(--sidebar) !important; }
   .bg-card          { background-color: var(--card) !important; }
   .bg-primary       { background-color: var(--primary) !important; }
+  .bg-sidebar-primary { background-color: var(--sidebar-primary) !important; }
+  .bg-sidebar-accent  { background-color: var(--sidebar-accent) !important; }
 
   .text-foreground  { color: var(--foreground) !important; }
   .text-sidebar     { color: var(--sidebar-foreground) !important; }
   .text-primary     { color: var(--primary) !important; }
+  .text-sidebar-primary { color: var(--sidebar-primary-foreground) !important; }
+  .text-sidebar-accent  { color: var(--sidebar-accent-foreground) !important; }
 
   .border-card      { border-color: var(--card-border) !important; }
+  .border-sidebar   { border-color: var(--sidebar-border) !important; }
 
-  /* Tarjetas */
+  /* TARJETAS */
   .card, .bg-card {
     background: var(--card);
     border-radius: 1rem;
-    box-shadow: var(--shadow-card);
+    box-shadow: 0 4px 24px rgba(126, 87, 194, 0.07);
     padding: 1.75rem 1.5rem;
     margin-bottom: 2rem;
     border: 1px solid var(--card-border);
     transition: all 0.25s ease;
   }
 
-  /* Botones */
+  .card-sidebar {
+    background: var(--sidebar);
+    color: var(--sidebar-foreground);
+    border: 1px solid var(--sidebar-border);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease;
+  }
+
+  /* BOTONES */
   .button, .btn, button, [type="button"], [type="submit"] {
     border-radius: var(--radius);
     font-family: inherit;
@@ -153,7 +161,22 @@
     background: #8d6efc;
   }
 
-  /* Sidebar */
+  .btn-sidebar {
+    background: var(--sidebar-primary);
+    color: var(--sidebar-primary-foreground);
+    border-radius: var(--radius);
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(159, 122, 234, 0.15);
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .btn-sidebar:hover {
+    background: var(--sidebar-accent);
+    color: var(--sidebar-accent-foreground);
+  }
+
+  /* SIDEBAR */
   .sidebar {
     background: var(--sidebar);
     color: var(--sidebar-foreground);
@@ -202,7 +225,7 @@
     margin-top: auto;
   }
 
-  /* Animaciones suaves */
+  /* ANIMACIONES */
   @keyframes fadeInDown { from { opacity: 0; transform: translateY(-24px);} to { opacity: 1; transform: translateY(0);} }
   @keyframes fadeInUp { from { opacity: 0; transform: translateY(24px);} to { opacity: 1; transform: translateY(0);} }
   @keyframes scaleIn { from { opacity: 0; transform: scale(0.96);} to { opacity: 1; transform: scale(1);} }
