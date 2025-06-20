@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import { JWT } from "google-auth-library";
 // Importa las credenciales del service account (asegúrate de que las rutas sean correctas)
+// Credenciales del service account codificadas en base64
 const credentialsBase64 = process.env.VISION_SERVICE_ACCOUNT_BASE64;
 if (!credentialsBase64) {
     throw new Error("VISION_SERVICE_ACCOUNT_BASE64 env var is not set");

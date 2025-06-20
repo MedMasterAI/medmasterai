@@ -11,6 +11,8 @@ module.exports = {
         sans: ['Poppins', 'sans-serif'],
       },
       colors: {
+        'vanilla-cream': '#F0E7D5',
+        'midnight-indigo': '#212842',
         background: 'var(--background)',
         foreground: 'var(--foreground)',
         card: 'var(--card)',

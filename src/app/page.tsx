@@ -8,7 +8,7 @@ import { BookOpen, Video, Mic, File, Sparkles, Bot } from 'lucide-react'
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen w-full bg-[#17172B] text-white flex flex-col items-center px-2 relative overflow-x-hidden">
+    <main className="min-h-screen w-full bg-[var(--bg)] text-[var(--text)] flex flex-col items-center px-2 relative overflow-x-hidden transition-colors duration-300">
 
       {/* HERO fondo imagen y gradiente */}
       <div className="absolute top-0 left-0 w-full h-[600px] md:h-[700px] z-0">

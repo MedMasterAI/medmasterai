@@ -42,7 +42,7 @@ export default function SoportePage() {
   
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-background px-4">
+    <main className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--text)] transition-colors duration-300 px-4">
       <Card className="w-full max-w-lg shadow-xl rounded-2xl">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Soporte y Ayuda</CardTitle>

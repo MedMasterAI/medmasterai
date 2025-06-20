@@ -3,13 +3,15 @@
 
 @layer base {
   :root {
+    --bg: #F0E7D5;
+    --text: #212842;
     /* General */
     --radius: 0.75rem;
     --font-family: 'Poppins', sans-serif;
 
     /* Base UI */
-    --background: #f8f5ff;
-    --foreground: #2a2a38;
+    --background: var(--bg);
+    --foreground: var(--text);
 
     --card: #ffffff;
     --card-foreground: #2a2a38;
@@ -17,18 +19,18 @@
 
     /* Sidebar */
     --sidebar: linear-gradient(180deg, #f5f1ff 0%, #ede1ff 100%);
-    --sidebar-foreground: #40276c;
-    --sidebar-primary: #a78bfa;
-    --sidebar-primary-foreground: #ffffff;
+    --sidebar-foreground: #212842;
+    --sidebar-primary: #212842;
+    --sidebar-primary-foreground: #212842;
     --sidebar-accent: #f0e6ff;
-    --sidebar-accent-foreground: #40276c;
-    --sidebar-border: #d5c6f0;
+    --sidebar-accent-foreground: #212842;
+    --sidebar-border: #F0E7D5;
 
     /* Branding */
-    --primary: #a68cff;
+    --primary: #212842;
     --primary-foreground: #ffffff;
-    --primary-light: #cdbdff;
-    --primary-dark: #7153c9;
+    --primary-light: #ffffff;
+    --primary-dark: #212842;
 
     --secondary: #c0f1e8;
     --secondary-foreground: #1a1a1a;
@@ -45,25 +47,27 @@
   }
 
   .dark {
-    --background: #121022;
-    --foreground: #f0f0f6;
+    --bg: #212842;
+    --text: #F0E7D5;
+    --background: var(--bg);
+    --foreground: var(--text);
 
     --card: #1e1b2f;
     --card-foreground: #ffffff;
-    --border: #3a335c;
+    --border: #212842;
 
-    --sidebar: #1a1228;
-    --sidebar-foreground: #e6d3ff;
-    --sidebar-primary: #a68cff;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #322648;
-    --sidebar-accent-foreground: #e6d3ff;
-    --sidebar-border: #3f3156;
+    --sidebar: #212842;
+    --sidebar-foreground: #F0E7D5;
+    --sidebar-primary: #F0E7D5;
+    --sidebar-primary-foreground: #F0E7D5;
+    --sidebar-accent: #212842;
+    --sidebar-accent-foreground: #F0E7D5;
+    --sidebar-border: #212842;
 
-    --primary: #b5a7ff;
-    --primary-foreground: #2a2a38;
-    --primary-light: #d6cdff;
-    --primary-dark: #8f7bdf;
+    --primary: #F0E7D5;
+    --primary-foreground: #212842;
+    --primary-light: #F0E7D5;
+    --primary-dark: #212842;
 
     --secondary: #7ed6c2;
     --secondary-foreground: #1e1e2e;
@@ -80,9 +84,10 @@
   }
 
   body {
-    background-color: var(--background);
-    color: var(--foreground);
+    background-color: var(--bg);
+    color: var(--text);
     font-family: var(--font-family);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
   *, *::before, *::after {
@@ -158,7 +163,7 @@
   }
 
   .button:hover, .btn:hover, button:hover {
-    background: #8d6efc;
+    background: #212842;
   }
 
   .btn-sidebar {

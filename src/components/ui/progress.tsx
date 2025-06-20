@@ -29,7 +29,7 @@ const Progress = React.forwardRef<HTMLDivElement, ProgressProps>(
         <div
           className={cn(
             "absolute left-0 top-0 h-full rounded-full bg-gradient-to-r",
-            "from-primary via-[#9270ff] to-[#6147f9]",
+            "from-primary via-[#6374b3] to-[#212842]",
             "transition-[width] duration-500 ease-in-out"
           )}
           style={{ width: `${percentage}%` }}

@@ -1,6 +1,6 @@
 "use client"
-import { useTheme } from 'next-themes'
 import Image from "next/image"
+import { useEffect, useState } from "react"
 import { Menu } from "lucide-react"
 import {
   BookOpen,
@@ -40,7 +40,15 @@ interface NavItem {
 }
 
 export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSidebarProps) {
-  const { theme } = useTheme()
+  const [isDark, setIsDark] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsDark(document.documentElement.classList.contains('dark'))
+    const handler = () => check()
+    check()
+    document.addEventListener('theme-change', handler)
+    return () => document.removeEventListener('theme-change', handler)
+  }, [])
 
   const navMain: NavItem[] = [
     {
@@ -104,7 +112,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
 <SidebarHeader className={`flex flex-col items-center gap-4 pt-8 pb-4 transition-all duration-300 ${collapsed ? "px-0" : ""}`}>
   <Link href="/dashboard" className="flex flex-col items-center gap-2 group">
     <Image
-      src={theme === 'dark' ? "/logo2.PNG" : "/logo1.png"}
+      src={isDark ? "/logo2.PNG" : "/logo1.png"}
       alt="Logo MedMasterAI"
       width={collapsed ? 36 : 66}
       height={collapsed ? 36 : 66}
@@ -116,7 +124,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         <span className="text-xl font-extrabold text-[var(--sidebar-foreground)] group-hover:text-[var(--primary)] transition">
           MedMasterAI
         </span>
-        <span className="text-xs font-medium text-[var(--sidebar-foreground)]/70">
+        <span className="text-xs font-medium text-[var(--sidebar-foreground)]">
           Study
         </span>
       </>

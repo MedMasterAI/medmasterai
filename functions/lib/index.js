@@ -17,6 +17,13 @@ const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
 const beautifyHtml = jsBeautify.html_beautify;
 const CHUNK_TOKEN_SIZE = 10000;
+/**
+ * Split a large text into token-sized chunks.
+ *
+ * @param text The text to divide into pieces.
+ * @param maxTokens Maximum token count per chunk. Defaults to `CHUNK_TOKEN_SIZE`.
+ * @returns Array of chunked strings.
+ */
 function chunkTextByTokens(text, maxTokens = CHUNK_TOKEN_SIZE) {
     const maxChars = maxTokens * 4;
     const chunks = [];
@@ -39,6 +46,12 @@ function chunkTextByTokens(text, maxTokens = CHUNK_TOKEN_SIZE) {
 const db = getFirestore();
 const storage = getStorage();
 const PDF_EXTENSION_REGEX = /\.pdf$/;
+/**
+ * Generate a summarized note from a PDF uploaded by the client.
+ *
+ * @param request Callable request containing authentication and file metadata.
+ * @returns Result with success flag, note ID and a signed URL to the final file.
+ */
 export const generateNoteFromPdf = functions.https.onCall(async (request) => {
     if (!request.auth) {
         throw new functions.https.HttpsError("unauthenticated", "La función debe ser llamada por un usuario autenticado.");
@@ -176,6 +189,12 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
         throw new functions.https.HttpsError("internal", errorMessage);
     }
 });
+/**
+ * Generate a summarized note from a YouTube video URL.
+ *
+ * @param request Callable request containing auth info, video URL and note details.
+ * @returns Object with success flag, note ID and the public URL to the generated PDF.
+ */
 export const generateNoteFromVideo = functions.https.onCall(async (request) => {
     // 🔒 Chequeo de auth igual que PDF
     if (!request.auth) {
@@ -217,9 +236,9 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
         // Recibe transcript (string o array)
         const dumplingData = await dumplingRes.json();
         const transcript = dumplingData.transcript;
-        const rawText = Array.isArray(transcript) ?
-            transcript.map((item) => (typeof item === "string" ? item : item.text || "")).join(" ") :
-            String(transcript);
+        const rawText = Array.isArray(transcript)
+            ? transcript.map((item) => (typeof item === "string" ? item : item.text || "")).join(" ")
+            : String(transcript);
         await noteRef.update({
             status: "processing",
             progress: 40,
