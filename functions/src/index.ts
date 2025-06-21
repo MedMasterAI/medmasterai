@@ -96,6 +96,20 @@ export const generateNoteFromPdf = functions.https.onCall(
 
     const isPlus = plan === "pro" || plan === "unlimited";
     const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
+    const userRef = db.collection("users").doc(uid);
+    const userSnap = await userRef.get();
+    const activeCount = userSnap.exists ? userSnap.get("activeNoteCount") || 0 : 0;
+    console.log(`Concurrencia actual: ${activeCount}`);
+    if (activeCount >= 3) {
+      throw new functions.https.HttpsError(
+        "resource-exhausted",
+        "Ya estás generando 3 tareas. Espera a que finalicen."
+      );
+    }
+    await userRef.update({
+      activeNoteCount: FieldValue.increment(1),
+    });
+    console.log("Incrementando activeNoteCount");
     let fileBuffer: Buffer | undefined;
 
     try {
@@ -247,6 +261,19 @@ export const generateNoteFromPdf = functions.https.onCall(
         lastUpdated: FieldValue.serverTimestamp(),
       });
       throw new functions.https.HttpsError("internal", errorMessage);
+    } finally {
+      try {
+        await userRef.update({
+          activeNoteCount: FieldValue.increment(-1),
+        });
+        console.log("Decrementando activeNoteCount");
+        const finalSnap = await userRef.get();
+        if ((finalSnap.get("activeNoteCount") || 0) < 0) {
+          await userRef.update({ activeNoteCount: 0 });
+        }
+      } catch (countErr) {
+        console.error("Error actualizando activeNoteCount:", countErr);
+      }
     }
   }
 );
@@ -283,32 +310,42 @@ export const generateNoteFromVideo = functions.https.onCall(
 
     // 📍 Referencia en Firestore
     const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
+    const userRef = db.collection("users").doc(uid);
 
-    // 🛑 Control de concurrencia: máximo 3 notas en proceso por usuario
-    const activeSnap = await db
-      .collection("users")
-      .doc(uid)
+    // Verifica cuántos apuntes del usuario están en estado pendiente o procesando
+    const activeSnap = await userRef
       .collection("notes")
       .where("status", "in", ["pending", "processing"])
       .get();
 
-    const activeCount = activeSnap.docs.filter((d) => d.id !== noteId).length;
-    const MAX_CONCURRENT_VIDEOS = 3;
-    if (activeCount >= MAX_CONCURRENT_VIDEOS) {
+    let activeCount = 0;
+    activeSnap.forEach((doc) => {
+      if (doc.id !== noteId) {
+        activeCount++;
+      }
+    });
+
+    console.log(`Concurrencia actual: ${activeCount}`);
+    if (activeCount >= 3) {
       await noteRef.set(
         {
           status: "failed",
-          errorMessage:
-            "Ya estás generando 3 videos, espera a que finalicen para enviar más",
+          errorMessage: "Ya estás generando 3 videos, espera a que finalicen para enviar más",
           lastUpdated: FieldValue.serverTimestamp(),
         },
         { merge: true }
       );
       throw new functions.https.HttpsError(
         "resource-exhausted",
-        "Ya estás generando 3 videos, espera a que finalicen para enviar más"
+        "Ya estás generando 3 tareas. Espera a que finalicen."
       );
     }
+
+    // Incrementa el contador de tareas activas
+    await userRef.update({
+      activeNoteCount: FieldValue.increment(1),
+    });
+    console.log("Incrementando activeNoteCount");
 
     try {
       // Estado inicial
@@ -437,6 +474,19 @@ export const generateNoteFromVideo = functions.https.onCall(
         lastUpdated: FieldValue.serverTimestamp(),
       });
       throw new functions.https.HttpsError("internal", errorMessage);
+    } finally {
+      try {
+        await userRef.update({
+          activeNoteCount: FieldValue.increment(-1),
+        });
+        console.log("Decrementando activeNoteCount");
+        const finalSnap = await userRef.get();
+        if ((finalSnap.get("activeNoteCount") || 0) < 0) {
+          await userRef.update({ activeNoteCount: 0 });
+        }
+      } catch (countErr) {
+        console.error("Error actualizando activeNoteCount:", countErr);
+      }
     }
   }
 );
