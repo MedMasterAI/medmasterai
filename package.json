@@ -32,6 +32,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "axios": "^1.10.0",
     "canvas": "^3.1.0",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
@@ -105,5 +106,20 @@
     "tailwindcss": "^4.1.8",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5"
-  }
+  },
+  "description": "## Instalación",
+  "main": "loadTest.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MedMasterAI/medmasterai.git"
+  },
+  "keywords": [],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/MedMasterAI/medmasterai/issues"
+  },
+  "homepage": "https://github.com/MedMasterAI/medmasterai#readme"
 }

@@ -107,11 +107,17 @@ export default function MisApuntesPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-3 items-center">
-                      <Button asChild variant="link" size="sm" className="text-accent">
-                        <a href={note.url} target="_blank" rel="noopener noreferrer">
-                          <FileTextIcon className="w-4 h-4 mr-1" /> Ver PDF
-                        </a>
-                      </Button>
+                      {note.status === "completed" && note.url ? (
+                        <Button asChild variant="link" size="sm" className="text-accent">
+                          <a href={note.url} target="_blank" rel="noopener noreferrer">
+                            <FileTextIcon className="w-4 h-4 mr-1" /> Ver PDF
+                          </a>
+                        </Button>
+                      ) : (
+                        <span className="flex items-center text-sm text-muted-foreground">
+                          <Loader2 className="w-4 h-4 mr-1 animate-spin" /> Generando PDF…
+                        </span>
+                      )}
 
                       <Button
                         size="sm"

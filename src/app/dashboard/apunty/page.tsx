@@ -63,7 +63,7 @@ export default function Page() {
       if (!data) return
       const status = (data.status || "idle").toLowerCase() as JobStatus
       setJobStatus(status)
-      setProgress(Number(data.progress ?? getProgressForStatus(status)))
+      setProgress((p) => Math.max(p, Number(data.progress ?? getProgressForStatus(status))))
       setStatusDetail(data.errorMessage || "")
       if (status === "completed" && data.url) {
         setDownloadUrl(data.url)
@@ -80,7 +80,7 @@ export default function Page() {
       case "validating": return 10
       case "uploading_pdf": return 20
       case "saving_firestore": return 30
-      case "calling_function": return 35
+      case "calling_function": return 40
       case "pending": return 40
       case "processing": return 50
       case "extracting_text": return 60

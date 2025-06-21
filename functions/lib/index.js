@@ -68,7 +68,7 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
         // Estado: PROCESANDO (inicio real del procesamiento)
         await noteRef.update({
             status: "processing",
-            progress: 10,
+            progress: 50,
             lastUpdated: FieldValue.serverTimestamp(),
         });
         const bucket = storage.bucket();
@@ -83,7 +83,7 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
         let rawText = await pdfExtract(fileBuffer);
         await noteRef.update({
             status: "processing",
-            progress: 30,
+            progress: 60,
             lastUpdated: FieldValue.serverTimestamp(),
         });
         // OCR solo para usuarios Plus si no hay texto extraído
@@ -101,7 +101,7 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
         }
         await noteRef.update({
             status: "processing",
-            progress: 60,
+            progress: 75,
             lastUpdated: FieldValue.serverTimestamp(),
         });
         const bloques = chunkTextByTokens(rawText);
@@ -208,11 +208,28 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
     }
     // 📍 Referencia en Firestore
     const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
+    // 🛑 Control de concurrencia: máximo 3 notas en proceso por usuario
+    const activeSnap = await db
+        .collection("users")
+        .doc(uid)
+        .collection("notes")
+        .where("status", "in", ["pending", "processing"])
+        .get();
+    const activeCount = activeSnap.docs.filter((d) => d.id !== noteId).length;
+    const MAX_CONCURRENT_VIDEOS = 3;
+    if (activeCount >= MAX_CONCURRENT_VIDEOS) {
+        await noteRef.set({
+            status: "failed",
+            errorMessage: "Ya estás generando 3 videos, espera a que finalicen para enviar más",
+            lastUpdated: FieldValue.serverTimestamp(),
+        }, { merge: true });
+        throw new functions.https.HttpsError("resource-exhausted", "Ya estás generando 3 videos, espera a que finalicen para enviar más");
+    }
     try {
         // Estado inicial
         await noteRef.set({
             status: "processing",
-            progress: 10,
+            progress: 50,
             lastUpdated: FieldValue.serverTimestamp(),
         }, { merge: true });
         // 1️⃣ Llama a Dumpling AI
@@ -241,7 +258,7 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
             : String(transcript);
         await noteRef.update({
             status: "processing",
-            progress: 40,
+            progress: 60,
             lastUpdated: FieldValue.serverTimestamp(),
         });
         // 2️⃣ Pipeline de HTML (igual que PDF)

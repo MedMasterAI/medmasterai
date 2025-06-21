@@ -52,7 +52,7 @@ export default function Page() {
       if (!data) return
       const status = (data.status || "idle").toLowerCase() as JobStatus
       setJobStatus(status)
-      setProgress(Number(data.progress ?? getProgressForStatus(status)))
+      setProgress((p) => Math.max(p, Number(data.progress ?? getProgressForStatus(status))))
       setStatusDetail(data.errorMessage || "")
       if (status === "completed" && data.url) {
         setDownloadUrl(data.url)
@@ -149,16 +149,23 @@ export default function Page() {
       setJobStatus("calling_function")
       setStatusDetail("Llamando función Cloud Function (IA)...")
       const generateNoteFromVideo = httpsCallable(getFirebaseFunctions(), "generateNoteFromVideo")
-      await generateNoteFromVideo({
-        noteId,
-        plan,
-        videoUrl,
-        fileName: "Apunte-Video.pdf"
-      }).then(r => {
-        if (DEBUG) console.log('[DEBUG] Response función:', r)
-      }).catch(err => {
+      try {
+        const res = await generateNoteFromVideo({
+          noteId,
+          plan,
+          videoUrl,
+          fileName: "Apunte-Video.pdf"
+        })
+        if (DEBUG) console.log('[DEBUG] Response función:', res)
+      } catch (err: any) {
         console.error('[DEBUG] ERROR FUNCIÓN:', err)
-      })
+        const msg = err?.message || 'Error generando video'
+        toast.error(msg)
+        setJobStatus('failed')
+        setStatusDetail(msg)
+        setProgress(0)
+        return
+      }
 
       setProgress(40)
       setJobStatus("pending")
