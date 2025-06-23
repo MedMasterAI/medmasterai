@@ -4,101 +4,105 @@
 /* ========== BASE VARIABLES ========== */
 @layer base {
   :root {
-    
+
     /* Radios y tipografía */
     --radius: 0.75rem;
     font-family: 'Poppins', 'Inter', sans-serif;
-  
+
     /* Fondo principal */
-    --background: #F8F7FC;            /* Gris lila muuy claro (no blanco puro) */
-    --foreground: #191936;            /* Gris ultra oscuro, elegante */
+    --background: #f5f2ff;            /* Lila muy claro */
+    --foreground: #261c3c;            /* Violeta oscuro */
+    --bg: var(--background);
+    --text: var(--foreground);
   
     /* Sidebar */
-    --sidebar: rgba(33, 25, 77, 0.94);                 /* Lila pastel, muy suave */
-    --sidebar-foreground: #57409E;    /* Lila oscuro/azulado para textos */
-    --sidebar-primary: #7B61FF;       /* Violeta marca */
+    --sidebar: rgba(99, 55, 165, 0.95);  /* Morado suave */
+    --sidebar-foreground: #f5f2ff;
+    --sidebar-primary: #7b61ff;
     --sidebar-primary-foreground: #fff;
-    --sidebar-accent: #EFEAFF;        /* Lila claro para hover activo */
-    --sidebar-accent-foreground: #7B61FF;
-    --sidebar-border: #E3D8FF;
+    --sidebar-accent: #e5dbff;
+    --sidebar-accent-foreground: #7b61ff;
+    --sidebar-border: #d9ceff;
   
     /* Card principal */
-    --card: #FCFBFF;                  /* Gris-lila ultra claro, NO blanco puro */
-    --card-foreground: #191936;       /* Gris oscuro */
-    --card-border: #ECE6FA;
+    --card: #ffffff;                  /* Blanco */
+    --card-foreground: #261c3c;
+    --card-border: #e8e0ff;
   
     /* Card interna/ventaja/features */
-    --card-inner: #F1EDFF;            /* Lila grisáceo, sutilmente más fuerte */
-    --card-feature: #E3D8FF;          /* Lila pastel, para destacar cards feature */
-    --card-feature-border: #C7B8FA;
-    --card-feature-title: #57409E;    /* Títulos de cards feature en violeta */
-    --card-feature-desc: #86859A;     /* Descripciones en gris liloso */
+    --card-inner: #f4efff;
+    --card-feature: #ede6ff;
+    --card-feature-border: #cec0ff;
+    --card-feature-title: #4c2e9c;
+    --card-feature-desc: #7a739b;
   
     /* Colores principales */
-    --primary: #7B61FF;               /* Violeta marca */
+    --primary: #7b61ff;
     --primary-foreground: #fff;
   
     /* Secundarios y muted */
-    --secondary: #EFEAFF;             /* Lila grisáceo suave */
-    --secondary-foreground: #57409E;  /* Texto para lo secundario */
-    --muted: #F3F2FB;                 /* Gris liloso, menos saturado */
-    --muted-foreground: #A9A9BC;
+    --secondary: #efeaff;
+    --secondary-foreground: #4c3691;
+    --muted: #f3f0ff;
+    --muted-foreground: #8a81b6;
   
     /* Acento */
-    --accent: #3252FF;                /* Azul digital para detalles y links */
+    --accent: #6b4cff;
     --accent-foreground: #fff;
   
     /* Textos */
-    --text: #1A1B22;                  /* Gris negro moderno */
-    --text-secondary: #86859A;        /* Gris liloso */
+    --text: var(--foreground);
+    --text-secondary: #86859A;
     
     /* Sombra tarjeta */
-    --shadow-card: 0 4px 24px 0 rgba(123,97,255,0.08);
+    --shadow-card: 0 4px 24px 0 rgba(123,97,255,0.1);
   
     /* Otros */
     --destructive: #F44336;
-    --border: #E3D8FF;
-    --input: #EDEDF7;
+    --border: #dcd1ff;
+    --input: #ece6ff;
     --ring: #7B61FF;
   }
   
   .dark {
-    --background: #181925;
-    --foreground: #fff;
+    --background: #131121;
+    --foreground: #f5f2ff;
+    --bg: var(--background);
+    --text: var(--foreground);
 
-    --card: #23243A;
+    --card: #1e1c2f;
     --card-foreground: #fff;
 
-    --card-feature: #46454aaa;   /* Violeta oscuro translúcido */
-    --card-feature-border: #7860ff;
-    --card-feature-title: #E3D8FF;     /* Violeta claro para títulos en oscuro */
-    --card-feature-desc: #A9A9BC;      /* Gris suave para descripciones */
+    --card-feature: #2d294a;
+    --card-feature-border: #8170ff;
+    --card-feature-title: #d4c9ff;
+    --card-feature-desc: #b1a6d4;
 
-    --primary: #7B61FF;
+    --primary: #8f77ff;
     --primary-foreground: #fff;
 
-    --secondary: #e6e5eb;
-    --secondary-foreground: #E3D8FF;
+    --secondary: #29264c;
+    --secondary-foreground: #d4c9ff;
 
-    --muted: #22233E;
-    --muted-foreground: #A9A9BC;
+    --muted: #2a2748;
+    --muted-foreground: #aca5d1;
 
-    --accent: #FFE066;
+    --accent: #ffd966;
     --accent-foreground: #21194D;
 
     --destructive: #F44336;
 
-    --border: #23243A;
-    --input: #23243A;
-    --ring: #7B61FF;
+    --border: #2a2748;
+    --input: #2a2748;
+    --ring: #8f77ff;
 
-    --sidebar: rgba(33, 25, 77, 0.92);  
-    --sidebar-foreground: #E3D8FF;
-    --sidebar-primary: #A88AFF;
+    --sidebar: rgba(26, 22, 45, 0.96);
+    --sidebar-foreground: #d4c9ff;
+    --sidebar-primary: #8f77ff;
     --sidebar-primary-foreground: #fff;
-    --sidebar-accent: #bebecc;
-    --sidebar-accent-foreground: #A88AFF;
-    --sidebar-border: #2D2D53;
+    --sidebar-accent: #34304e;
+    --sidebar-accent-foreground: #cbb9ff;
+    --sidebar-border: #2c274f;
   }
 
   body {

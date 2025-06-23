@@ -16,7 +16,7 @@ export default function LoginPage() {
   }, [])
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--bg)] text-[var(--text)] transition-colors duration-300 px-4 py-12">
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-background text-foreground transition-colors duration-300 px-4 py-12">
       <Image
         src="/322.png"
         alt="Fondo decorativo"

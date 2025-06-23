@@ -5,10 +5,16 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { BookOpen, Video, Mic, File, Sparkles, Bot } from 'lucide-react'
+import { useEffect } from 'react'
 
 export default function HomePage() {
+  useEffect(() => {
+    document.documentElement.classList.add('dark')
+    return () => document.documentElement.classList.remove('dark')
+  }, [])
+
   return (
-    <main className="min-h-screen w-full bg-[var(--bg)] text-[var(--text)] flex flex-col items-center px-2 relative overflow-x-hidden transition-colors duration-300">
+    <main className="min-h-screen w-full bg-background text-foreground flex flex-col items-center px-2 relative overflow-x-hidden transition-colors duration-300">
 
       {/* HERO fondo imagen y gradiente */}
       <div className="absolute top-0 left-0 w-full h-[600px] md:h-[700px] z-0">
@@ -25,7 +31,7 @@ export default function HomePage() {
           priority
         />
         {/* Gradiente para fundir la imagen con el fondo oscuro */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#18182980] to-[#17172B] pointer-events-none"/>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#21163480] to-[#131121] pointer-events-none"/>
       </div>
 
       {/* Header */}
@@ -36,7 +42,7 @@ export default function HomePage() {
         <Link href="/login">
           <Button
             variant="outline"
-            className="border-white/10 text-white/90 bg-[#191930] hover:bg-[#22213c] hover:text-purple-300 transition rounded-xl px-7 py-2 font-semibold shadow-none"
+            className="border-white/10 text-white/90 bg-[#1d1b2d] hover:bg-[#2a2748] hover:text-purple-300 transition rounded-xl px-7 py-2 font-semibold shadow-none"
           >
             Ingresar
           </Button>
@@ -49,7 +55,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: -22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-6xl font-extrabold text-center tracking-tight leading-tight bg-gradient-to-r from-[#a990ff] via-[#8c79e6] to-[#f3c9fa] bg-clip-text text-transparent drop-shadow-md"
+          className="text-4xl md:text-6xl font-extrabold text-center tracking-tight leading-tight bg-gradient-to-r from-[#c0b5ff] via-[#a791ff] to-[#f3e9ff] bg-clip-text text-transparent drop-shadow-md"
 
         >
           Aprendé más rápido,<br /> como nunca antes.
@@ -58,7 +64,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.23 }}
-          className="mt-7 text-lg md:text-2xl text-[#f4f1ff] text-center max-w-2xl font-medium drop-shadow"
+          className="mt-7 text-lg md:text-2xl text-[#e8e6ff] text-center max-w-2xl font-medium drop-shadow"
         >
           Convertí videos, PDFs o audios en apuntes, flashcards y más, con ayuda de la IA.
         </motion.p>
@@ -69,7 +75,7 @@ export default function HomePage() {
           className="mt-10"
         >
           <Link href="/login">
-            <Button className="text-base px-8 py-3 rounded-xl bg-[#7b61ff] hover:bg-[#9f86ff] text-white font-bold shadow-lg shadow-[#a990ff20]/40">
+            <Button className="text-base px-8 py-3 rounded-xl bg-[#8f77ff] hover:bg-[#a995ff] text-white font-bold shadow-lg shadow-[#8f77ff20]/40">
               Comenzar gratis
             </Button>
           </Link>
@@ -77,16 +83,16 @@ export default function HomePage() {
       </section>
 
       {/* Divider */}
-      <div className="w-full max-w-2xl my-16 h-px bg-gradient-to-r from-transparent via-[#7b61ff33] to-transparent" />
+      <div className="w-full max-w-2xl my-16 h-px bg-gradient-to-r from-transparent via-[#8f77ff33] to-transparent" />
 
       {/* Features */}
       <section className="relative z-10 max-w-5xl w-full text-center mb-24">
-        <h2 className="text-3xl font-extrabold mb-8 text-[#a990ff]">¿Por qué MedMasterAI?</h2>
+        <h2 className="text-3xl font-extrabold mb-8 text-[#c0b5ff]">¿Por qué MedMasterAI?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FeatureCard
             title="📚 Belleza visual"
             desc="Apuntes organizados, visualmente atractivos, con tablas, emojis y más."
-            icon={<BookOpen className="text-[#a990ff] w-10 h-10" />}
+            icon={<BookOpen className="text-[#c0b5ff] w-10 h-10" />}
           />
           <FeatureCard
             title="🧠 Multimodalidad"
@@ -114,7 +120,7 @@ export default function HomePage() {
             icon={
               <div className="flex items-center space-x-3 mt-2">
                 <Bot className="text-pink-400 w-7 h-7" />
-                <span className="text-sm text-[#a990ff]/80">"¿Qué dijo sobre mecanismos de inflamación?"</span>
+                <span className="text-sm text-[#c0b5ff]/80">"¿Qué dijo sobre mecanismos de inflamación?"</span>
               </div>
             }
           />
@@ -122,11 +128,11 @@ export default function HomePage() {
       </section>
 
       {/* Divider */}
-      <div className="w-full max-w-2xl my-8 h-px bg-gradient-to-r from-transparent via-[#a990ff33] to-transparent" />
+      <div className="w-full max-w-2xl my-8 h-px bg-gradient-to-r from-transparent via-[#8f77ff33] to-transparent" />
 
       {/* Testimonios */}
       <section className="relative z-10 w-full max-w-5xl text-center">
-        <h2 className="text-2xl font-bold mb-10 text-[#a990ff]/90">Lo que dicen los usuarios</h2>
+        <h2 className="text-2xl font-bold mb-10 text-[#c0b5ff]/90">Lo que dicen los usuarios</h2>
         <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-7">
           <Testimony
             quote="Esto me salvó el examen de Semiología. ¡Gracias MedMaster!"
@@ -143,7 +149,7 @@ export default function HomePage() {
         </div>
         <div className="mt-14">
           <Link href="/login">
-            <Button size="lg" className="text-white bg-[#7b61ff] hover:bg-[#a990ff] font-bold rounded-xl px-7 py-3 shadow-lg shadow-[#7b61ff20]/50">
+            <Button size="lg" className="text-white bg-[#8f77ff] hover:bg-[#a995ff] font-bold rounded-xl px-7 py-3 shadow-lg shadow-[#8f77ff20]/50">
               Empezá ahora — es gratis
             </Button>
           </Link>
@@ -151,7 +157,7 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 w-full py-10 text-center text-sm text-[#c1c1da] border-t border-[#23243A] bg-[#161626]/70 mt-24">
+      <footer className="relative z-10 w-full py-10 text-center text-sm text-[#b9b4d1] border-t border-[#2a2748] bg-[#1a1829]/70 mt-24">
         <div>
           Hecho con <span className="text-red-400">❤️</span> en Argentina — MedMaster 2025
         </div>
@@ -163,9 +169,9 @@ export default function HomePage() {
 // Componente de card para features
 function FeatureCard({ title, desc, icon }: { title: string, desc: string, icon: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-[#23243A] bg-[#1f1f38cc] p-7 text-left shadow-xl hover:scale-[1.03] transition-all flex flex-col gap-2 min-h-[170px] backdrop-blur-[1.5px]">
-      <h3 className="font-bold text-xl text-[#f2ecff]">{title}</h3>
-      <p className="text-[#c1c1da] mb-2">{desc}</p>
+    <div className="rounded-2xl border border-[#2a2748] bg-[#242046cc] p-7 text-left shadow-xl hover:scale-[1.03] transition-all flex flex-col gap-2 min-h-[170px] backdrop-blur-[1.5px]">
+      <h3 className="font-bold text-xl text-[#e9e4ff]">{title}</h3>
+      <p className="text-[#b9b4d1] mb-2">{desc}</p>
       <div>{icon}</div>
     </div>
   )
@@ -174,9 +180,9 @@ function FeatureCard({ title, desc, icon }: { title: string, desc: string, icon:
 // Componente para testimonios
 function Testimony({ quote, author }: { quote: string, author: string }) {
   return (
-    <div className="border border-[#23243A] rounded-2xl p-7 bg-[#191930ee] text-left shadow-md flex flex-col gap-3 backdrop-blur-[2px]">
-      <p className="text-lg italic text-[#e2deff]">"{quote}"</p>
-      <span className="text-xs text-[#a890ff]/80 mt-2">{author}</span>
+    <div className="border border-[#2a2748] rounded-2xl p-7 bg-[#1b1831ee] text-left shadow-md flex flex-col gap-3 backdrop-blur-[2px]">
+      <p className="text-lg italic text-[#dcd8ff]">"{quote}"</p>
+      <span className="text-xs text-[#c0b5ff]/80 mt-2">{author}</span>
     </div>
   )
 }

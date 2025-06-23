@@ -23,7 +23,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       {/* Fondo Aurora Moderno */}
-      <div className="fixed inset-0 -z-20 w-full h-full pointer-events-none bg-[var(--bg)] transition-colors duration-300">
+      <div className="fixed inset-0 -z-20 w-full h-full pointer-events-none bg-background transition-colors duration-300">
         {/* Lila suave */}
         <div className="absolute left-[15%] top-[8%] w-[60vw] h-[60vw] bg-[radial-gradient(circle,rgba(123,97,255,0.22)_0%,transparent_70%)] rounded-full blur-[140px]" />
         {/* Azul digital */}
@@ -33,7 +33,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       </div>
 
       {/* Estructura principal */}
-      <div className="relative flex min-h-screen w-full text-[var(--text)] bg-[var(--bg)] transition-colors duration-300">
+      <div className="relative flex min-h-screen w-full text-foreground bg-background transition-colors duration-300">
 
         {/* Sidebar móvil */}
         <Sheet>

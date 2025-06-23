@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         className={`
           ${poppins.className}
           h-full min-h-screen w-full
-          bg-[var(--bg)] text-[var(--text)]
+          bg-background text-foreground
           antialiased transition-colors duration-300 ease-in-out
         `}
       >

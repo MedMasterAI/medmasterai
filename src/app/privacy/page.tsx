@@ -6,8 +6,8 @@ import Link from 'next/link'
 
 export default function PrivacyPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--text)] px-2 py-8 transition-colors duration-300">
-      <Card className="max-w-2xl w-full shadow-xl rounded-2xl border-none bg-[var(--bg)]">
+    <main className="min-h-screen flex items-center justify-center bg-background text-foreground px-2 py-8 transition-colors duration-300">
+      <Card className="max-w-2xl w-full shadow-xl rounded-2xl border-none bg-background">
         <CardContent className="p-6">
           <h1 className="text-2xl font-bold mb-4">Política de Privacidad</h1>
           <ScrollArea className="h-[65vh] pr-2 custom-scroll">

@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { pdfExtract } from "@lib/ingesta/pdfExtractPdfReader";
+
+export const runtime = 'nodejs'
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 const GEMINI_MODEL = process.env.MODEL_GEMINI_2_5_PRO_PREVIEW_03_25 || "gemini-2.5-pro-preview-03-25";
@@ -54,7 +57,33 @@ Caso clínico: Paciente con úlcera genital indolora y adenopatía satélite. ¿
 IMPORTANTE: No incluyas saludos, comentarios, explicaciones, encabezados, instrucciones ni texto adicional antes o después del archivo generado. La salida debe ser exclusivamente el archivo .txt con las flashcards, directamente listo para importar a Anki.`;
 
 export async function POST(req: Request) {
-  const { text, emphasis } = await req.json();
+  let text = "";
+  let emphasis = "";
+  const contentType = req.headers.get("content-type") || "";
+
+  if (contentType.startsWith("multipart/form-data")) {
+    const formData = await req.formData();
+    emphasis = String(formData.get("emphasis") || "");
+    const file = formData.get("file");
+    const textField = formData.get("text");
+    if (typeof textField === "string" && textField.trim()) {
+      text = textField.trim();
+    }
+    if (file && typeof file !== "string") {
+      if (file.type === "application/pdf") {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        text += await pdfExtract(buffer);
+      } else if (file.type === "text/plain") {
+        text += await file.text();
+      } else {
+        return NextResponse.json({ error: "Tipo de archivo no soportado" }, { status: 415 });
+      }
+    }
+  } else {
+    const body = await req.json();
+    text = body.text;
+    emphasis = body.emphasis || "";
+  }
 
   if (!text || typeof text !== "string" || text.trim().length === 0) {
     return NextResponse.json({ error: "Texto requerido" }, { status: 400 });
