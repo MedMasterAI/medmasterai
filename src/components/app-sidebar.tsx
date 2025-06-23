@@ -9,6 +9,7 @@ import {
   FileTextIcon,
   LayoutDashboard,
   CreditCard,
+  Sparkles,
   LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
@@ -59,6 +60,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
       items: [
         { title: "ApuntyAI", url: "/dashboard/apunty", icon: Bot },
         { title: "VideoAI", url: "/dashboard/videoai", icon: Video },
+        { title: "Anki", url: "/dashboard/anki", icon: Sparkles },
         { title: "Mis Apuntes", url: "/dashboard/mis-apuntes", icon: FileTextIcon },
       ],
     },

@@ -12,6 +12,7 @@ import { checkHtmlRules } from "./validator/ruleChecker.js";
 import { htmlToPdf } from "./pdf/htmlToPdf.js";
 import { ocrConDocumentAI } from "./ocr/ocrConDocumentAI.js";
 import { splitPdfByPageCount } from "./pdfsplit/splitPdfBuffer.js";
+import { cleanupStuckNotes } from "./utils/cleanupStuckNotes.js";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
@@ -64,6 +65,7 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
     const isPlus = plan === "pro" || plan === "unlimited";
     const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
     let fileBuffer;
+    await cleanupStuckNotes(uid);
     try {
         // Estado: PROCESANDO (inicio real del procesamiento)
         await noteRef.update({
@@ -196,26 +198,38 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
  * @returns Object with success flag, note ID and the public URL to the generated PDF.
  */
 export const generateNoteFromVideo = functions.https.onCall(async (request) => {
-    // 🔒 Chequeo de auth igual que PDF
     if (!request.auth) {
         throw new functions.https.HttpsError("unauthenticated", "La función debe ser llamada por un usuario autenticado.");
     }
-    // 📦 Extraer datos igual que PDF
     const uid = request.auth.uid;
     const { noteId, plan, videoUrl, fileName } = request.data;
     if (!noteId || !plan || !videoUrl || !fileName) {
         throw new functions.https.HttpsError("invalid-argument", "Faltan argumentos necesarios para procesar el apunte de video.");
     }
-    // 📍 Referencia en Firestore
-    const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
+    const userRef = db.collection("users").doc(uid);
+    const noteRef = userRef.collection("notes").doc(noteId);
+    const isPlus = plan === "pro" || plan === "unlimited";
+    await cleanupStuckNotes(uid);
+    const userSnap = await userRef.get();
+    const activeCount = userSnap.exists ? userSnap.get("activeNoteCount") || 0 : 0;
+    console.log(`Concurrencia actual: ${activeCount}`);
+    if (activeCount >= 3) {
+        await noteRef.set({
+            status: "failed",
+            errorMessage: "Ya estás generando 3 videos, espera a que finalicen para enviar más",
+            lastUpdated: FieldValue.serverTimestamp(),
+        }, { merge: true });
+        throw new functions.https.HttpsError("resource-exhausted", "Ya estás generando 3 tareas. Espera a que finalicen.");
+    }
+    await userRef.update({
+        activeNoteCount: FieldValue.increment(1),
+    });
     try {
-        // Estado inicial
         await noteRef.set({
             status: "processing",
             progress: 10,
             lastUpdated: FieldValue.serverTimestamp(),
         }, { merge: true });
-        // 1️⃣ Llama a Dumpling AI
         const DUMPLING_API_KEY = process.env.DUMPLING_API_KEY;
         const dumplingRes = await fetch("https://app.dumplingai.com/api/v1/get-youtube-transcript", {
             method: "POST",
@@ -233,7 +247,6 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
         if (!dumplingRes.ok) {
             throw new functions.https.HttpsError("internal", `Dumpling AI error: ${dumplingRes.statusText}`);
         }
-        // Recibe transcript (string o array)
         const dumplingData = await dumplingRes.json();
         const transcript = dumplingData.transcript;
         const rawText = Array.isArray(transcript)
@@ -244,7 +257,6 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
             progress: 40,
             lastUpdated: FieldValue.serverTimestamp(),
         });
-        // 2️⃣ Pipeline de HTML (igual que PDF)
         const bloques = chunkTextByTokens(rawText);
         const htmlFragments = [];
         for (const texto of bloques) {
@@ -257,7 +269,6 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
             progress: 75,
             lastUpdated: FieldValue.serverTimestamp(),
         });
-        // 3️⃣ Sanitiza y embellece HTML
         const fullHtml = htmlFragments.join("\n\n");
         const cleanHtml = sanitizeHtmlContent(fullHtml);
         checkHtmlRules(cleanHtml);
@@ -273,7 +284,6 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
             progress: 95,
             lastUpdated: FieldValue.serverTimestamp(),
         });
-        // 4️⃣ Genera el PDF
         const pdfBuffer = await htmlToPdf(prettyHtml);
         const timestamp = Date.now();
         const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${fileName.replace(PDF_EXTENSION_REGEX, "_note.pdf")}`;
@@ -284,7 +294,6 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
             action: "read",
             expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
         });
-        // Estado: COMPLETADO
         await noteRef.update({
             title: fileName.replace(PDF_EXTENSION_REGEX, "") || "Apunte desde Video",
             url: publicURL,
@@ -309,13 +318,17 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
         else if (typeof err === "string") {
             errorMessage = err;
         }
-        // Estado: FALLIDO
         await noteRef.update({
             status: "failed",
             errorMessage,
             lastUpdated: FieldValue.serverTimestamp(),
         });
         throw new functions.https.HttpsError("internal", errorMessage);
+    }
+    finally {
+        await userRef.update({
+            activeNoteCount: FieldValue.increment(-1),
+        });
     }
 });
 //# sourceMappingURL=index.js.map

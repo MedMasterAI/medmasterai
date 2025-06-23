@@ -41,8 +41,9 @@ export default function MisApuntesPage() {
   }
 
   return (
+    <div className="min-h-screen flex flex-col">
     <SidebarProvider>
-      <div className="flex min-h-screen">
+      <div className="flex-1 flex">
         <SidebarInset className="w-full max-w-5xl mx-auto px-4 md:px-8 py-10 flex flex-col items-center">
           {/* Hero */}
           <motion.div
@@ -113,6 +114,10 @@ export default function MisApuntesPage() {
                             <FileTextIcon className="w-4 h-4 mr-1" /> Ver PDF
                           </a>
                         </Button>
+                      ) : note.status === "failed" ? (
+                        <span className="text-sm" style={{ color: "red" }}>
+                          ❌ Error al generar PDF
+                        </span>
                       ) : (
                         <span className="flex items-center text-sm text-muted-foreground">
                           <Loader2 className="w-4 h-4 mr-1 animate-spin" /> Generando PDF…
@@ -199,5 +204,6 @@ export default function MisApuntesPage() {
         </SidebarInset>
       </div>
     </SidebarProvider>
+    </div>
   )
 }

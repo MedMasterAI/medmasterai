@@ -16,10 +16,10 @@ export const buttonVariants = cva(
         destructive: "bg-error text-primary-foreground hover:bg-error/80",
       },
       size: {
-        sm: "h-8 px-3 rounded-md text-sm",
-        md: "h-10 px-4 rounded-lg",
+        sm: "h-9 px-3 rounded-md text-sm",
+        md: "h-11 px-4 rounded-lg",
         lg: "h-12 px-6 rounded-xl text-base",
-        icon: "h-10 w-10 rounded-lg",
+        icon: "h-11 w-11 rounded-lg",
       },
     },
     defaultVariants: {

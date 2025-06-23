@@ -3,7 +3,6 @@ import { httpsCallable } from "firebase/functions";
 import { getFirebaseFunctions } from "@/lib/firebase";
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { AppSidebar } from '@/components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -15,9 +14,8 @@ import { useUserPlan } from '@/hooks/useUserPlan'
 import { useMonthlyUsage } from '@/hooks/useMonthlyUsage'
 import { motion, AnimatePresence } from 'framer-motion'
 import { JobStatus, statusMessages } from '@/lib/statusMessages'
-import { VideoIcon, Info, CheckCircle } from 'lucide-react'
+import { VideoIcon, Info, CheckCircle, FileTextIcon } from 'lucide-react'
 import { PLAN_LIMITS } from '@/lib/plans'
-import { Loader2 } from "lucide-react"
 import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore"
 
 const DEBUG = process.env.NODE_ENV !== 'production'
@@ -35,6 +33,23 @@ export default function Page() {
   const [statusDetail, setStatusDetail] = useState<string>("")
   const [downloadUrl, setDownloadUrl] = useState<string>("")
   const [jobNoteId, setJobNoteId] = useState<string | null>(null)
+  const ventajas = [
+    {
+      icon: <VideoIcon className="text-primary w-5 h-5 sm:w-6 sm:h-6" />,
+      title: "Transcripción precisa",
+      desc: "Convertí clases o charlas en texto rápidamente.",
+    },
+    {
+      icon: <CheckCircle className="text-accent w-5 h-5 sm:w-6 sm:h-6" />,
+      title: "Resumen automático",
+      desc: "Obtené un PDF organizado y fácil de leer.",
+    },
+    {
+      icon: <FileTextIcon className="text-primary w-5 h-5 sm:w-6 sm:h-6" />,
+      title: "Listo para estudiar",
+      desc: "Descargá apuntes profesionales al instante.",
+    },
+  ]
 
   useEffect(() => {
     if (!loading && !user) {
@@ -180,49 +195,29 @@ export default function Page() {
 
 
   return (
-    <SidebarProvider className="flex flex-col min-h-screen">
-      <div className="flex-1 min-h-screen flex">
-        {loading ? (
-          <SidebarInset className="flex-1 min-h-screen w-full flex items-center justify-center px-2 sm:px-4">
+    <SidebarProvider className="flex flex-col">
+    <div className="flex flex-1">
+        <SidebarInset className="px-2 sm:px-6 md:px-12 py-10">
+          <div className="flex flex-col items-center w-full">
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.4 }}
-              className="flex flex-col items-center gap-4"
-            >
-              <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 text-primary animate-spin" />
-              <p className="text-muted-foreground font-medium">Cargando interfaz de VideoAI…</p>
-            </motion.div>
-          </SidebarInset>
-        ) : (
-          <SidebarInset className="relative flex-1 min-h-screen w-full flex flex-col items-center px-2 sm:px-6 md:px-12 py-10">
-            <motion.section
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full max-w-3xl space-y-10 mx-auto"
+              transition={{ duration: 0.5, type: "spring", bounce: 0.15 }}
+              className="flex flex-col items-center mb-8"
             >
-              {/* Hero */}
-              <div className="text-center">
-                <motion.h1
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-[2.4rem] md:text-4xl font-extrabold flex flex-col items-center gap-2"
-                >
-                  <span className="inline-flex items-center gap-2 text-primary text-[2.7rem]">
-                    <VideoIcon className="w-8 h-8 sm:w-10 sm:h-10" /> VideoAI
-                  </span>
-                  <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">Transcribí Videos</span>
-                </motion.h1>
-                <p className="text-base text-muted-foreground mt-2 max-w-2xl mx-auto font-medium">
-                  Convertí cualquier clase, seminario o video educativo de YouTube en un apunte PDF profesional, limpio y organizado.
-                </p>
+              <div className="bg-primary/10 rounded-full p-4 mb-2">
+                <VideoIcon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
               </div>
-
+              <h1 className="text-2xl md:text-3xl font-extrabold text-text dark:text-text-dark text-center">
+                Transcribí videos con IA
+              </h1>
+              <span className="mt-2 text-base text-text-secondary font-semibold text-center">
+                Pegá un link de YouTube y obtené tu PDF
+              </span>
+            </motion.div>
               {/* Barra de progreso y estado */}
               <AnimatePresence>
-                {(loading || jobStatus !== "idle") && (
+              {jobStatus !== "idle" && (
                   <motion.div
                     key="progress"
                     initial={{ opacity: 0, y: 8 }}
@@ -259,7 +254,7 @@ export default function Page() {
                 )}
               </AnimatePresence>
 
-              <div className="w-full max-w-5xl grid gap-8 lg:grid-cols-2">
+              <div className="w-full flex flex-col gap-8">
                 {/* Card principal */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.98 }}
@@ -289,21 +284,20 @@ export default function Page() {
                           URL del Video (YouTube)
                         </Label>
                         <Input
-  id="videoUrl"
-  type="url"
-  placeholder="https://www.youtube.com/watch?v=..."
-  value={videoUrl}
-  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVideoUrl(e.target.value)}
-  required
-  className="bg-[var(--input)] border border-[var(--card-border)] rounded-lg"
+ id="videoUrl"
+ type="url"
+ placeholder="https://www.youtube.com/watch?v=..."
+ value={videoUrl}
+ onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVideoUrl(e.target.value)}
+ required
+ className="bg-accent-2/50 dark:bg-card-dark focus:border-primary"
 />
 
                       </div>
                       <Button
                         type="submit"
                         disabled={loading || !canVideo || !user}
-                        className="w-full bg-primary hover:bg-accent text-white font-bold py-3 rounded-lg shadow-button hover:shadow-card transition-all flex items-center justify-center gap-2 text-lg"
-                      >
+                        className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold py-3 rounded-lg shadow-button hover:shadow-cardHover transition-all flex items-center justify-center gap-2 text-lg">
                         {loading ? (
                           <>Procesando…</>
                         ) : (
@@ -316,6 +310,34 @@ export default function Page() {
                   </CardContent>
                 </Card>
                 </motion.div>
+  {/* Ventajas de VideoAI */}
+  <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1, duration: 0.4 }}
+                  className="w-full mt-8"
+                >
+                <Card className="bg-[var(--card-feature)] border-none shadow-card rounded-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-primary text-xl">
+                      <VideoIcon className="w-5 h-5 sm:w-6 sm:h-6" /> ¿Por qué usar VideoAI?
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="flex flex-col md:flex-row gap-4">
+                    {ventajas.map((v, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 flex flex-col items-start gap-2 bg-[var(--card-feature)] border border-[var(--card-feature-border)] p-4 rounded-2xl shadow-card transition hover:scale-105 hover:shadow-lg"
+                        style={{ color: "var(--card-feature-text)", minWidth: 0 }}
+                      >
+                        <div className="mb-1 text-[var(--card-feature-title)]">{v.icon}</div>
+                        <div className="text-base font-bold text-[var(--card-feature-title)]">{v.title}</div>
+                        <div className="text-sm text-[var(--card-feature-desc)]">{v.desc}</div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+                </motion.div>
 
                 {/* Card de ayuda / instrucciones */}
                 <motion.div
@@ -324,7 +346,7 @@ export default function Page() {
                   transition={{ delay: 0.2, duration: 0.5 }}
                   className="w-full"
                 >
-                <Card className="w-full bg-[#232243]/90 border border-[var(--card-border)] shadow-card rounded-2xl transition-colors">
+                <Card className="w-full bg-[#302F2C]/90 border border-[var(--card-border)] shadow-card rounded-2xl transition-colors">
                   <CardHeader className="flex flex-row items-center gap-3 pb-2">
                     <Info className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
                     <CardTitle className="text-lg font-bold text-[var(--card-foreground)]">
@@ -345,9 +367,8 @@ export default function Page() {
                 </Card>
                 </motion.div>
               </div>
-            </motion.section>
+              </div>
           </SidebarInset>
-        )}
       </div>
     </SidebarProvider>
   )
