@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { getAuth, getIdToken } from "firebase/auth";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 type UpgradeButtonProps = {
   plan: "pro" | "unlimited";
@@ -50,14 +51,14 @@ export function UpgradeButton({ plan }: UpgradeButtonProps) {
   }
 
   return (
-    <button
+    <Button
       onClick={handleClick}
       disabled={loading}
-      className="px-4 py-2 bg-blue-600 text-white rounded w-full"
+      className="w-full hover:scale-[1.02] transition-transform"
     >
       {loading
         ? "Cargando…"
-        : `Actualizar a ${plan === "pro" ? "PRO" : "ILIMITADO"}`}
-    </button>
+        : `Actualizar a ${plan === "pro" ? "PLUS" : "ILIMITADO"}`}
+    </Button>
   );
 }

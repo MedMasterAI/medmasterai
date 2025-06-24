@@ -7,8 +7,20 @@ import { UpgradeButton } from "./upgradeButton"
 
 const plans = [
   {
+    key: "free",
+    title: "GRATIS",
+    price: "$0",
+    billed: "para siempre",
+    features: [
+      "1 PDF al día",
+      "1 video al día",
+      "Funciones básicas de estudio",
+    ],
+    highlight: false,
+  },
+  {
     key: "pro",
-    title: "PRO",
+    title: "PLUS",
     price: "$3000",
     billed: "por mes",
     features: [
@@ -41,11 +53,11 @@ const plans = [
 
 export function SubscriptionPlans() {
   return (
-    <div className="max-w-3xl mx-auto py-8 grid md:grid-cols-2 gap-8">
+    <div className="max-w-5xl mx-auto py-8 grid md:grid-cols-3 gap-8">
       {plans.map((plan) => (
         <Card
           key={plan.key}
-          className={`border-2 ${
+          className={`border-2 transition-transform hover:scale-105 hover:shadow-xl animate-in fade-in-0 slide-in-from-bottom-4 ${
             plan.highlight
               ? "border-primary ring-2 ring-primary-light"
               : "border-border"
@@ -55,7 +67,7 @@ export function SubscriptionPlans() {
             className={`${
               plan.highlight
                 ? "bg-primary text-primary-foreground"
-                : "bg-secondary-light text-foreground"
+                : "bg-gradient-to-br from-white to-secondary-light text-foreground"
             }`}
           >
             <CardTitle className="text-2xl">{plan.title}</CardTitle>
@@ -77,8 +89,16 @@ export function SubscriptionPlans() {
               ))}
             </ul>
             <div className="pt-4">
-              {/* Podés pasar el tipo de plan al botón para checkout */}
-              <UpgradeButton plan={plan.key as "pro" | "unlimited"} />
+              {plan.key === "free" ? (
+                <Button
+                  disabled
+                  className="w-full bg-gray-100 text-gray-500 cursor-default"
+                >
+                  Plan actual
+                </Button>
+              ) : (
+                <UpgradeButton plan={plan.key as "pro" | "unlimited"} />
+              )}
             </div>
           </CardContent>
         </Card>

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { useRequireAuth } from '@/hooks/useRequireAuth'
 import { toast } from 'sonner'
-import { Loader2, Sparkles, FileTextIcon } from 'lucide-react'
+import { Loader2, Sparkles, FileTextIcon, CheckCircle, BookCopy } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function Page() {
@@ -23,6 +23,24 @@ export default function Page() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout>()
+
+  const features = [
+    {
+      icon: <CheckCircle className="text-accent w-5 h-5 sm:w-6 sm:h-6" />,
+      title: 'Organización automática',
+      desc: 'Convertí apuntes largos en tarjetas claras y jerarquizadas.'
+    },
+    {
+      icon: <FileTextIcon className="text-primary w-5 h-5 sm:w-6 sm:h-6" />,
+      title: 'Soporte de archivos',
+      desc: 'Subí TXT, PDF o PPTX y evitá copiar y pegar manualmente.'
+    },
+    {
+      icon: <BookCopy className="text-primary w-5 h-5 sm:w-6 sm:h-6" />,
+      title: 'Listo para estudiar',
+      desc: 'Descargá un archivo importable en Anki al instante.'
+    },
+  ]
   
   useEffect(() => {
     if (loading) {
@@ -108,76 +126,131 @@ export default function Page() {
   if (!user) return null
 
   return (
-    <div className="flex flex-col px-4 py-10 items-center w-full">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="w-full"
-      >
-        <Card className="w-full max-w-2xl bg-card border border-border rounded-xl shadow-md">
-            <CardHeader className="text-center flex flex-col items-center gap-2">
-              <CardTitle className="text-2xl flex items-center gap-2 font-bold text-primary">
-                <Sparkles className="w-5 h-5" /> Generar Flashcards Anki
-              </CardTitle>
-              <CardDescription>Pegá tu texto o subí un .txt o .pdf y descargá el archivo listo para Anki.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="text">Texto</Label>
-                  <Textarea id="text" value={text} onChange={(e) => setText(e.target.value)} rows={8} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="file" className="flex items-center gap-2">
-                  <FileTextIcon className="w-4 h-4" /> Archivo .txt, .pdf o .pptx
-                  </Label>
-                  <Input
-                    id="file"
-                    type="file"
-                    accept="text/plain,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint"
-                    onChange={(e) => handleFile(e.target.files?.[0] || null)}
-                  />
-                  {file && <p className="text-xs text-primary mt-1 font-semibold">{file.name}</p>}
-                </div>
-                <div className="space-y-2">
-                  <label className="flex items-center gap-2">
-                    <input type="checkbox" checked={emphasis} onChange={(e) => setEmphasis(e.target.checked)} />
-                    ¿Querés enfatizar algún punto?
-                  </label>
-                  {emphasis && (
-                    <Textarea placeholder="Fisiopatología, diagnóstico diferencial..." value={points} onChange={(e) => setPoints(e.target.value)} />
-                  )}
-                </div>
-                <Button type="submit" disabled={loading} className="w-full">
-                  {loading ? (
-                    <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Procesando...</span>
-                  ) : (
-                    'Generar Flashcards'
-                  )}
-                </Button>
-                {(loading || progress > 0) && (
-                  <div className="space-y-1">
-                    <Progress value={progress} />
-                    <p className="text-xs text-center text-muted-foreground">{progress}%</p>
-                    {loading && (
-                      <p className="text-xs text-center text-muted-foreground">Procesando, por favor no cierres la ventana o pestaña.</p>
+    <SidebarProvider className="flex flex-col">
+      <div className="flex flex-1">
+        <SidebarInset className="px-2 sm:px-6 md:px-12 py-10 w-full flex flex-col items-center">
+          {/* Hero */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="w-full max-w-3xl text-center mb-10 p-8 md:p-12 rounded-3xl relative overflow-hidden bg-card border border-border shadow-lg bg-[url('/fondo-ondas.png')] bg-cover bg-center"
+          >
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+            <div className="relative z-10 flex flex-col items-center gap-3">
+              <div className="bg-primary/10 rounded-full p-4 mx-auto">
+                <Sparkles className="w-8 h-8 text-primary" />
+              </div>
+              <h1 className="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Generá Flashcards Anki
+              </h1>
+              <p className="text-muted-foreground max-w-xl mx-auto">
+                Pegá tu texto o subí un PDF y obtené tarjetas de estudio listas para importar.
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Formulario principal */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-2xl"
+          >
+            <Card className="bg-card border border-border shadow-card rounded-2xl">
+              <CardHeader className="text-center flex flex-col items-center gap-2">
+                <CardTitle className="text-xl flex items-center gap-2 font-bold text-primary">
+                  <Sparkles className="w-5 h-5" /> Generar Flashcards
+                </CardTitle>
+                <CardDescription>Ingresá tu texto o subí un archivo.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="text">Texto</Label>
+                    <Textarea id="text" value={text} onChange={(e) => setText(e.target.value)} rows={8} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="file" className="flex items-center gap-2">
+                      <FileTextIcon className="w-4 h-4" /> Archivo .txt, .pdf o .pptx
+                    </Label>
+                    <Input
+                      id="file"
+                      type="file"
+                      accept="text/plain,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint"
+                      onChange={(e) => handleFile(e.target.files?.[0] || null)}
+                    />
+                    {file && <p className="text-xs text-primary mt-1 font-semibold">{file.name}</p>}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" checked={emphasis} onChange={(e) => setEmphasis(e.target.checked)} />
+                      ¿Querés enfatizar algún punto?
+                    </label>
+                    {emphasis && (
+                      <Textarea placeholder="Fisiopatología, diagnóstico diferencial..." value={points} onChange={(e) => setPoints(e.target.value)} />
                     )}
                   </div>
+                  <Button type="submit" disabled={loading} className="w-full">
+                    {loading ? (
+                      <span className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Procesando...</span>
+                    ) : (
+                      'Generar Flashcards'
+                    )}
+                  </Button>
+                  {(loading || progress > 0) && (
+                    <div className="space-y-1">
+                      <Progress value={progress} />
+                      <p className="text-xs text-center text-muted-foreground">{progress}%</p>
+                      {loading && (
+                        <p className="text-xs text-center text-muted-foreground">Procesando, por favor no cierres la ventana o pestaña.</p>
+                      )}
+                    </div>
+                  )}
+                </form>
+                {downloadUrl && (
+                  <div className="text-center pt-2">
+                    <a href={downloadUrl} download="flashcards.txt" className="text-primary underline font-semibold">Descargar archivo</a>
+                  </div>
                 )}
-              </form>
-              {downloadUrl && (
-                <div className="text-center pt-2">
-                  <a href={downloadUrl} download="flashcards.txt" className="text-primary underline font-semibold">Descargar archivo</a>
+                <div className="text-xs text-center text-muted-foreground border border-dashed rounded-md p-2 mt-4">
+                  Solo aceptamos archivos <b>.pdf</b> o <b>.pptx</b> que contengan texto extraíble.
+                  Si el documento no incluye texto (por ejemplo, un escaneo sin OCR) no podremos procesarlo.
                 </div>
-              )}
-              <div className="text-xs text-center text-muted-foreground border border-dashed rounded-md p-2 mt-4">
-                Solo aceptamos archivos <b>.pdf</b> o <b>.pptx</b> que contengan texto extraíble.
-                Si el documento no incluye texto (por ejemplo, un escaneo sin OCR) no podremos procesarlo.
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
           </motion.div>
+
+          {/* Ventajas */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="w-full mt-8"
+          >
+            <Card className="bg-[var(--card-feature)] border-none shadow-card rounded-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-primary text-xl">
+                  <BookCopy className="w-5 h-5 sm:w-6 sm:h-6" /> ¿Por qué usar AnkiAI?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col md:flex-row gap-4">
+                {features.map((f, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 flex flex-col items-start gap-2 bg-[var(--card-feature)] border border-[var(--card-feature-border)] p-4 rounded-2xl shadow-card transition hover:scale-105 hover:shadow-lg"
+                    style={{ color: 'var(--card-feature-text)', minWidth: 0 }}
+                  >
+                    <div className="mb-1 text-[var(--card-feature-title)]">{f.icon}</div>
+                    <div className="text-base font-bold text-[var(--card-feature-title)]">{f.title}</div>
+                    <div className="text-sm text-[var(--card-feature-desc)]">{f.desc}</div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </motion.div>
+        </SidebarInset>
       </div>
+    </SidebarProvider>
   )
 }

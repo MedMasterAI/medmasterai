@@ -36,9 +36,9 @@ export default function PagosPage() {
 
   // Helper para mensaje según plan
   function getPlanName(plan: string) {
-    if (plan === "pro") return "PRO"
+    if (plan === "pro") return "PLUS"
     if (plan === "unlimited") return "ILIMITADO"
-    return "Free"
+    return "FREE"
   }
 
   return (
@@ -58,7 +58,7 @@ export default function PagosPage() {
           </p>
         </div>
       </div>
-      <Card className="mx-auto w-full max-w-4xl">
+      <Card className="mx-auto w-full max-w-4xl animate-in fade-in-0 slide-in-from-bottom-4">
         <CardHeader>
           <CardTitle className="text-2xl">Facturación</CardTitle>
           <CardDescription>
@@ -100,7 +100,7 @@ export default function PagosPage() {
           )}
 
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Con nuestro plan mensual PRO o ILIMITADO accedés a <strong className="text-foreground">todas las funciones</strong> sin restricciones.
+            Con nuestros planes PLUS o ILIMITADO accedés a <strong className="text-foreground">todas las funciones</strong> sin restricciones.
           </p>
 
           {/* Plan de suscripción */}

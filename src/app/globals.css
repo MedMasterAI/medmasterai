@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
 
 /* ========== BASE VARIABLES ========== */
 @layer base {
@@ -7,7 +7,7 @@
 
     /* Radios y tipografía */
     --radius: 0.75rem;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Inter', sans-serif;
 
     /* Fondo principal */
     --background: #fafaff; /* Fondo muy claro */
@@ -115,7 +115,7 @@
   body {
     background: transparent !important;
     color: var(--foreground);
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
     transition:
       background 0.2s,
@@ -155,7 +155,7 @@
 .sidebar a,
 .sidebar button {
   color: var(--sidebar-foreground);
-  font-weight: 500;
+  font-weight: 600;
   border-radius: 0.75rem;
   padding: 0.5rem 1rem;
   display: flex;
@@ -314,4 +314,23 @@
   background-color: var(--sidebar) !important;
   color: var(--sidebar-foreground) !important;
   transition: background 0.25s, color 0.2s;
+}
+
+/* ========== TIPOGRAFÍA BASE ========== */
+@layer base {
+  h1 {
+    @apply text-4xl font-bold leading-tight mb-4;
+  }
+  h2 {
+    @apply text-3xl font-semibold leading-snug mb-3;
+  }
+  h3 {
+    @apply text-2xl font-semibold leading-snug mb-2;
+  }
+  p {
+    @apply text-base leading-relaxed mb-4;
+  }
+  label {
+    @apply text-sm font-medium;
+  }
 }
