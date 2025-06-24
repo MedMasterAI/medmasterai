@@ -3,15 +3,15 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { Menu } from "lucide-react"
 import {
-  BookOpen,
-  Bot,
-  Video,
-  FileTextIcon,
-  LayoutDashboard,
-  CreditCard,
-  Sparkles,
-  LucideIcon,
-} from "lucide-react"
+  FaBookOpen,
+  FaRobot,
+  FaVideo,
+  FaFileAlt,
+  FaTachometerAlt,
+  FaCreditCard,
+  FaMagic,
+} from "react-icons/fa"
+import { IconType } from "react-icons"
 import Link from "next/link"
 import {
   Sidebar,
@@ -31,12 +31,12 @@ interface AppSidebarProps {
 interface NavItem {
   title: string
   url: string
-  icon: LucideIcon
+  icon: IconType
   isActive?: boolean
   items?: {
     title: string
     url: string
-    icon?: LucideIcon
+    icon?: IconType
   }[]
 }
 
@@ -55,21 +55,21 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
     {
       title: "ApuntyApps",
       url: "#",
-      icon: BookOpen,
+      icon: FaBookOpen,
       isActive: true,
       items: [
-        { title: "ApuntyAI", url: "/dashboard/apunty", icon: Bot },
-        { title: "VideoAI", url: "/dashboard/videoai", icon: Video },
-        { title: "Anki", url: "/dashboard/anki", icon: Sparkles },
-        { title: "Mis Apuntes", url: "/dashboard/mis-apuntes", icon: FileTextIcon },
+        { title: "ApuntyAI", url: "/dashboard/apunty", icon: FaRobot },
+        { title: "VideoAI", url: "/dashboard/videoai", icon: FaVideo },
+        { title: "Anki", url: "/dashboard/anki", icon: FaMagic },
+        { title: "Mis Apuntes", url: "/dashboard/mis-apuntes", icon: FaFileAlt },
       ],
     },
     {
       title: "Panel de Control",
       url: "#",
-      icon: LayoutDashboard,
+      icon: FaTachometerAlt,
       items: [
-        { title: "Pagos", url: "/pagos", icon: CreditCard },
+        { title: "Pagos", url: "/pagos", icon: FaCreditCard },
       ],
     },
   ]

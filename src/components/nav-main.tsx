@@ -1,6 +1,7 @@
 "use client"
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { ChevronRight } from "lucide-react"
+import { IconType } from "react-icons"
 import { useState, useEffect } from "react"
 import {
   Collapsible,
@@ -34,12 +35,12 @@ export function NavMain({
   items: {
     title: string
     url: string
-    icon: LucideIcon
+    icon: IconType
     isActive?: boolean
     items?: {
       title: string
       url: string
-      icon?: LucideIcon
+      icon?: IconType
     }[]
   }[]
   collapsed?: boolean
@@ -82,7 +83,7 @@ export function NavMain({
                       href={item.url}
                       className={`flex items-center font-medium rounded-lg hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] transition-all duration-200 ${
                         isCollapsed
-                          ? "justify-center w-11 h-11 p-0 mx-auto"
+                          ? "justify-center w-full p-3"
                           : "gap-2 px-3 py-2"
                       }`}
                     >
@@ -129,7 +130,7 @@ export function NavMain({
                                   href={subItem.url}
                                   className={`flex items-center rounded-md hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] transition-all duration-200 ${
                                     isCollapsed
-                                      ? "justify-center w-10 h-10 p-0 mx-auto"
+                                      ? "justify-center w-full p-2.5"
                                       : "gap-2 px-3 py-2"
                                   }`}
                                 >

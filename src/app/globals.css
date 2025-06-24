@@ -11,18 +11,18 @@
 
     /* Fondo principal */
     --background: #fafaff;            /* Fondo muy claro */
-    --foreground: #222;               /* Texto oscuro */              /* Texto oscuro */
+    --foreground: #4c2e9c;               /* Texto oscuro */              /* Texto oscuro */
     --bg: var(--background);
     --text: var(--foreground);
   
     /* Sidebar */
-    --sidebar: #ede9fe;                 /* Lila pálido */
-    --sidebar-foreground: #2e1065;
-    --sidebar-primary: #7b61ff;
+    --sidebar: linear-gradient(180deg,#f5f4ff 0%,#ebedff 100%);
+    --sidebar-foreground: #4c2e9c;
+    --sidebar-primary: #6c5ce7;
     --sidebar-primary-foreground: #fff;
-    --sidebar-accent: #ebe4ff;
-    --sidebar-accent-foreground: #7b61ff;
-    --sidebar-border: #c9baff;
+    --sidebar-accent: #ecebff;
+    --sidebar-accent-foreground: #6c5ce7;
+    --sidebar-border: #d5d0ff;
   
     /* Card principal */
     --card: #ffffff;                  /* Blanco */
@@ -70,7 +70,7 @@
   }
   
   .dark {
-    --background: #131121;
+    --background: #29264c;
     --foreground: #f5f2ff;
     --bg: var(--background);
     --text: var(--foreground);
@@ -101,13 +101,13 @@
     --input: #2a2748;
     --ring: #8f77ff;
 
-    --sidebar: rgba(40, 32, 72, 0.96);
-    --sidebar-foreground: #d4c9ff;
-    --sidebar-primary: #8f77ff;
+    --sidebar: rgba(28, 29, 60, 0.96);
+    --sidebar-foreground: #e1dfff;
+    --sidebar-primary: #7d6bff;
     --sidebar-primary-foreground: #fff;
-    --sidebar-accent: #3d375c;
-    --sidebar-accent-foreground: #cbb9ff;
-    --sidebar-border: #2c274f;
+    --sidebar-accent: #35385c;
+    --sidebar-accent-foreground: #d0c6ff;
+    --sidebar-border: #272a4d;
   }
 
   body {
@@ -134,7 +134,7 @@
   max-width: 300px;
   border-right: 1px solid var(--sidebar-border);
   box-shadow: 0 2px 24px 0 rgba(123,97,255,0.08);
-  transition: background 0.22s, color 0.22s;
+  transition: background 0.22s, color 0.22s, width 0.3s;
   display: flex;
   flex-direction: column;
   z-index: 40;

@@ -23,7 +23,7 @@ export default function Page() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout>()
-
+  
   useEffect(() => {
     if (loading) {
       intervalRef.current = setInterval(() => {
