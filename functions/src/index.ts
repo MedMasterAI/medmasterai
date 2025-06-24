@@ -75,6 +75,7 @@ const PDF_EXTENSION_REGEX = /\.pdf$/;
  * @returns Result with success flag, note ID and a signed URL to the final file.
  */
 export const generateNoteFromPdf = functions.https.onCall(
+  { memory: '2GiB', timeoutSeconds: 540, cpu: 2 },
   async (
     request: functions.https.CallableRequest<GenerateNoteRequestData>
   ): Promise<GenerateNoteResponseData> => {
@@ -99,6 +100,9 @@ export const generateNoteFromPdf = functions.https.onCall(
     const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
     let fileBuffer: Buffer | undefined;
     await cleanupStuckNotes(uid);
+    const startTime = Date.now();
+    const startMem = process.memoryUsage().rss;
+    console.log(`generateNoteFromPdf start - rss: ${startMem}`);
     try {
       // Estado: PROCESANDO (inicio real del procesamiento)
       await noteRef.update({
@@ -248,6 +252,11 @@ export const generateNoteFromPdf = functions.https.onCall(
         lastUpdated: FieldValue.serverTimestamp(),
       });
       throw new functions.https.HttpsError("internal", errorMessage);
+    } finally {
+      console.log(
+        `generateNoteFromPdf end - duration: ${Date.now() - startTime}ms rss:` +
+          ` ${process.memoryUsage().rss}`
+      );
     }
   }
 );
@@ -258,6 +267,7 @@ export const generateNoteFromPdf = functions.https.onCall(
  * @returns Object with success flag, note ID and the public URL to the generated PDF.
  */
 export const generateNoteFromVideo = functions.https.onCall(
+  { memory: '2GiB', timeoutSeconds: 540, cpu: 2 },
   async (
     request: functions.https.CallableRequest<
       GenerateNoteRequestData & { videoUrl: string }
@@ -308,6 +318,10 @@ export const generateNoteFromVideo = functions.https.onCall(
     await userRef.update({
       activeNoteCount: FieldValue.increment(1),
     });
+
+    const startTime = Date.now();
+    const startMem = process.memoryUsage().rss;
+    console.log(`generateNoteFromVideo start - rss: ${startMem}`);
 
     try {
       await noteRef.set(
@@ -431,6 +445,10 @@ export const generateNoteFromVideo = functions.https.onCall(
 
       throw new functions.https.HttpsError("internal", errorMessage);
     } finally {
+      console.log(
+        `generateNoteFromVideo end - duration: ${Date.now() - startTime}ms rss:` +
+          ` ${process.memoryUsage().rss}`
+      );
       await userRef.update({
         activeNoteCount: FieldValue.increment(-1),
       });

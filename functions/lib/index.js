@@ -53,7 +53,7 @@ const PDF_EXTENSION_REGEX = /\.pdf$/;
  * @param request Callable request containing authentication and file metadata.
  * @returns Result with success flag, note ID and a signed URL to the final file.
  */
-export const generateNoteFromPdf = functions.https.onCall(async (request) => {
+export const generateNoteFromPdf = functions.https.onCall({ memory: '2GiB', timeoutSeconds: 540, cpu: 2 }, async (request) => {
     if (!request.auth) {
         throw new functions.https.HttpsError("unauthenticated", "La función debe ser llamada por un usuario autenticado.");
     }
@@ -66,6 +66,9 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
     const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
     let fileBuffer;
     await cleanupStuckNotes(uid);
+    const startTime = Date.now();
+    const startMem = process.memoryUsage().rss;
+    console.log(`generateNoteFromPdf start - rss: ${startMem}`);
     try {
         // Estado: PROCESANDO (inicio real del procesamiento)
         await noteRef.update({
@@ -190,6 +193,10 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
         });
         throw new functions.https.HttpsError("internal", errorMessage);
     }
+    finally {
+        console.log(`generateNoteFromPdf end - duration: ${Date.now() - startTime}ms rss:` +
+            ` ${process.memoryUsage().rss}`);
+    }
 });
 /**
  * Generate a summarized note from a YouTube video URL.
@@ -197,7 +204,7 @@ export const generateNoteFromPdf = functions.https.onCall(async (request) => {
  * @param request Callable request containing auth info, video URL and note details.
  * @returns Object with success flag, note ID and the public URL to the generated PDF.
  */
-export const generateNoteFromVideo = functions.https.onCall(async (request) => {
+export const generateNoteFromVideo = functions.https.onCall({ memory: '2GiB', timeoutSeconds: 540, cpu: 2 }, async (request) => {
     if (!request.auth) {
         throw new functions.https.HttpsError("unauthenticated", "La función debe ser llamada por un usuario autenticado.");
     }
@@ -224,6 +231,9 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
     await userRef.update({
         activeNoteCount: FieldValue.increment(1),
     });
+    const startTime = Date.now();
+    const startMem = process.memoryUsage().rss;
+    console.log(`generateNoteFromVideo start - rss: ${startMem}`);
     try {
         await noteRef.set({
             status: "processing",
@@ -326,6 +336,8 @@ export const generateNoteFromVideo = functions.https.onCall(async (request) => {
         throw new functions.https.HttpsError("internal", errorMessage);
     }
     finally {
+        console.log(`generateNoteFromVideo end - duration: ${Date.now() - startTime}ms rss:` +
+            ` ${process.memoryUsage().rss}`);
         await userRef.update({
             activeNoteCount: FieldValue.increment(-1),
         });

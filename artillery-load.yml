@@ -1,0 +1,22 @@
+config:
+  target: "https://us-central1-frontedwebmedmaster.cloudfunctions.net"
+  phases:
+    - duration: 60
+      arrivalRate: 5
+      rampTo: 20
+      name: "Fase de incremento"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      Authorization: "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjNiZjA1MzkxMzk2OTEzYTc4ZWM4MGY0MjcwMzM4NjM2NDA2MTBhZGMiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiTWVkTWFzdGVyIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0s1OWozUEdiSjl6a014MW5UUmlsUFRFUDhBcVVfNVVLZDFocUM0WExRMWNiZldLTG89czk2LWMiLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZnJvbnRlZHdlYm1lZG1hc3RlciIsImF1ZCI6ImZyb250ZWR3ZWJtZWRtYXN0ZXIiLCJhdXRoX3RpbWUiOjE3NTA3ODc1MTMsInVzZXJfaWQiOiJYc2lINlVPZGpFY0ZrbjVJeVZveTYwR2ZYMDkyIiwic3ViIjoiWHNpSDZVT2RqRWNGa241SXlWb3k2MEdmWDA5MiIsImlhdCI6MTc1MDc4NzUxMywiZXhwIjoxNzUwNzkxMTEzLCJlbWFpbCI6Im1lZG1hc3RlcnVubHBAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMDk4OTg0MTg0ODg0NzA0OTgxNjQiXSwiZW1haWwiOlsibWVkbWFzdGVydW5scEBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.rL-SBCp_r7h8igWLLSEN-pfF07gr7rDgmJWpzHQMqaJIXk83UwzevFuZm8PMNG_d8NY1KHFGVPzpPNt77aqDzbgvpVJ76b8_pqSuYs5r29A8X_HJQTlhgfRbduhpT0j_gtcU0ifNhZojsISC4AsLtVSyEAJIGjyGcqwO4PtyLhitlCDSlGgTZhXoLgZr-zOlJWTORI9krr4hpaJiSIxj8THHmSAoefYpBg5XciNFniKSdoep_-4Esy9Vr-cqrxcrt_69jDBZwDxzGtdgnRmTQLyAv2ZAYfNYyAJJCQXQaOMtGgpxiLU7KDJ3X_4Nu9H7IwcnkSQSaOmoV0DiLGoZjg"
+scenarios:
+  - name: "Generar apunte desde video"
+    flow:
+      - post:
+          url: "/generateNoteFromVideo"
+          json:
+            data:
+              noteId: "nota-{{ $randomString(8) }}"
+              plan: "unlimited"
+              videoUrl: "https://www.youtube.com/watch?v=OXiJ659P0ig&list=PLqCFTxArTuLxP7kiyUVr3bUe76f-OgVnV"
+              fileName: "video.pdf"
