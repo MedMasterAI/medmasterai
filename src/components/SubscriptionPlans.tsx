@@ -57,17 +57,15 @@ export function SubscriptionPlans() {
       {plans.map((plan) => (
         <Card
           key={plan.key}
-          className={`border-2 transition-transform hover:scale-105 hover:shadow-xl animate-in fade-in-0 slide-in-from-bottom-4 ${
-            plan.highlight
-              ? "border-primary ring-2 ring-primary-light"
-              : "border-border"
+          className={`overflow-hidden rounded-2xl border transition-transform hover:scale-105 hover:shadow-xl ${
+            plan.highlight ? "border-primary shadow-lg" : "border-border"
           }`}
         >
           <CardHeader
-            className={`${
+            className={`text-center ${
               plan.highlight
                 ? "bg-primary text-primary-foreground"
-                : "bg-gradient-to-br from-white to-secondary-light text-foreground"
+                : "bg-muted dark:bg-muted/40 text-foreground"
             }`}
           >
             <CardTitle className="text-2xl">{plan.title}</CardTitle>
@@ -80,8 +78,8 @@ export function SubscriptionPlans() {
                 <li key={feat} className="flex items-start">
                   <Check
                     className={`mt-[3px] mr-2 ${
-                      plan.highlight ? "text-primary-foreground" : "text-primary-dark"
-                    }`}
+                      plan.highlight ? "text-primary-foreground" : "text-primary"
+                    } dark:text-primary`}
                     size={16}
                   />
                   <span className="text-sm">{feat}</span>
@@ -92,7 +90,7 @@ export function SubscriptionPlans() {
               {plan.key === "free" ? (
                 <Button
                   disabled
-                  className="w-full bg-gray-100 text-gray-500 cursor-default"
+                  className="w-full bg-gray-100 text-gray-500 dark:bg-card dark:text-gray-400 cursor-default"
                 >
                   Plan actual
                 </Button>

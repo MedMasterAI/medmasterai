@@ -26,6 +26,8 @@ module.exports = {
         'secondary-foreground': 'var(--secondary-foreground)',
         'secondary-light': 'var(--secondary-light)',
         'secondary-dark': 'var(--secondary-dark)',
+        accent: 'var(--accent)',
+        'accent-foreground': 'var(--accent-foreground)',
         'accent-1': 'var(--accent-1)',
         'accent-2': 'var(--accent-2)',
         'accent-3': 'var(--accent-3)',

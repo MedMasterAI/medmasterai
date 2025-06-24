@@ -44,21 +44,15 @@ export default function PagosPage() {
   return (
     <main className="min-h-screen flex flex-col">
       {/* Encabezado con fondo atractivo */}
-      <div className="relative h-40 md:h-52 w-full flex items-center justify-center text-white mb-6">
-        <Image
-          src="/ggr.PNG"
-          alt="Fondo decorativo"
-          fill
-          className="absolute inset-0 object-cover opacity-40"
-        />
-        <div className="relative z-10 text-center space-y-1 px-4">
-          <h1 className="text-3xl md:text-4xl font-bold">Planes y facturación</h1>
+      <div className="relative h-40 md:h-52 w-full flex items-center justify-center text-white mb-6 bg-gradient-to-br from-purple-600 via-indigo-600 to-blue-600">
+        <div className="text-center space-y-1 px-4">
+          <h1 className="text-4xl md:text-5xl font-extrabold drop-shadow-sm">Gestión de pagos</h1>
           <p className="text-sm md:text-base text-white/90 max-w-xl mx-auto">
-            Gestioná tus pagos y elegí el plan que mejor se adapte a tu estudio.
+            Actualizá tu plan y revisá el estado de tus pagos.
           </p>
         </div>
       </div>
-      <Card className="mx-auto w-full max-w-4xl animate-in fade-in-0 slide-in-from-bottom-4">
+      <Card className="mx-auto w-full max-w-4xl animate-in fade-in-0 slide-in-from-bottom-4 shadow-lg ring-1 ring-primary/10">
         <CardHeader>
           <CardTitle className="text-2xl">Facturación</CardTitle>
           <CardDescription>
@@ -69,19 +63,19 @@ export default function PagosPage() {
         <CardContent className="space-y-6">
           {/* Notificaciones de estado de pago */}
           {status === "true" && (
-            <div className="flex items-center gap-3 p-4 rounded-md bg-green-100 text-green-800">
+            <div className="flex items-center gap-3 p-4 rounded-md bg-green-100 text-green-800 dark:bg-green-800/20 dark:text-green-200">
               <CheckCircle className="w-5 h-5" />
               <p>¡Pago exitoso! Tu suscripción está activa.</p>
             </div>
           )}
           {status === "false" && (
-            <div className="flex items-center gap-3 p-4 rounded-md bg-red-100 text-red-800">
+            <div className="flex items-center gap-3 p-4 rounded-md bg-red-100 text-red-800 dark:bg-red-800/20 dark:text-red-200">
               <XCircle className="w-5 h-5" />
               <p>El pago no se completó. Inténtalo de nuevo.</p>
             </div>
           )}
           {status === "pending" && (
-            <div className="flex items-center gap-3 p-4 rounded-md bg-yellow-100 text-yellow-800">
+            <div className="flex items-center gap-3 p-4 rounded-md bg-yellow-100 text-yellow-800 dark:bg-yellow-700/20 dark:text-yellow-200">
               <AlertTriangle className="w-5 h-5" />
               <p>Pago pendiente. Te notificaremos cuando se confirme.</p>
             </div>
@@ -89,7 +83,7 @@ export default function PagosPage() {
 
           {/* Estado de suscripción actual */}
           {isActive && plan !== "free" && (
-            <div className="flex items-center gap-3 p-4 rounded-md bg-blue-100 text-blue-800 border border-blue-300">
+            <div className="flex items-center gap-3 p-4 rounded-md bg-blue-100 text-blue-800 border border-blue-300 dark:bg-blue-900/20 dark:text-blue-200 dark:border-blue-700">
               <Star className="w-5 h-5 fill-blue-500" />
               <p>
                 Ya estás en el plan <strong>{getPlanName(plan)}</strong>
