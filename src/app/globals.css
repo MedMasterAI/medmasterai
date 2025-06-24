@@ -10,24 +10,24 @@
     font-family: 'Poppins', 'Inter', sans-serif;
 
     /* Fondo principal */
-    --background: #f5f2ff;            /* Lila muy claro */
-    --foreground: #261c3c;            /* Violeta oscuro */
+    --background: #fafaff;            /* Fondo muy claro */
+    --foreground: #222;               /* Texto oscuro */              /* Texto oscuro */
     --bg: var(--background);
     --text: var(--foreground);
   
     /* Sidebar */
-    --sidebar: rgba(99, 55, 165, 0.95);  /* Morado suave */
-    --sidebar-foreground: #f5f2ff;
+    --sidebar: #ede9fe;                 /* Lila pálido */
+    --sidebar-foreground: #2e1065;
     --sidebar-primary: #7b61ff;
     --sidebar-primary-foreground: #fff;
-    --sidebar-accent: #e5dbff;
+    --sidebar-accent: #ebe4ff;
     --sidebar-accent-foreground: #7b61ff;
-    --sidebar-border: #d9ceff;
+    --sidebar-border: #c9baff;
   
     /* Card principal */
     --card: #ffffff;                  /* Blanco */
-    --card-foreground: #261c3c;
-    --card-border: #e8e0ff;
+    --card-foreground: #222;
+    --card-border: #b6aaff;
   
     /* Card interna/ventaja/features */
     --card-inner: #f4efff;
@@ -49,17 +49,22 @@
     /* Acento */
     --accent: #6b4cff;
     --accent-foreground: #fff;
+
+    /* Gradiente de la barra de progreso */
+    --progress-from: #7b61ff;
+    --progress-via: #735fd7;
+    --progress-to: rgb(201, 195, 227);
   
     /* Textos */
     --text: var(--foreground);
     --text-secondary: #86859A;
     
     /* Sombra tarjeta */
-    --shadow-card: 0 4px 24px 0 rgba(123,97,255,0.1);
+    --shadow-card: 0 4px 24px 0 rgba(100,80,200,0.04);
   
     /* Otros */
     --destructive: #F44336;
-    --border: #dcd1ff;
+    --border: #b6aaff;
     --input: #ece6ff;
     --ring: #7B61FF;
   }
@@ -96,11 +101,11 @@
     --input: #2a2748;
     --ring: #8f77ff;
 
-    --sidebar: rgba(26, 22, 45, 0.96);
+    --sidebar: rgba(40, 32, 72, 0.96);
     --sidebar-foreground: #d4c9ff;
     --sidebar-primary: #8f77ff;
     --sidebar-primary-foreground: #fff;
-    --sidebar-accent: #34304e;
+    --sidebar-accent: #3d375c;
     --sidebar-accent-foreground: #cbb9ff;
     --sidebar-border: #2c274f;
   }

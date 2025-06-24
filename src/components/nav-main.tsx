@@ -80,18 +80,19 @@ export function NavMain({
                   <SidebarMenuButton asChild>
                     <a
                       href={item.url}
-                      className={`flex items-center rounded-lg transition-all duration-200 ${
+                      className={`flex items-center font-medium rounded-lg hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] transition-all duration-200 ${
                         isCollapsed
                           ? "justify-center w-11 h-11 p-0 mx-auto"
-                          : "gap-2 px-2 py-2"
+                          : "gap-2 px-3 py-2"
                       }`}
                     >
                       <item.icon
-                        className="text-sidebar-primary transition-all duration-200"
-                        size={isCollapsed ? 24 : 20}
+                        className="text-sidebar-primary drop-shadow-sm group-hover:scale-110 transition-transform"
+                        size={isCollapsed ? 26 : 22}
+                        strokeWidth={2}
                       />
                       {!isCollapsed && (
-                        <span className="text-base font-medium">{item.title}</span>
+                        <span className="text-sm tracking-wide">{item.title}</span>
                       )}
                     </a>
                   </SidebarMenuButton>
@@ -126,20 +127,21 @@ export function NavMain({
                               <SidebarMenuSubButton asChild>
                                 <a
                                   href={subItem.url}
-                                  className={`flex items-center transition-all duration-200 ${
+                                  className={`flex items-center rounded-md hover:bg-[var(--sidebar-accent)] hover:text-[var(--sidebar-accent-foreground)] transition-all duration-200 ${
                                     isCollapsed
                                       ? "justify-center w-10 h-10 p-0 mx-auto"
-                                      : "gap-2 px-2 py-2"
+                                      : "gap-2 px-3 py-2"
                                   }`}
                                 >
                                   {subItem.icon && (
                                     <subItem.icon
-                                      className="text-muted-foreground transition group-hover:text-primary"
+                                      className="text-muted-foreground group-hover:text-primary transition-transform group-hover:scale-110"
                                       size={isCollapsed ? 22 : 18}
+                                      strokeWidth={2}
                                     />
                                   )}
                                   {!isCollapsed && (
-                                    <span className="text-sm font-normal">
+                                    <span className="text-sm tracking-wide">
                                       {subItem.title}
                                     </span>
                                   )}

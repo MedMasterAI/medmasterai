@@ -346,7 +346,7 @@ export default function Page() {
                   transition={{ delay: 0.2, duration: 0.5 }}
                   className="w-full"
                 >
-                <Card className="w-full bg-[#302F2C]/90 border border-[var(--card-border)] shadow-card rounded-2xl transition-colors">
+                <Card className="w-full bg-card border border-[var(--card-border)] shadow-card rounded-2xl transition-colors">
                   <CardHeader className="flex flex-row items-center gap-3 pb-2">
                     <Info className="w-5 h-5 sm:w-6 sm:h-6 text-accent" />
                     <CardTitle className="text-lg font-bold text-[var(--card-foreground)]">
