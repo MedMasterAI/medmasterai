@@ -2,10 +2,11 @@
 
 import './globals.css'
 import { ReactNode, useEffect, useState } from 'react'
-import { Poppins } from 'next/font/google'
+import { Nunito } from 'next/font/google'
+
 import { Toaster } from 'sonner'
 
-const poppins = Poppins({
+const nunito = Nunito({
   weight: ['400', '600', '800'],
   subsets: ['latin'],
   display: 'swap',
@@ -25,7 +26,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="es" suppressHydrationWarning className="h-full">
       <body
         className={`
-          ${poppins.className}
+           ${nunito.className}
           h-full min-h-screen w-full
           bg-background text-foreground
           antialiased transition-colors duration-300 ease-in-out

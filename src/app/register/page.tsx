@@ -2,14 +2,13 @@
 
 import { useEffect } from 'react'
 import { useAuthRedirect } from '@/hooks/useAuthRedirect'
-import { LoginForm } from '@/components/login-form'
+import { SignupForm } from '@/components/signup-form'
 import Image from 'next/image'
 import Link from 'next/link'
 
-export default function LoginPage() {
+export default function RegisterPage() {
   useAuthRedirect()
 
-  // Forzar modo oscuro solo para esta página
   useEffect(() => {
     document.documentElement.classList.add('dark')
     return () => document.documentElement.classList.remove('dark')
@@ -26,16 +25,18 @@ export default function LoginPage() {
       <div className="z-10 w-full max-w-md space-y-6 rounded-xl bg-card/80 p-8 shadow-xl backdrop-blur-lg">
         <div className="flex flex-col items-center gap-4">
           <Image src="/logo2.png" alt="MedMaster logo" width={120} height={40} />
-          <h1 className="text-2xl font-semibold text-center text-foreground">Bienvenidos a MedMasterAI</h1>
+          <h1 className="text-2xl font-semibold text-center text-foreground">Crear cuenta</h1>
           <p className="text-sm text-muted-foreground text-center">
-            ¿Aún no tienes cuenta?{' '}
-            <Link href="/register" className="underline">
-              Regístrate aquí
-            </Link>{' '}
-            para crear tu cuenta sin Google ni Apple.
+            Regístrate con tu email para comenzar a usar MedMasterAI.
           </p>
         </div>
-        <LoginForm />
+        <SignupForm />
+        <p className="text-center text-sm">
+          ¿Ya tienes cuenta?{' '}
+          <Link href="/login" className="underline">
+            Inicia sesión
+          </Link>
+        </p>
       </div>
     </div>
   )

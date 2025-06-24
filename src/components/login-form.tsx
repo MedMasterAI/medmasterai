@@ -10,12 +10,7 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-
-const isEmailAllowed = (email: string): boolean => {
-  const allowedDomains = ['gmail.com', 'outlook.com', 'hotmail.com', 'yahoo.com', 'icloud.com']
-  const domain = email.split('@')[1]?.toLowerCase()
-  return allowedDomains.includes(domain)
-}
+import { isEmailAllowed } from '@/lib/emailFilter'
 
 export function LoginForm({
   className,

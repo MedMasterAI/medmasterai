@@ -80,7 +80,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         min-h-screen flex flex-col justify-between
         bg-[var(--sidebar)] border-r border-[var(--sidebar-border)]
         shadow-xl z-20
-        text-sidebar-foreground font-poppins
+         text-sidebar-foreground font-sans
         transition-all
         duration-300
         ${collapsed ? "w-[4.5rem]" : "w-64"}
