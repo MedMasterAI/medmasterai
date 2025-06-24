@@ -49,8 +49,10 @@ export default function Page() {
         setText(String(e.target?.result || ''))
       }
       reader.readAsText(f, 'UTF-8')
-    } else if (f.type !== 'application/pdf') {
-      toast.error('Solo se permiten archivos .txt o .pdf')
+    } else if (f.type === 'application/pdf' || f.type === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' || f.type === 'application/vnd.ms-powerpoint') {
+      // El procesamiento de PDF se hace en el servidor; para PPTX mostramos solo el nombre
+    } else {
+      toast.error('Solo se permiten archivos .txt, .pdf o .pptx')
       return
     }
     setFile(f)
@@ -106,11 +108,14 @@ export default function Page() {
   if (!user) return null
 
   return (
-    <SidebarProvider className="flex flex-col">
-      <div className="flex flex-1">
-        <SidebarInset className="px-4 py-10 w-full flex flex-col items-center">
-          <motion.div initial={{ opacity: 0, scale: 0.97 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="w-full">
-          <Card className="w-full max-w-2xl bg-card border border-border rounded-xl shadow-md">
+    <div className="flex flex-col px-4 py-10 items-center w-full">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.97 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-full"
+      >
+        <Card className="w-full max-w-2xl bg-card border border-border rounded-xl shadow-md">
             <CardHeader className="text-center flex flex-col items-center gap-2">
               <CardTitle className="text-2xl flex items-center gap-2 font-bold text-primary">
                 <Sparkles className="w-5 h-5" /> Generar Flashcards Anki
@@ -125,12 +130,12 @@ export default function Page() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="file" className="flex items-center gap-2">
-                    <FileTextIcon className="w-4 h-4" /> Archivo .txt o .pdf
+                  <FileTextIcon className="w-4 h-4" /> Archivo .txt, .pdf o .pptx
                   </Label>
                   <Input
                     id="file"
                     type="file"
-                    accept="text/plain,application/pdf"
+                    accept="text/plain,application/pdf,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/vnd.ms-powerpoint"
                     onChange={(e) => handleFile(e.target.files?.[0] || null)}
                   />
                   {file && <p className="text-xs text-primary mt-1 font-semibold">{file.name}</p>}
@@ -155,6 +160,9 @@ export default function Page() {
                   <div className="space-y-1">
                     <Progress value={progress} />
                     <p className="text-xs text-center text-muted-foreground">{progress}%</p>
+                    {loading && (
+                      <p className="text-xs text-center text-muted-foreground">Procesando, por favor no cierres la ventana o pestaña.</p>
+                    )}
                   </div>
                 )}
               </form>
@@ -163,11 +171,13 @@ export default function Page() {
                   <a href={downloadUrl} download="flashcards.txt" className="text-primary underline font-semibold">Descargar archivo</a>
                 </div>
               )}
+              <div className="text-xs text-center text-muted-foreground border border-dashed rounded-md p-2 mt-4">
+                Solo aceptamos archivos <b>.pdf</b> o <b>.pptx</b> que contengan texto extraíble.
+                Si el documento no incluye texto (por ejemplo, un escaneo sin OCR) no podremos procesarlo.
+              </div>
             </CardContent>
           </Card>
           </motion.div>
-        </SidebarInset>
       </div>
-    </SidebarProvider>
   )
 }

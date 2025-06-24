@@ -1,16 +1,16 @@
 // src/components/dashboard/CardItem.tsx
-"use client"
+"use client";
 
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { LucideIcon } from "lucide-react"
 
 interface CardItemProps {
-  href: string
-  icon: LucideIcon
-  title: string
-  description: string
-  className?: string
+  href: string;
+  title: string;
+  description: string;
+  icon: React.ComponentType<{ className?: string }>;
+  className?: string;
 }
 
 export default function CardItem({
@@ -25,7 +25,7 @@ export default function CardItem({
       href={href}
       className={cn(
         "group bg-card border border-card-border shadow-card rounded-2xl p-6 flex flex-col items-start gap-4 transition-all hover:shadow-cardHover hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-ring",
-        className
+        className,
       )}
     >
       {/* Icon container con color suave */}

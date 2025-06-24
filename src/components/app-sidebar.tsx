@@ -1,7 +1,7 @@
 "use client"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { Menu } from "lucide-react"
+import { ChevronsLeft } from "lucide-react"
 import {
   FaBookOpen,
   FaRobot,
@@ -101,7 +101,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         `}
         tabIndex={0}
       >
-        <Menu
+         <ChevronsLeft
           className={`
             text-muted-foreground transition-transform duration-200
             ${collapsed ? "rotate-180" : ""}

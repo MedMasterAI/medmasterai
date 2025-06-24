@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
 /* ========== BASE VARIABLES ========== */
 @layer base {
@@ -7,16 +7,16 @@
 
     /* Radios y tipografía */
     --radius: 0.75rem;
-    font-family: 'Poppins', 'Inter', sans-serif;
+    font-family: "Poppins", "Inter", sans-serif;
 
     /* Fondo principal */
-    --background: #fafaff;            /* Fondo muy claro */
-    --foreground: #4c2e9c;               /* Texto oscuro */              /* Texto oscuro */
+    --background: #fafaff; /* Fondo muy claro */
+    --foreground: #4c2e9c; /* Texto oscuro */ 
     --bg: var(--background);
     --text: var(--foreground);
   
     /* Sidebar */
-    --sidebar: linear-gradient(180deg,#f5f4ff 0%,#ebedff 100%);
+    --sidebar: linear-gradient(180deg, #f5f4ff 0%, #ebedff 100%);
     --sidebar-foreground: #4c2e9c;
     --sidebar-primary: #6c5ce7;
     --sidebar-primary-foreground: #fff;
@@ -25,7 +25,7 @@
     --sidebar-border: #d5d0ff;
   
     /* Card principal */
-    --card: #ffffff;                  /* Blanco */
+    --card: #ffffff;/* Blanco */
     --card-foreground: #222;
     --card-border: #b6aaff;
   
@@ -35,7 +35,8 @@
     --card-feature-border: #cec0ff;
     --card-feature-title: #4c2e9c;
     --card-feature-desc: #7a739b;
-  
+    --card-feature-text: #4c2e9c;
+
     /* Colores principales */
     --primary: #7b61ff;
     --primary-foreground: #fff;
@@ -57,16 +58,16 @@
   
     /* Textos */
     --text: var(--foreground);
-    --text-secondary: #86859A;
+    --text-secondary: #86859a;
     
     /* Sombra tarjeta */
-    --shadow-card: 0 4px 24px 0 rgba(100,80,200,0.04);
+    --shadow-card: 0 4px 24px 0 rgba(100, 80, 200, 0.04);
   
     /* Otros */
-    --destructive: #F44336;
+    --destructive: #f44336;
     --border: #b6aaff;
     --input: #ece6ff;
-    --ring: #7B61FF;
+    --ring: #7b61ff;
   }
   
   .dark {
@@ -82,6 +83,7 @@
     --card-feature-border: #8170ff;
     --card-feature-title: #d4c9ff;
     --card-feature-desc: #b1a6d4;
+    --card-feature-text: #d4c9ff;
 
     --primary: #8f77ff;
     --primary-foreground: #fff;
@@ -93,9 +95,9 @@
     --muted-foreground: #aca5d1;
 
     --accent: #ffd966;
-    --accent-foreground: #21194D;
+    --accent-foreground: #21194d;
 
-    --destructive: #F44336;
+    --destructive: #f44336;
 
     --border: #2a2748;
     --input: #2a2748;
@@ -113,16 +115,23 @@
   body {
     background: transparent !important;
     color: var(--foreground);
-    font-family: 'Poppins', 'Inter', sans-serif;
+    font-family: "Poppins", "Inter", sans-serif;
     min-height: 100vh;
-    transition: background 0.2s, color 0.2s;
+    transition:
+      background 0.2s,
+      color 0.2s;
   }
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
     border-color: var(--border);
     outline-color: var(--ring);
-    transition: background-color 0.18s, color 0.18s, border-color 0.18s;
+    transition:
+    background-color 0.18s,
+    color 0.18s,
+    border-color 0.18s;
   }
 }
 
@@ -133,14 +142,18 @@
   min-width: 250px;
   max-width: 300px;
   border-right: 1px solid var(--sidebar-border);
-  box-shadow: 0 2px 24px 0 rgba(123,97,255,0.08);
-  transition: background 0.22s, color 0.22s, width 0.3s;
+  box-shadow: 0 2px 24px 0 rgba(123, 97, 255, 0.08);
+  transition:
+    background 0.22s,
+    color 0.22s,
+    width 0.3s;
   display: flex;
   flex-direction: column;
   z-index: 40;
 }
 
-.sidebar a, .sidebar button {
+.sidebar a,
+.sidebar button {
   color: var(--sidebar-foreground);
   font-weight: 500;
   border-radius: 0.75rem;
@@ -184,21 +197,67 @@
 }
 
 /* ========== ANIMACIONES SUAVES ========== */
-@keyframes fadeInDown { from { opacity: 0; transform: translateY(-24px);} to { opacity: 1; transform: translateY(0);} }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px);} to { opacity: 1; transform: translateY(0);} }
-@keyframes scaleIn { from { opacity: 0; transform: scale(0.96);} to { opacity: 1; transform: scale(1);} }
-@keyframes spin { to { transform: rotate(360deg);} }
-
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 /* ========== UTILIDADES EXTRA ========== */
 @layer base {
-  .bg-background    { background: var(--background) !important; }
-  .bg-sidebar       { background: var(--sidebar) !important; }
-  .bg-card          { background: var(--card) !important; }
-  .bg-primary       { background: var(--primary) !important; }
-  .text-foreground  { color: var(--foreground) !important; }
-  .text-sidebar     { color: var(--sidebar-foreground) !important; }
-  .text-primary     { color: var(--primary) !important; }
-  .border-card      { border-color: var(--card) !important; }
+  .bg-background {
+    background: var(--background) !important;
+  }
+  .bg-sidebar {
+    background: var(--sidebar) !important;
+  }
+  .bg-card {
+    background: var(--card) !important;
+  }
+  .bg-primary {
+    background: var(--primary) !important;
+  }
+  .text-foreground {
+    color: var(--foreground) !important;
+  }
+  .text-sidebar {
+    color: var(--sidebar-foreground) !important;
+  }
+  .text-primary {
+    color: var(--primary) !important;
+  }
+  .border-card {
+    border-color: var(--card) !important;
+  }
 }
 
 /* ========== BOTONES Y TARJETAS MODERNOS ========== */
@@ -214,7 +273,7 @@
 }
 
 .button:hover, .btn:hover, button:hover, [type="button"]:hover, [type="submit"]:hover {
-  background: #6F54DD;
+  background: #6f54dd;
 }
 
 .card, .bg-card {
@@ -236,16 +295,20 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E3D8FF;
+  background: #e3d8ff;
   border-radius: 8px;
 }
 .dark ::-webkit-scrollbar-thumb {
-  background: #21194D;
+  background: #21194d;
 }
 
 /* ========== TRANSICIÓN SUAVE EN TODO ========== */
 * {
-  transition: background-color 0.22s, color 0.22s, border-color 0.22s, box-shadow 0.18s;
+  transition:
+    background-color 0.22s,
+    color 0.22s,
+    border-color 0.22s,
+    box-shadow 0.18s;
 }
 .bg-sidebar {
   background-color: var(--sidebar) !important;
