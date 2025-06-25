@@ -40,10 +40,10 @@ export async function POST(request: Request) {
     const expiresAtMs = dateApprovedMs + 30 * 24 * 60 * 60 * 1000
 
     // Determina el plan comprado (puedes ajustar esta lógica si tienes más de un plan)
-    const plan =
-      payment.body.items && payment.body.items[0]?.title?.toLowerCase().includes("premium")
-        ? "premium"
-        : "pro"
+    const itemTitle = payment.body.items?.[0]?.title?.toLowerCase() || ""
+    const plan = itemTitle.includes("ilimitado") || itemTitle.includes("premium")
+      ? "unlimited"
+      : "pro"
 
     // Guarda la suscripción en la subcolección del usuario
     await db

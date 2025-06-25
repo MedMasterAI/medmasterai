@@ -7,10 +7,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const preference = await mercadopago.preferences.create({
     items: [
       {
-        title: plan === "plus" ? "Plus Mensual" : "Premium Mensual",
+        title: plan === "pro" ? "Plus Mensual" : "Ilimitado Mensual",
         quantity: 1,
         currency_id: "ARS",
-        unit_price: plan === "plus" ? 500 : 1000,
+        unit_price: plan === "pro" ? 500 : 1000,
       },
     ],
     back_urls: {

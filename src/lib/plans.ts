@@ -1,4 +1,4 @@
-export type PlanId = 'free' | 'pro' | 'premium'
+export type PlanId = 'free' | 'pro' | 'unlimited'
 
 export const PLAN_DETAILS: Record<PlanId, { name: string; priceARS: number; priceUSD: number; pdf: number; video: number }> = {
   free: {
@@ -15,17 +15,17 @@ export const PLAN_DETAILS: Record<PlanId, { name: string; priceARS: number; pric
     pdf: 20,
     video: 20,
   },
-  premium: {
-    name: 'Premium',
+  unlimited: {
+    name: 'Ilimitado',
     priceARS: 9000,
     priceUSD: 9,
-    pdf: 40,
-    video: 40,
+    pdf: Infinity,
+    video: Infinity,
   },
 }
 
 export const PLAN_LIMITS: Record<PlanId, { pdf: number; video: number }> = {
   free: { pdf: 1, video: 1 },
   pro: { pdf: 20, video: 20 },
-  premium: { pdf: 40, video: 40 },
+  unlimited: { pdf: Infinity, video: Infinity },
 }
