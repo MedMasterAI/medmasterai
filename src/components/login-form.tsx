@@ -1,6 +1,5 @@
 "use client";
 
-<<<<<<< ours
 import { useState, FormEvent, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -10,49 +9,26 @@ import {
 } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ensureUserDocWithFreePlan } from "@/lib/ensureUserDocWithFreePlan";
-import { isProfileComplete } from "@/lib/isProfileComplete";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Eye, EyeOff } from "lucide-react";
 import { isEmailAllowed } from "@/lib/emailFilter";
-=======
-import { useState, FormEvent, ChangeEvent } from 'react'
-import { useRouter } from 'next/navigation'
-import { signInWithGoogle, signInWithApple, getFirebaseAuth } from '@/lib/firebase'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { ensureUserDocWithFreePlan } from "@/lib/ensureUserDocWithFreePlan"
-import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Eye, EyeOff } from 'lucide-react'
-import { isEmailAllowed } from '@/lib/emailFilter'
->>>>>>> theirs
 
 export function LoginForm({
   className,
   ...props
-<<<<<<< ours
 }: React.ComponentProps<"div">) {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [showPass, setShowPass] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-=======
-}: React.ComponentProps<'div'>) {
-  const router = useRouter()
-  const [email, setEmail] = useState<string>('')
-  const [password, setPassword] = useState<string>('')
-  const [showPass, setShowPass] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
->>>>>>> theirs
 
-  const redirectAfterLogin = async (uid: string) => {
-    const completed = await isProfileComplete(uid);
-    router.replace(completed ? "/dashboard" : "/dashboard/perfil");
+  const redirectToDashboard = () => {
+    router.replace("/dashboard");
   };
 
   const handleGoogle = async () => {
@@ -63,7 +39,7 @@ export function LoginForm({
       if (!user.uid) throw new Error("No se pudo obtener el UID");
       await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined);
       toast.success("✅ ¡Bienvenido con Google!");
-      await redirectAfterLogin(user.uid);
+      redirectToDashboard();
     } catch (err) {
       console.error(err);
       toast.error("Error al iniciar con Google");
@@ -80,7 +56,7 @@ export function LoginForm({
       if (!user.uid) throw new Error("No se pudo obtener el UID");
       await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined);
       toast.success("✅ ¡Bienvenido con Apple!");
-      await redirectAfterLogin(user.uid);
+      redirectToDashboard();
     } catch (err) {
       console.error(err);
       toast.error("Error al iniciar con Apple");
@@ -109,7 +85,7 @@ export function LoginForm({
       if (!user.uid) throw new Error("No se pudo obtener el UID");
       await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined);
       toast.success("✅ ¡Bienvenido!");
-      await redirectAfterLogin(user.uid);
+      redirectToDashboard();
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "Error al iniciar con email");
@@ -137,25 +113,15 @@ export function LoginForm({
           </div>
           <div>
             <Label htmlFor="password">Contraseña</Label>
-<<<<<<< ours
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setPassword(e.target.value)
-              }
-              required
-            />
-=======
             <div className="relative">
               <Input
                 id="password"
-                type={showPass ? 'text' : 'password'}
+                type={showPass ? "text" : "password"}
                 placeholder="••••••••"
                 value={password}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  setPassword(e.target.value)
+                }
                 className="pr-10"
                 required
               />
@@ -163,12 +129,17 @@ export function LoginForm({
                 type="button"
                 onClick={() => setShowPass(!showPass)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-                aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                aria-label={
+                  showPass ? "Ocultar contraseña" : "Mostrar contraseña"
+                }
               >
-                {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPass ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
->>>>>>> theirs
           </div>
         </div>
 
