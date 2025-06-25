@@ -1,9 +1,8 @@
 import "dotenv/config";
 import * as functions from "firebase-functions";
-import { initializeApp } from "firebase-admin/app";
+import "./firebase-admin.js";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-initializeApp();
 import { pdfExtract } from "./ingesta/pdfExtractPdfReader.js";
 import { generarEsquemaJSON } from "./structura/generarEsquemaJSON.js";
 import { generarHTMLMedMaster } from "./html/generarHTMLMedMaster.js";
