@@ -2,6 +2,7 @@
 
 import { ReactNode, useState } from "react"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { Toaster } from "@/components/ui/toaster"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ThemeToggle } from "@/components/theme-toggle"
@@ -18,7 +19,8 @@ import { Menu } from "lucide-react"
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
-  const sidebarWidth = collapsed ? "4.5rem" : "16rem"
+  const isMobile = useIsMobile()
+  const sidebarWidth = isMobile ? "0rem" : collapsed ? "4.5rem" : "16rem"
 
   return (
     <SidebarProvider>

@@ -39,37 +39,58 @@ export default function TermsPage() {
 
             <h2 className="text-lg font-semibold mt-4 mb-2">5. Conducta del usuario</h2>
             <p>
-              El usuario se compromete a no usar la plataforma para actividades ilícitas, fraudulentas, difamatorias, o que violen derechos de terceros.
+              El usuario se compromete a no usar la plataforma para actividades ilícitas, fraudulentas, difamatorias o que violen derechos de terceros.
             </p>
 
-            <h2 className="text-lg font-semibold mt-4 mb-2">6. Responsabilidad</h2>
+            <h2 className="text-lg font-semibold mt-4 mb-2">6. Naturaleza del servicio</h2>
             <p>
-              MedMaster no garantiza la exactitud de los contenidos generados por IA y no se responsabiliza por decisiones tomadas a partir de ellos.
-              El usuario utiliza la plataforma bajo su propia responsabilidad.
+              MedMaster brinda herramientas automatizadas con fines informativos y educativos.
+              No prestamos servicios de asesoramiento profesional ni generamos una relación médico‑paciente.
+              El uso de la plataforma es voluntario y bajo exclusiva responsabilidad del usuario.
             </p>
 
-            <h2 className="text-lg font-semibold mt-4 mb-2">7. Cambios en el servicio</h2>
+            <h2 className="text-lg font-semibold mt-4 mb-2">7. Limitación de responsabilidad</h2>
+            <p>
+              La plataforma se provee “tal cual” y “según disponibilidad”, sin garantías de ningún tipo.
+              En la máxima medida permitida por la ley argentina, MedMaster queda eximida de toda responsabilidad por daños directos o indirectos derivados del uso o imposibilidad de uso del servicio.
+              El usuario asume todos los riesgos relacionados con el uso de la información obtenida.
+            </p>
+
+            <h2 className="text-lg font-semibold mt-4 mb-2">8. Cambios en el servicio</h2>
             <p>
               Nos reservamos el derecho de modificar, suspender o discontinuar servicios, así como de actualizar estos términos, notificando los cambios por este medio.
             </p>
 
-            <h2 className="text-lg font-semibold mt-4 mb-2">8. Legislación y jurisdicción</h2>
+            <h2 className="text-lg font-semibold mt-4 mb-2">9. Legislación y jurisdicción</h2>
             <p>
               Este acuerdo se rige por las leyes de la República Argentina. Ante cualquier conflicto, las partes se someten a la jurisdicción de los tribunales ordinarios de la Ciudad Autónoma de Buenos Aires, renunciando a cualquier otro fuero.
             </p>
 
-            <h2 className="text-lg font-semibold mt-4 mb-2">9. Protección de datos personales</h2>
+            <h2 className="text-lg font-semibold mt-4 mb-2">10. Protección de datos personales</h2>
             <p>
               MedMaster cumple con la Ley 25.326 de Protección de Datos Personales de la República Argentina. El usuario puede ejercer sus derechos de acceso, rectificación y supresión de datos personales comunicándose a <a className="text-primary underline" href="mailto:legal@medmaster.com.ar">legal@medmaster.com.ar</a>.
               La Dirección Nacional de Protección de Datos Personales, órgano de control de la Ley 25.326, tiene la atribución de atender reclamos sobre incumplimiento de normas de protección de datos personales (<a className="text-primary underline" href="https://www.argentina.gob.ar/aaip/datospersonales" target="_blank" rel="noopener noreferrer">www.argentina.gob.ar/aaip/datospersonales</a>).
+              El usuario autoriza el tratamiento de sus datos conforme a nuestra <Link className="text-primary underline" href="/privacy">Política de Privacidad</Link>. MedMaster no será responsable por eventuales pérdidas o filtraciones de información ocasionadas por terceros fuera de nuestro control.
             </p>
 
-            <h2 className="text-lg font-semibold mt-4 mb-2">10. Contacto</h2>
+            <h2 className="text-lg font-semibold mt-4 mb-2">11. Contacto</h2>
             <p>
               Cualquier duda o reclamo puede realizarse a través del{' '}
               <Link className="text-primary underline" href="/contact">formulario de contacto</Link> en la plataforma
               o al correo legal:{' '}
               <a className="text-primary underline" href="mailto:legal@medmaster.com.ar">legal@medmaster.com.ar</a>
+            </p>
+
+            <h2 className="text-lg font-semibold mt-4 mb-2">11. Pagos y reembolsos</h2>
+            <p>
+              Los pagos se procesan en pesos argentinos a través de proveedores de servicios autorizados. El usuario asume los cargos e impuestos aplicables a cada transacción.
+            </p>
+            <p>
+              Conforme a la Ley 24.240 de Defensa del Consumidor de la República Argentina, podés solicitar la cancelación o reembolso dentro de los diez (10) días hábiles de efectuado el pago contactando a{' '}
+              <a className="text-primary underline" href="mailto:legal@medmaster.com.ar">legal@medmaster.com.ar</a>.
+            </p>
+            <p>
+              Una vez vencido dicho plazo y tratándose de un servicio digital de acceso inmediato, MedMaster no ofrece reembolsos, salvo los previstos por la normativa vigente. Nos reservamos el derecho de rechazar solicitudes que se consideren abusivas o fraudulentas.
             </p>
           </ScrollArea>
         </CardContent>

@@ -36,6 +36,12 @@ export default function LoginPage() {
           </p>
         </div>
         <LoginForm />
+        <p className="text-center text-sm">
+          ¿Olvidaste tu contraseña?{' '}
+          <Link href="/reset-password" className="underline">
+            Recupérala aquí
+          </Link>
+        </p>
       </div>
     </div>
   )

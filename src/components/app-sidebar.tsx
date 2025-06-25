@@ -1,7 +1,7 @@
-"use client"
-import Image from "next/image"
-import { useEffect, useState } from "react"
-import { ChevronsLeft } from "lucide-react"
+"use client";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { ChevronsLeft } from "lucide-react";
 import {
   FaBookOpen,
   FaRobot,
@@ -10,46 +10,52 @@ import {
   FaTachometerAlt,
   FaCreditCard,
   FaMagic,
-} from "react-icons/fa"
-import { IconType } from "react-icons"
-import Link from "next/link"
+  FaUser,
+} from "react-icons/fa";
+import { IconType } from "react-icons";
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-} from "@/components/ui/sidebar"
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+} from "@/components/ui/sidebar";
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 
 interface AppSidebarProps {
-  collapsed: boolean
-  setCollapsed: (collapsed: boolean) => void
-  className?: string
+  collapsed: boolean;
+  setCollapsed: (collapsed: boolean) => void;
+  className?: string;
 }
 
 interface NavItem {
-  title: string
-  url: string
-  icon: IconType
-  isActive?: boolean
+  title: string;
+  url: string;
+  icon: IconType;
+  isActive?: boolean;
   items?: {
-    title: string
-    url: string
-    icon?: IconType
-  }[]
+    title: string;
+    url: string;
+    icon?: IconType;
+  }[];
 }
 
-export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSidebarProps) {
-  const [isDark, setIsDark] = useState(false)
+export function AppSidebar({
+  collapsed,
+  setCollapsed,
+  className = "",
+}: AppSidebarProps) {
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const check = () => setIsDark(document.documentElement.classList.contains('dark'))
-    const handler = () => check()
-    check()
-    document.addEventListener('theme-change', handler)
-    return () => document.removeEventListener('theme-change', handler)
-  }, [])
+    const check = () =>
+      setIsDark(document.documentElement.classList.contains("dark"));
+    const handler = () => check();
+    check();
+    document.addEventListener("theme-change", handler);
+    return () => document.removeEventListener("theme-change", handler);
+  }, []);
 
   const navMain: NavItem[] = [
     {
@@ -61,7 +67,11 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         { title: "ApuntyAI", url: "/dashboard/apunty", icon: FaRobot },
         { title: "VideoAI", url: "/dashboard/videoai", icon: FaVideo },
         { title: "Anki", url: "/dashboard/anki", icon: FaMagic },
-        { title: "Mis Apuntes", url: "/dashboard/mis-apuntes", icon: FaFileAlt },
+        {
+          title: "Mis Apuntes",
+          url: "/dashboard/mis-apuntes",
+          icon: FaFileAlt,
+        },
       ],
     },
     {
@@ -70,9 +80,10 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
       icon: FaTachometerAlt,
       items: [
         { title: "Pagos", url: "/pagos", icon: FaCreditCard },
+        { title: "Mi Perfil", url: "/dashboard/perfil", icon: FaUser },
       ],
     },
-  ]
+  ];
 
   return (
     <aside
@@ -101,7 +112,7 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         `}
         tabIndex={0}
       >
-         <ChevronsLeft
+        <ChevronsLeft
           className={`
             text-muted-foreground transition-transform duration-200
             ${collapsed ? "rotate-180" : ""}
@@ -110,30 +121,34 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         />
       </button>
 
-    {/* Header: Logo */}
-<SidebarHeader className={`flex flex-col items-center gap-4 pt-8 pb-4 transition-all duration-300 ${collapsed ? "px-0" : ""}`}>
-  <Link href="/dashboard" className="flex flex-col items-center gap-2 group">
-    <Image
-      src={isDark ? "/logo2.PNG" : "/logo1.png"}
-      alt="Logo MedMasterAI"
-      width={collapsed ? 36 : 66}
-      height={collapsed ? 36 : 66}
-      className="rounded-2xl shadow-md transition-all duration-300 group-hover:scale-105"
-      priority
-    />
-    {!collapsed && (
-      <>
-        <span className="text-xl font-extrabold text-[var(--sidebar-foreground)] group-hover:text-[var(--primary)] transition">
-          MedMasterAI
-        </span>
-        <span className="text-xs font-medium text-[var(--sidebar-foreground)]">
-          Study
-        </span>
-      </>
-    )}
-  </Link>
-</SidebarHeader>
-
+      {/* Header: Logo */}
+      <SidebarHeader
+        className={`flex flex-col items-center gap-4 pt-8 pb-4 transition-all duration-300 ${collapsed ? "px-0" : ""}`}
+      >
+        <Link
+          href="/dashboard"
+          className="flex flex-col items-center gap-2 group"
+        >
+          <Image
+            src={isDark ? "/logo2.PNG" : "/logo1.png"}
+            alt="Logo MedMasterAI"
+            width={collapsed ? 36 : 66}
+            height={collapsed ? 36 : 66}
+            className="rounded-2xl shadow-md transition-all duration-300 group-hover:scale-105"
+            priority
+          />
+          {!collapsed && (
+            <>
+              <span className="text-xl font-extrabold text-[var(--sidebar-foreground)] group-hover:text-[var(--primary)] transition">
+                MedMasterAI
+              </span>
+              <span className="text-xs font-medium text-[var(--sidebar-foreground)]">
+                Study
+              </span>
+            </>
+          )}
+        </Link>
+      </SidebarHeader>
 
       {/* Menú principal */}
       <SidebarContent className="flex-1 flex flex-col gap-6 px-2 transition-all duration-300">
@@ -145,5 +160,5 @@ export function AppSidebar({ collapsed, setCollapsed, className = "" }: AppSideb
         <NavUser />
       </SidebarFooter>
     </aside>
-  )
+  );
 }

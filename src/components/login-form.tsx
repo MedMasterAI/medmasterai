@@ -1,5 +1,23 @@
-'use client'
+"use client";
 
+<<<<<<< ours
+import { useState, FormEvent, ChangeEvent } from "react";
+import { useRouter } from "next/navigation";
+import {
+  signInWithGoogle,
+  signInWithApple,
+  getFirebaseAuth,
+} from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { ensureUserDocWithFreePlan } from "@/lib/ensureUserDocWithFreePlan";
+import { isProfileComplete } from "@/lib/isProfileComplete";
+import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { isEmailAllowed } from "@/lib/emailFilter";
+=======
 import { useState, FormEvent, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { signInWithGoogle, signInWithApple, getFirebaseAuth } from '@/lib/firebase'
@@ -10,82 +28,98 @@ import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Eye, EyeOff } from 'lucide-react'
 import { isEmailAllowed } from '@/lib/emailFilter'
+>>>>>>> theirs
 
 export function LoginForm({
   className,
   ...props
+<<<<<<< ours
+}: React.ComponentProps<"div">) {
+  const router = useRouter();
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+=======
 }: React.ComponentProps<'div'>) {
   const router = useRouter()
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [showPass, setShowPass] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+>>>>>>> theirs
 
-  const redirectToDashboard = () => {
-    router.replace('/dashboard')
-  }
+  const redirectAfterLogin = async (uid: string) => {
+    const completed = await isProfileComplete(uid);
+    router.replace(completed ? "/dashboard" : "/dashboard/perfil");
+  };
 
   const handleGoogle = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const userCredential = await signInWithGoogle()
-      const user = userCredential.user
-      if (!user.uid) throw new Error("No se pudo obtener el UID")
-      await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined)
-      toast.success('✅ ¡Bienvenido con Google!')
-      redirectToDashboard()
+      const userCredential = await signInWithGoogle();
+      const user = userCredential.user;
+      if (!user.uid) throw new Error("No se pudo obtener el UID");
+      await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined);
+      toast.success("✅ ¡Bienvenido con Google!");
+      await redirectAfterLogin(user.uid);
     } catch (err) {
-      console.error(err)
-      toast.error('Error al iniciar con Google')
+      console.error(err);
+      toast.error("Error al iniciar con Google");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleApple = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const userCredential = await signInWithApple()
-      const user = userCredential.user
-      if (!user.uid) throw new Error("No se pudo obtener el UID")
-      await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined)
-      toast.success('✅ ¡Bienvenido con Apple!')
-      redirectToDashboard()
+      const userCredential = await signInWithApple();
+      const user = userCredential.user;
+      if (!user.uid) throw new Error("No se pudo obtener el UID");
+      await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined);
+      toast.success("✅ ¡Bienvenido con Apple!");
+      await redirectAfterLogin(user.uid);
     } catch (err) {
-      console.error(err)
-      toast.error('Error al iniciar con Apple')
+      console.error(err);
+      toast.error("Error al iniciar con Apple");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleEmailLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!isEmailAllowed(email)) {
-      toast.error('Solo se permiten correos Gmail, Outlook, Hotmail, etc.')
-      setLoading(false)
-      return
+      toast.error("Solo se permiten correos Gmail, Outlook, Hotmail, etc.");
+      setLoading(false);
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password)
-      const user = userCredential.user
-      if (!user.uid) throw new Error("No se pudo obtener el UID")
-      await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined)
-      toast.success('✅ ¡Bienvenido!')
-      redirectToDashboard()
+      const userCredential = await signInWithEmailAndPassword(
+        getFirebaseAuth(),
+        email,
+        password,
+      );
+      const user = userCredential.user;
+      if (!user.uid) throw new Error("No se pudo obtener el UID");
+      await ensureUserDocWithFreePlan(user.uid, user.email ?? undefined);
+      toast.success("✅ ¡Bienvenido!");
+      await redirectAfterLogin(user.uid);
     } catch (err: any) {
-      console.error(err)
-      toast.error(err.message || 'Error al iniciar con email')
+      console.error(err);
+      toast.error(err.message || "Error al iniciar con email");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <form onSubmit={handleEmailLogin} className="flex flex-col gap-6">
         <div className="grid gap-3">
           <div>
@@ -95,25 +129,51 @@ export function LoginForm({
               type="email"
               placeholder="m@example.com"
               value={email}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
               required
             />
           </div>
           <div>
             <Label htmlFor="password">Contraseña</Label>
+<<<<<<< ours
             <Input
               id="password"
               type="password"
               placeholder="••••••••"
               value={password}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
               required
             />
+=======
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPass ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+                className="pr-10"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(!showPass)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-label={showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              >
+                {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+>>>>>>> theirs
           </div>
         </div>
 
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? 'Cargando…' : 'Iniciar con Email'}
+          {loading ? "Cargando…" : "Iniciar con Email"}
         </Button>
       </form>
 
@@ -144,15 +204,16 @@ export function LoginForm({
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
-        Al continuar, aceptas nuestros{' '}
+        Al continuar, aceptas nuestros{" "}
         <a href="/terms" className="underline">
           Términos
-        </a>{' '}
-        y{' '}
+        </a>{" "}
+        y{" "}
         <a href="/privacy" className="underline">
           Política de Privacidad
-        </a>.
+        </a>
+        .
       </p>
     </div>
-  )
+  );
 }
