@@ -6,6 +6,7 @@ import { generarHTMLMedMaster } from '@lib/html/generarHTMLMedMaster'
 import { sanitizeHtmlContent } from '@lib/validator/htmlSanitizer'
 import { checkHtmlRules } from '@lib/validator/ruleChecker'
 import { htmlToPdf } from '@lib/pdf/htmlToPdf'
+import { consumeCredit } from '@/lib/credits'
 
 export const runtime = 'nodejs'
 const DUMPLING_API_KEY = process.env.DUMPLING_API_KEY!
@@ -44,11 +45,17 @@ function chunkTextByTokens(text: string, maxTokens = CHUNK_TOKEN_SIZE): string[]
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData()
+    const uid = formData.get('uid')
+    if (typeof uid !== 'string' || !uid) {
+      return NextResponse.json({ error: 'UID requerido' }, { status: 400 })
+    }
+
     let rawText: string
 
     // 1️⃣ YouTube → Dumpling AI
     const videoUrl = formData.get('videoUrl')
     if (typeof videoUrl === 'string' && videoUrl.trim()) {
+      await consumeCredit(uid, 'video')
       const res = await fetch(
         'https://app.dumplingai.com/api/v1/get-youtube-transcript',
         {
@@ -96,6 +103,7 @@ export async function POST(request: NextRequest) {
           { status: 415 }
         )
       }
+      await consumeCredit(uid, 'pdf')
       const buffer = Buffer.from(await file.arrayBuffer())
       rawText = await pdfExtract(buffer)
     }
@@ -143,9 +151,10 @@ export async function POST(request: NextRequest) {
 
   } catch (err: any) {
     console.error('❌ Error en /api/generar:', err)
+    const status = err.message === 'Sin créditos disponibles' ? 402 : 500
     return NextResponse.json(
       { error: err.message || 'Error interno' },
-      { status: 500 }
+      { status }
     )
   }
 }

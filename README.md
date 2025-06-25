@@ -95,6 +95,65 @@ ALLOWED_ORIGINS=https://ejemplo.com,https://otro.com
 Al desplegar, establece `ALLOWED_ORIGINS` con los dominios autorizados a invocar la función PDF.
 Si Puppeteer no encuentra Chrome, define también `CHROME_PATH` con la ruta al ejecutable.
 
+## Planes y sistema de créditos
+
+El servicio utiliza un modelo basado en créditos para prevenir abusos. Cada video o PDF procesado descuenta un crédito del tipo correspondiente. Los planes disponibles son:
+
+| Plan       | Precio ARS | Precio USD | Créditos video/mes | Créditos PDF/mes |
+|-----------|-----------|-----------|-------------------|-----------------|
+| Gratuito  | 0         | 0         | 1                 | 1               |
+| Pro       | 5000      | 5         | 20                | 20              |
+| Premium   | 9000      | 9         | 40                | 40              |
+
+Los usuarios que agotan sus créditos pueden comprar packs adicionales (ejemplo: 5 videos extra por 1000 ARS).
+
+Las cuentas guardan sus créditos en la colección `users` de Firestore mediante los campos `videoCredits` y `pdfCredits`.
+
+### Simulación de ingresos y costos
+
+Suponiendo un costo de procesamiento aproximado de 0,05 USD por cada video o PDF:
+
+- **100 usuarios gratuitos** → sin ingresos y un gasto de ~10 USD al mes.
+- **100 usuarios Pro** → ingreso 500 USD, gasto ~200 USD, margen ~300 USD.
+- **100 usuarios Premium** → ingreso 900 USD, gasto ~400 USD, margen ~500 USD.
+
+Mostrar siempre el saldo de créditos en la interfaz y ofrecer la compra de packs cuando se quedan en cero.
+
 ## License
 
 This project is licensed under the MIT License.
+
+## Procesamiento as\u00edncrono de jobs
+
+El sistema soporta tareas pesadas (transcripci\u00f3n de video, generaci\u00f3n de PDFs, llamadas a IA) mediante un flujo basado en Pub/Sub.
+
+1. **createJob** recibe la petici\u00f3n, valida l\u00edmites por usuario y encola el trabajo. Responde con `jobId`.
+2. **worker** se activa por Pub/Sub y procesa cada mensaje usando Gemini como modelo principal y OpenAI como _fallback_. Guarda el resultado en Cloud Storage y actualiza el estado en Firestore.
+3. **getJobStatus** permite consultar `queued`, `processing`, `completed` o `failed`.
+4. **downloadJobResult** entrega una URL firmada del archivo resultante.
+
+Variables relevantes:
+
+```bash
+JOB_TOPIC=jobs                # Nombre del topic de Pub/Sub
+JOBS_PER_MINUTE=5             # L\u00edmite de trabajos por usuario
+GEMINI_API_KEY=...            # API key de Gemini
+OPENAI_API_KEY=...            # API key de OpenAI
+```
+
+Ejemplo para aumentar recursos de una funci\u00f3n:
+
+```ts
+export const worker = functions
+  .runWith({ memory: '2GiB', timeoutSeconds: 540, cpu: 2 })
+  .pubsub.topic(JOB_TOPIC)
+  .onPublish(async msg => { /* ... */ });
+```
+
+Para desplegar las funciones ejecuta:
+
+```bash
+npm run --prefix functions deploy
+```
+
+Si necesitas procesar cargas a\u00fan mayores, puedes portar el `worker` a [Cloud Run](https://cloud.google.com/run) y ejecutarlo desde una suscripci\u00f3n de Pub/Sub para disponer de m\u00e1s CPU, memoria y tiempos de ejecuci\u00f3n sin l\u00edmites.

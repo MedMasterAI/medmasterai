@@ -449,9 +449,11 @@ export const generateNoteFromVideo = functions.https.onCall(
         `generateNoteFromVideo end - duration: ${Date.now() - startTime}ms rss:` +
           ` ${process.memoryUsage().rss}`
       );
-      await userRef.update({
+  await userRef.update({
         activeNoteCount: FieldValue.increment(-1),
       });
     }
   }
 );
+
+export { createJob, worker, getJobStatus, downloadJobResult } from './jobs/jobFunctions.js';

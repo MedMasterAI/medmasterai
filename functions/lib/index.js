@@ -343,4 +343,5 @@ export const generateNoteFromVideo = functions.https.onCall({ memory: '2GiB', ti
         });
     }
 });
+export { createJob, worker, getJobStatus, downloadJobResult } from './jobs/jobFunctions.js';
 //# sourceMappingURL=index.js.map

@@ -4,6 +4,7 @@ import { NextResponse } from "next/server"
 import admin from "firebase-admin"
 import mercadopago from "@/lib/mercadopago"
 import serviceAccount from "@/lib/frontedwebmedmaster-firebase-adminsdk-fbsvc-1e8dfbf46f.json"
+import { PLAN_LIMITS } from "@/lib/plans"
 
 const DEBUG = process.env.NODE_ENV !== 'production'
 
@@ -41,7 +42,7 @@ export async function POST(request: Request) {
     // Determina el plan comprado (puedes ajustar esta lógica si tienes más de un plan)
     const plan =
       payment.body.items && payment.body.items[0]?.title?.toLowerCase().includes("premium")
-        ? "unlimited"
+        ? "premium"
         : "pro"
 
     // Guarda la suscripción en la subcolección del usuario
@@ -67,6 +68,8 @@ export async function POST(request: Request) {
         {
           plan,
           planExpiresAt: admin.firestore.Timestamp.fromMillis(expiresAtMs),
+          pdfCredits: PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS].pdf,
+          videoCredits: PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS].video,
         },
         { merge: true }
       )

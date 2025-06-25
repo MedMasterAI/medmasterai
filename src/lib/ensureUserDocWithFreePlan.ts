@@ -1,5 +1,6 @@
 import { getFirestore, doc, getDoc, setDoc, Timestamp } from "firebase/firestore"
 import { getFirebaseApp } from "./firebase"
+import { PLAN_LIMITS } from "./plans"
 
 // Asegura que el usuario tenga un doc en Firestore con plan "free"
 export async function ensureUserDocWithFreePlan(uid: string, email?: string) {
@@ -13,6 +14,8 @@ export async function ensureUserDocWithFreePlan(uid: string, email?: string) {
       planExpiresAt: null,
       email: email || "",
       createdAt: Timestamp.now(),
+      pdfCredits: PLAN_LIMITS.free.pdf,
+      videoCredits: PLAN_LIMITS.free.video,
     })
     return "created"
   }
