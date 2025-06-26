@@ -13,6 +13,7 @@ import { htmlToPdf } from "./pdf/htmlToPdf.js";
 import { ocrConDocumentAI } from "./ocr/ocrConDocumentAI.js";
 import { splitPdfByPageCount } from "./pdfsplit/splitPdfBuffer.js";
 import { cleanupStuckNotes } from "./utils/cleanupStuckNotes.js";
+import { slugify, extractTitle } from "./utils/slugify.js";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
@@ -207,10 +208,12 @@ export const generateNoteFromPdf = functions.https.onCall(
         console.log("==========================================");
       }
 
+      const title = extractTitle(prettyHtml) || fileName.replace(PDF_EXTENSION_REGEX, "");
+      const slug = slugify(title);
+
       const pdfBuffer = await htmlToPdf(prettyHtml);
       const timestamp = Date.now();
-      const finalNoteFilePath =
-        `users/${uid}/notes/${timestamp}-${fileName.replace(PDF_EXTENSION_REGEX, "_note.pdf")}`;
+      const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${slug}_note.pdf`;
       const fileRef = storage.bucket().file(finalNoteFilePath);
 
       const bufferToSave = Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
@@ -223,7 +226,7 @@ export const generateNoteFromPdf = functions.https.onCall(
 
       // Estado: COMPLETADO
       await noteRef.update({
-        title: fileName.replace(PDF_EXTENSION_REGEX, "") || "Apunte desde PDF",
+        title,
         url: publicURL,
         type: "pdf",
         rawText: rawText.substring(0, 5000),
@@ -381,10 +384,12 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
         lastUpdated: FieldValue.serverTimestamp(),
       });
 
+      const title = extractTitle(prettyHtml) || fileName.replace(PDF_EXTENSION_REGEX, '');
+      const slug = slugify(title);
+
       const pdfBuffer = await htmlToPdf(prettyHtml);
       const timestamp = Date.now();
-      const finalNoteFilePath =
-        `users/${uid}/notes/${timestamp}-${fileName.replace(PDF_EXTENSION_REGEX, '_note.pdf')}`;
+      const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${slug}_note.pdf`;
       const fileRef = storage.bucket().file(finalNoteFilePath);
 
       const bufferToSave = Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
@@ -396,7 +401,7 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
       });
 
       await noteRef.update({
-        title: fileName.replace(PDF_EXTENSION_REGEX, '') || 'Apunte desde PDF',
+        title,
         url: publicURL,
         type: 'pdf',
         rawText: rawText.substring(0, 5000),
@@ -580,9 +585,12 @@ export const generateNoteFromVideo = functions.https.onCall(
         lastUpdated: FieldValue.serverTimestamp(),
       });
 
+      const title = extractTitle(prettyHtml) || fileName.replace(PDF_EXTENSION_REGEX, "");
+      const slug = slugify(title);
+
       const pdfBuffer = await htmlToPdf(prettyHtml);
       const timestamp = Date.now();
-      const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${fileName.replace(PDF_EXTENSION_REGEX, "_note.pdf")}`;
+      const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${slug}_note.pdf`;
       const fileRef = storage.bucket().file(finalNoteFilePath);
 
       const bufferToSave = Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
@@ -594,7 +602,7 @@ export const generateNoteFromVideo = functions.https.onCall(
       });
 
       await noteRef.update({
-        title: fileName.replace(PDF_EXTENSION_REGEX, "") || "Apunte desde Video",
+        title,
         url: publicURL,
         type: "pdf",
         rawText: rawText.substring(0, 5000),
@@ -770,9 +778,12 @@ export const generateNoteFromVideoEmphasis = functions.https.onCall(
         lastUpdated: FieldValue.serverTimestamp(),
       });
 
+      const title = extractTitle(prettyHtml) || fileName.replace(PDF_EXTENSION_REGEX, '');
+      const slug = slugify(title);
+
       const pdfBuffer = await htmlToPdf(prettyHtml);
       const timestamp = Date.now();
-      const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${fileName.replace(PDF_EXTENSION_REGEX, '_note.pdf')}`;
+      const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${slug}_note.pdf`;
       const fileRef = storage.bucket().file(finalNoteFilePath);
 
       const bufferToSave = Buffer.isBuffer(pdfBuffer) ? pdfBuffer : Buffer.from(pdfBuffer);
@@ -784,7 +795,7 @@ export const generateNoteFromVideoEmphasis = functions.https.onCall(
       });
 
       await noteRef.update({
-        title: fileName.replace(PDF_EXTENSION_REGEX, '') || 'Apunte desde Video',
+        title,
         url: publicURL,
         type: 'pdf',
         rawText: rawText.substring(0, 5000),

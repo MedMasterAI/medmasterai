@@ -74,6 +74,12 @@ export default function DashboardPage() {
             description="Transcripciones desde video"
           />
           <CardItem
+            href="/dashboard/anki"
+            icon={FaMagic}
+            title="AnkiAI"
+            description="Flashcards automáticas"
+          />
+          <CardItem
             href="/dashboard/mis-apuntes"
             icon={FaFileAlt}
             title="Mis Apuntes"

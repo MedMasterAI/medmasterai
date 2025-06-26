@@ -7,6 +7,7 @@ import { sanitizeHtmlContent } from '@lib/validator/htmlSanitizer'
 import { checkHtmlRules } from '@lib/validator/ruleChecker'
 import { htmlToPdf } from '@lib/pdf/htmlToPdf'
 import { consumeCredit } from '@/lib/credits'
+import { slugify, extractTitle } from '@lib/utils/slugify'
 
 export const runtime = 'nodejs'
 const DUMPLING_API_KEY = process.env.DUMPLING_API_KEY!
@@ -138,13 +139,16 @@ export async function POST(request: NextRequest) {
       end_with_newline: true
     })
 
+    const title = extractTitle(prettyHtml) || 'Apunte-MedMaster'
+    const fileSlug = slugify(title)
+
     // 8️⃣ Convertir a PDF y devolver
     const pdfBuffer = await htmlToPdf(prettyHtml)
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="Apunte-MedMaster.pdf"',
+        'Content-Disposition': `attachment; filename="${fileSlug}.pdf"`,
         'Content-Length': String(pdfBuffer.length)
       }
     })
