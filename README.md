@@ -85,6 +85,9 @@ El archivo JSON con las credenciales debe guardarse en `functions/src/credential
 ### Google Generative AI
 ```
 GOOGLE_API_KEY                  # Clave de la API de Gemini/Generative AI
+GEMINI_API_KEY                 # API key para usar Gemini en las rutas del backend
+MODEL_GEMINI                   # Modelo principal del asistente (p. ej. "gemini-pro")
+MODEL_GEMINI_FALLBACK          # Modelo de respaldo opcional (por defecto "gemini-1.5-pro")
 ```
 
 ### CORS para la función PDF
@@ -94,6 +97,9 @@ ALLOWED_ORIGINS=https://ejemplo.com,https://otro.com
 ```
 Al desplegar, establece `ALLOWED_ORIGINS` con los dominios autorizados a invocar la función PDF.
 Si Puppeteer no encuentra Chrome, define también `CHROME_PATH` con la ruta al ejecutable.
+
+### Notificaciones por correo (Resend)
+Configura el envío de emails definiendo `RESEND_API_KEY` en tu `.env` y usando una dirección de remitente asociada a un dominio verificado en [Resend](https://resend.com). Las rutas `/api/send-support-email` y `/api/send-note-ready` utilizan esta clave para notificar a los usuarios.
 
 ## Planes y sistema de créditos
 

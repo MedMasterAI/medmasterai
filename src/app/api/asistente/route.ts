@@ -7,6 +7,8 @@ export const runtime = 'nodejs'
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ''
 const GEMINI_MODEL = process.env.MODEL_GEMINI || 'gemini-pro'
+const GEMINI_MODEL_FALLBACK =
+  process.env.MODEL_GEMINI_FALLBACK || 'gemini-1.5-pro'
 
 const ai = new GoogleGenerativeAI(GEMINI_API_KEY)
 
@@ -58,12 +60,24 @@ export async function POST(req: NextRequest) {
 
     const prompt = `${systemPrompt}\n\nContexto:\n${context}\n\nPregunta del usuario: ${question}\nRespuesta en español:`
 
-    const model = ai.getGenerativeModel({ model: GEMINI_MODEL })
-    const response = await model.generateContent(prompt)
-    const answer = response.response?.text().trim()
-    if (!answer) throw new Error('Respuesta vacía de la IA')
+    try {
+      const model = ai.getGenerativeModel({ model: GEMINI_MODEL })
+      const response = await model.generateContent(prompt)
+      const answer = response.response?.text().trim()
+      if (answer) {
+        return NextResponse.json({ answer })
+      }
+      console.warn(`Modelo ${GEMINI_MODEL} no devolvió texto, usando fallback`)
+    } catch (mainErr) {
+      console.warn(`Error en modelo ${GEMINI_MODEL}:`, (mainErr as any).message)
+    }
 
-    return NextResponse.json({ answer })
+    const fallback = ai.getGenerativeModel({ model: GEMINI_MODEL_FALLBACK })
+    const fbRes = await fallback.generateContent(prompt)
+    const fbAnswer = fbRes.response?.text().trim()
+    if (!fbAnswer) throw new Error('Respuesta vacía de la IA (fallback)')
+
+    return NextResponse.json({ answer: fbAnswer })
   } catch (err: any) {
     console.error('❌ Error en asistente:', err.message)
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })
