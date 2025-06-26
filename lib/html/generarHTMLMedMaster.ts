@@ -8,9 +8,15 @@ const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY! })
  * Genera HTML profesional a partir de un esquema JSON.
  * Si falla el modelo experimental, hace fallback a gemini-1.5-pro.
  */
-export async function generarHTMLMedMaster(esquema: any): Promise<string> {
+export async function generarHTMLMedMaster(
+  esquema: any,
+  emphasis: string = ""
+): Promise<string> {
   const esquemaStr = JSON.stringify(esquema)
-  const promptText = `${PROMPT_HTML_MEDMASTER}\n\n${esquemaStr}`
+  const emphasisText = emphasis
+    ? `\n\nEnfatiza especialmente los siguientes puntos al desarrollar el contenido:\n${emphasis}`
+    : ""
+  const promptText = `${PROMPT_HTML_MEDMASTER}${emphasisText}\n\n${esquemaStr}`
 
   // 1️⃣ Intento con modelo experimental
   try {

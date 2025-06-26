@@ -31,9 +31,6 @@ export function NotesList({ notes }: { notes: Note[] }) {
     }
   }
 
-  const handleFlashcards = (noteId: string) => {
-    router.push(`/dashboard/flashcards?noteId=${noteId}`)
-  }
 
   return (
     <ul className="space-y-4">
@@ -53,13 +50,6 @@ export function NotesList({ notes }: { notes: Note[] }) {
               </Button>
             )}
 
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => handleFlashcards(note.id)}
-            >
-              🧠 Flashcards
-            </Button>
 
             <Button
               size="sm"

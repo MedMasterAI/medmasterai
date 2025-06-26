@@ -15,17 +15,15 @@ import {
 import { IconType } from "react-icons";
 import Link from "next/link";
 import {
-  Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
 
 interface AppSidebarProps {
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
   className?: string;
 }
 
@@ -41,11 +39,9 @@ interface NavItem {
   }[];
 }
 
-export function AppSidebar({
-  collapsed,
-  setCollapsed,
-  className = "",
-}: AppSidebarProps) {
+export function AppSidebar({ className = "" }: AppSidebarProps) {
+  const { state, toggleSidebar } = useSidebar();
+  const collapsed = state === "collapsed";
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
@@ -103,7 +99,7 @@ export function AppSidebar({
       <button
         type="button"
         aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
-        onClick={() => setCollapsed(!collapsed)}
+        onClick={toggleSidebar}
         className={`
           absolute right-[-18px] top-4 z-30
           border border-[var(--sidebar-border)] shadow-lg bg-[var(--sidebar)]

@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sparkles, FileTextIcon, Brain, Eye, Loader2, Info } from "lucide-react"
-import { toast } from "sonner"
+import { Sparkles, FileTextIcon, Eye, Loader2, Info } from "lucide-react"
 
 import { useAuth } from "@/hooks/useAuth"
 import { useUserNotes } from "@/hooks/useUserNotes"
@@ -14,27 +13,7 @@ import { Button } from "@/components/ui/button"
 export default function MisApuntesPage() {
   const { user } = useAuth()
   const { notes, loading } = useUserNotes(user?.uid ?? null)
-  const [loadingNoteId, setLoadingNoteId] = useState<string | null>(null)
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null)
-
-  const generarFlashcards = async (noteId: string, text: string) => {
-    if (!user?.uid) return
-    setLoadingNoteId(noteId)
-    try {
-      const res = await fetch("/api/flashcards", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ uid: user.uid, noteId, text }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || "Error al generar flashcards.")
-      toast.success("🧠 Flashcards generadas correctamente.")
-    } catch (err: any) {
-      toast.error(err.message)
-    } finally {
-      setLoadingNoteId(null)
-    }
-  }
 
   const toggleFlashcards = (noteId: string) => {
     setExpandedNoteId(expandedNoteId === noteId ? null : noteId)
@@ -61,7 +40,7 @@ export default function MisApuntesPage() {
                 Tus Apuntes Generados
               </h1>
               <p className="text-muted-foreground max-w-xl mx-auto">
-                Accedé a tu historial de apuntes generados por IA, descargá tus PDFs y creá flashcards inteligentes.
+                Accedé a tu historial de apuntes generados por IA y descargá tus PDFs.
               </p>
             </div>
           </motion.div>
@@ -124,19 +103,6 @@ export default function MisApuntesPage() {
                         </span>
                       )}
 
-                      <Button
-                        size="sm"
-                        onClick={() => generarFlashcards(note.id, note.rawText || "")}
-                        disabled={loadingNoteId === note.id}
-                      >
-                        {loadingNoteId === note.id ? (
-                          <span className="flex items-center gap-1">
-                            <Loader2 className="animate-spin w-4 h-4" /> Generando…
-                          </span>
-                        ) : (
-                          <span><Brain className="inline w-4 h-4 mr-1" /> Generar Flashcards</span>
-                        )}
-                      </Button>
 
                       {note.flashcards?.length > 0 && (
                         <Button
@@ -187,12 +153,11 @@ export default function MisApuntesPage() {
                 <Info className="w-5 h-5 text-accent" />
                 <span className="text-lg font-semibold">¿Cómo funciona esta sección?</span>
               </div>
-              <ul className="list-disc pl-6 space-y-2 text-base text-muted-foreground">
-                <li>Todos los apuntes generados quedan guardados si sos usuario Plus.</li>
-                <li>Descargá tu PDF en cualquier momento desde “Ver PDF”.</li>
-                <li>Generá flashcards inteligentes a partir de cualquier apunte con un clic.</li>
-                <li>Si ya tenés flashcards, podés verlas desde “Ver Flashcards”.</li>
-              </ul>
+                <ul className="list-disc pl-6 space-y-2 text-base text-muted-foreground">
+                  <li>Todos los apuntes generados quedan guardados si sos usuario Plus.</li>
+                  <li>Descargá tu PDF en cualquier momento desde “Ver PDF”.</li>
+                  <li>Si ya tenés flashcards, podés verlas desde “Ver Flashcards”.</li>
+                </ul>
               <p className="text-sm text-muted-foreground pt-2">
                 ¿Tenés problemas o sugerencias?{" "}
                 <Link href="/ayuda" className="underline text-accent font-semibold hover:text-primary">

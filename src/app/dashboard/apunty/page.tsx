@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { useRequireAuth } from "@/hooks/useRequireAuth"
 import { useMonthlyUsage } from "@/hooks/useMonthlyUsage"
@@ -45,6 +46,8 @@ export default function Page() {
   const { pdfCount, canPdf, increment } = useMonthlyUsage(user?.uid ?? null, plan)
 
   const [file, setFile] = useState<File | null>(null)
+  const [emphasis, setEmphasis] = useState(false)
+  const [points, setPoints] = useState("")
   const [loadingForm, setLoadingForm] = useState(false)
   const [progress, setProgress] = useState(0)
   const [jobStatus, setJobStatus] = useState<JobStatus>("idle")
@@ -145,13 +148,17 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
       setProgress(35)
       setJobStatus("calling_function")
       setStatusDetail("Llamando función Cloud Function (IA)...")
-      if (DEBUG) console.log("Llamando Cloud Function: generateNoteFromPdf")
-      const generateNoteFromPdf = httpsCallable(getFirebaseFunctions(), "generateNoteFromPdf")
-      await generateNoteFromPdf({
+      const funcName = emphasis && points.trim()
+        ? "generateNoteFromPdfEmphasis"
+        : "generateNoteFromPdf"
+      if (DEBUG) console.log("Llamando Cloud Function:", funcName)
+      const generate = httpsCallable(getFirebaseFunctions(), funcName)
+      await generate({
         noteId,
         plan,
         fileName: file.name,
         fileMimeType: "application/pdf",
+        ...(emphasis && points.trim() ? { emphasis: points.trim() } : {}),
       })
 
       setProgress(40)
@@ -305,12 +312,25 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                           setDownloadUrl("")
                         }}
                       />
-                      {file && (
-                        <p className="text-xs text-primary mt-1 font-semibold flex items-center gap-1">
-                          <FileTextIcon className="w-4 h-4" /> {file.name}
-                        </p>
-                      )}
-                    </div>
+                    {file && (
+                      <p className="text-xs text-primary mt-1 font-semibold flex items-center gap-1">
+                        <FileTextIcon className="w-4 h-4" /> {file.name}
+                      </p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="flex items-center gap-2">
+                      <input type="checkbox" checked={emphasis} onChange={(e) => setEmphasis(e.target.checked)} />
+                      ¿Querés enfatizar algún punto?
+                    </label>
+                    {emphasis && (
+                      <Textarea
+                        placeholder="Fisiopatología, diagnóstico diferencial..."
+                        value={points}
+                        onChange={(e) => setPoints(e.target.value)}
+                      />
+                    )}
+                  </div>
 
                     <Button
                       type="submit"
