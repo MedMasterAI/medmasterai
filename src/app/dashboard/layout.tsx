@@ -1,7 +1,12 @@
 "use client"
 
-import { ReactNode, useState } from "react"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { ReactNode } from "react"
+import {
+  Sidebar,
+  SidebarInset,
+  SidebarProvider,
+  useSidebar,
+} from "@/components/ui/sidebar"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Toaster } from "@/components/ui/toaster"
 import { AppSidebar } from "@/components/app-sidebar"
@@ -18,12 +23,21 @@ import { Button } from "@/components/ui/button"
 import { Menu } from "lucide-react"
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  const [collapsed, setCollapsed] = useState(false)
+  return (
+    <SidebarProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </SidebarProvider>
+  )
+}
+
+function LayoutContent({ children }: { children: ReactNode }) {
+  const { state } = useSidebar()
   const isMobile = useIsMobile()
+  const collapsed = state === "collapsed"
   const sidebarWidth = isMobile ? "0rem" : collapsed ? "4.5rem" : "16rem"
 
   return (
-    <SidebarProvider>
+    <>
       {/* Fondo Aurora Moderno */}
       <div className="fixed inset-0 -z-20 w-full h-full pointer-events-none bg-background transition-colors duration-300">
         {/* Lila suave */}
@@ -45,22 +59,24 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <span className="sr-only">Abrir menú</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-64">
-            <SheetHeader className="sr-only">
-              <SheetTitle>Menú de navegación</SheetTitle>
-              <SheetDescription>Muestra la barra lateral móvil.</SheetDescription>
-            </SheetHeader>
-            <AppSidebar collapsed={false} setCollapsed={() => {}} />
-          </SheetContent>
-        </Sheet>
+        <SheetContent side="left" className="p-0 w-64">
+          <SheetHeader className="sr-only">
+            <SheetTitle>Menú de navegación</SheetTitle>
+            <SheetDescription>Muestra la barra lateral móvil.</SheetDescription>
+          </SheetHeader>
+          <AppSidebar />
+        </SheetContent>
+      </Sheet>
 
-        {/* Sidebar desktop */}
-        <div
-          className="hidden md:flex fixed top-0 left-0 bottom-0 z-30 transition-all duration-300"
-          style={{ width: sidebarWidth }}
-        >
-          <AppSidebar collapsed={collapsed} setCollapsed={setCollapsed} />
-        </div>
+      {/* Sidebar desktop */}
+      <div
+        className="hidden md:flex fixed top-0 left-0 bottom-0 z-30 transition-all duration-300"
+        style={{ width: sidebarWidth }}
+      >
+        <Sidebar collapsible="icon">
+          <AppSidebar />
+        </Sidebar>
+      </div>
 
         {/* Contenido desplazado */}
         <SidebarInset
@@ -75,6 +91,6 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         <Toaster />
       </div>
-    </SidebarProvider>
+    </>
   )
 }

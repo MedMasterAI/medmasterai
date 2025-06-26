@@ -4,7 +4,7 @@ import Link from "next/link"
 import { LucideIcon } from "lucide-react"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 
 interface CardItemProps {
   href: string
@@ -25,20 +25,18 @@ export default function CardItem({
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
       <Card
         className={cn(
-          "bg-[var(--card-feature)] border border-[var(--card-feature-border)] rounded-card shadow-card hover:shadow-cardHover transition-all",
+          "group relative rounded-xl border border-border bg-card/80 backdrop-blur-sm transition-shadow hover:shadow-md",
           className
         )}
       >
-        <Link href={href} className="block">
-          <CardContent className="p-6 flex flex-col items-center gap-2 text-center">
-            <Icon className="w-10 h-10 mb-1 text-[var(--card-feature-title)]" />
-            <span className="text-base font-semibold text-[var(--card-feature-title)]">
-              {title}
-            </span>
-            <span className="text-sm opacity-80 text-[var(--card-feature-desc)] leading-tight">
-              {description}
-            </span>
-          </CardContent>
+        <Link href={href} className="flex flex-col items-center gap-3 py-6">
+          <span className="bg-primary/10 text-primary rounded-full p-3 mb-1">
+            <Icon className="w-6 h-6" />
+          </span>
+          <span className="text-sm font-semibold">{title}</span>
+          <span className="text-xs text-muted-foreground text-center">
+            {description}
+          </span>
         </Link>
       </Card>
     </motion.div>

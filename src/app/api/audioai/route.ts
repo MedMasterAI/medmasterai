@@ -20,39 +20,43 @@ export async function POST(req: NextRequest) {
     const inputPath = path.join(tmpDir, 'input.webm')
     const mp3Path = path.join(tmpDir, 'audio.mp3')
 
-    await new Promise((resolve, reject) => {
-      ytdl(videoUrl, { quality: 'highestaudio' })
-        .pipe(fs.createWriteStream(inputPath))
-        .on('finish', resolve)
-        .on('error', reject)
-    })
+    try {
+      await new Promise((resolve, reject) => {
+        ytdl(videoUrl, { quality: 'highestaudio' })
+          .pipe(fs.createWriteStream(inputPath))
+          .on('finish', resolve)
+          .on('error', reject)
+      })
 
-    ffmpeg.setFfmpegPath(ffmpegPath.path)
-    await new Promise((resolve, reject) => {
-      ffmpeg(inputPath)
-        .audioCodec('libmp3lame')
-        .save(mp3Path)
-        .on('end', resolve)
-        .on('error', reject)
-    })
+      ffmpeg.setFfmpegPath(ffmpegPath.path)
+      await new Promise((resolve, reject) => {
+        ffmpeg(inputPath)
+          .audioCodec('libmp3lame')
+          .save(mp3Path)
+          .on('end', resolve)
+          .on('error', reject)
+      })
 
-    const audio = await fs.readFile(mp3Path)
-    const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY! })
-    const result = await ai.models.generateContent({
-      model: 'gemini-1.5-pro',
-      contents: [
-        {
-          role: 'user',
-          parts: [
-            { text: 'Transcribe el siguiente audio en texto:' },
-            { inlineData: { mimeType: 'audio/mp3', data: audio.toString('base64') } }
-          ]
-        }
-      ]
-    })
+      const audio = await fs.readFile(mp3Path)
+      const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY! })
+      const result = await ai.models.generateContent({
+        model: 'gemini-1.5-pro',
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text: 'Transcribe el siguiente audio en texto:' },
+              { inlineData: { mimeType: 'audio/mp3', data: audio.toString('base64') } }
+            ]
+          }
+        ]
+      })
 
-    const transcript = result.text || ''
-    return NextResponse.json({ transcript })
+      const transcript = result.text || ''
+      return NextResponse.json({ transcript })
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true })
+    }
   } catch (err: any) {
     console.error('audioai error', err)
     return NextResponse.json({ error: err.message }, { status: 500 })
