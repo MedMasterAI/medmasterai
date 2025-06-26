@@ -85,6 +85,12 @@ export default function DashboardPage() {
             title="Mis Apuntes"
             description="Historial generado"
           />
+          <CardItem
+            href="/dashboard/asistente"
+            icon={FaMagic}
+            title="Asistente"
+            description="Consultas sobre tu cuenta"
+          />
         </div>
 
         {/* Sección inferior */}

@@ -157,3 +157,14 @@ npm run --prefix functions deploy
 ```
 
 Si necesitas procesar cargas a\u00fan mayores, puedes portar el `worker` a [Cloud Run](https://cloud.google.com/run) y ejecutarlo desde una suscripci\u00f3n de Pub/Sub para disponer de m\u00e1s CPU, memoria y tiempos de ejecuci\u00f3n sin l\u00edmites.
+
+## API de pagos
+
+Se incluyen endpoints para integrar Mercado Pago:
+
+- `/api/create-payment-link` genera enlaces de pago personalizados.
+- `/api/payment-status` consulta el estado de un pago.
+- `/api/refund` procesa reembolsos aplicando las políticas de la app.
+
+Todas las acciones se registran en Firestore mediante `src/lib/logger.ts`.
+
