@@ -1,7 +1,7 @@
 'use client'
 import { httpsCallable } from "firebase/functions";
 import { getFirebaseFunctions } from "@/lib/firebase";
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
@@ -36,6 +36,8 @@ export default function Page() {
   const [statusDetail, setStatusDetail] = useState<string>("")
   const [downloadUrl, setDownloadUrl] = useState<string>("")
   const [jobNoteId, setJobNoteId] = useState<string | null>(null)
+  const emailSentRef = useRef(false)
+  const completedToast = useRef(false)
   const ventajas = [
     {
       icon: <VideoIcon className="text-primary w-5 h-5 sm:w-6 sm:h-6" />,
@@ -70,11 +72,22 @@ export default function Page() {
       if (!data) return
       const status = (data.status || "idle").toLowerCase() as JobStatus
       setJobStatus(status)
-      setProgress(Number(data.progress ?? getProgressForStatus(status)))
+      setProgress((p) => Math.max(p, Number(data.progress ?? getProgressForStatus(status))))
       setStatusDetail(data.errorMessage || "")
       if (status === "completed" && data.url) {
         setDownloadUrl(data.url)
-        toast.success("✅ ¡Tu apunte está listo para descargar!")
+        if (!emailSentRef.current && user?.email) {
+          fetch("/api/send-note-ready", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email, url: data.url }),
+          })
+          emailSentRef.current = true
+        }
+        if (!completedToast.current) {
+          toast.success("✅ ¡Tu apunte está listo para descargar!")
+          completedToast.current = true
+        }
       } else if (status === "failed") {
         toast.error(data.errorMessage || "Error al generar el apunte.")
       }
@@ -169,7 +182,9 @@ export default function Page() {
       const funcName = emphasis && points.trim()
         ? "generateNoteFromVideoEmphasis"
         : "generateNoteFromVideo"
-      const generateNoteFromVideo = httpsCallable(getFirebaseFunctions(), funcName)
+      const generateNoteFromVideo = httpsCallable(getFirebaseFunctions(), funcName, {
+        timeout: 540000,
+      })
       await generateNoteFromVideo({
         noteId,
         plan,
@@ -256,6 +271,12 @@ export default function Page() {
                       >
                         Descargar apunte generado
                       </a>
+                    )}
+                    {jobStatus !== "completed" && jobStatus !== "failed" && (
+                      <p className="text-xs text-text-secondary text-center mt-1">
+                        Favor no cerrar la pantalla mientras se procesa tu apunte.
+                        {jobStatus === "pending" && " Cuando esté listo te llegará un mail."}
+                      </p>
                     )}
                   </motion.div>
                 )}

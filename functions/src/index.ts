@@ -189,17 +189,23 @@ export const generateNoteFromPdf = functions.https.onCall(
         progress: 95,
         lastUpdated: FieldValue.serverTimestamp(),
       });
-      console.log("Payload a PDF:", JSON.stringify({ html: prettyHtml }).substring(0, 1000), "...");
+      if (process.env.NODE_ENV !== "production") {
+        console.log(
+          "Payload a PDF:",
+          JSON.stringify({ html: prettyHtml }).substring(0, 1000),
+          "..."
+        );
 
-      console.log("======= HTML enviado a función PDF =======");
+        console.log("======= HTML enviado a función PDF =======");
 
-      console.log(prettyHtml.substring(0, 1000)); // Muestra los primeros 1000 caracteres
+        console.log(prettyHtml.substring(0, 1000)); // Muestra los primeros 1000 caracteres
 
-      console.log("... [HTML truncado]");
+        console.log("... [HTML truncado]");
 
-      console.log("Largo total de HTML:", prettyHtml.length);
+        console.log("Largo total de HTML:", prettyHtml.length);
 
-      console.log("==========================================");
+        console.log("==========================================");
+      }
 
       const pdfBuffer = await htmlToPdf(prettyHtml);
       const timestamp = Date.now();

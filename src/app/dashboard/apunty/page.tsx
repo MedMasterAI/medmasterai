@@ -28,8 +28,8 @@ const statusMessages: Record<JobStatus, string> = {
   uploading_pdf: "Subiendo PDF al almacenamiento...",
   saving_firestore: "Guardando registro en Firestore...",
   calling_function: "Iniciando procesamiento con IA...",
-  pending: "En cola...",
-  processing: "Procesando PDF...",
+  pending: "Envío registrado. Te notificaremos por mail cuando esté listo.",
+  processing: "Procesando apunte...",
   extracting_text: "Extrayendo texto del PDF...",
   generating_schema: "Generando esquema del apunte...",
   formatting_html: "Formateando HTML...",
@@ -54,6 +54,8 @@ export default function Page() {
   const [statusDetail, setStatusDetail] = useState<string>("")
   const [downloadUrl, setDownloadUrl] = useState<string>("")
   const [jobNoteId, setJobNoteId] = useState<string | null>(null)
+  const emailSentRef = useRef(false)
+  const completedToast = useRef(false)
 
   
   // Listener para Firestore en tiempo real
@@ -70,7 +72,18 @@ export default function Page() {
       setStatusDetail(data.errorMessage || "")
       if (status === "completed" && data.url) {
         setDownloadUrl(data.url)
-        toast.success("✅ ¡Tu apunte está listo para descargar!")
+        if (!emailSentRef.current && user?.email) {
+          fetch("/api/send-note-ready", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: user.email, url: data.url }),
+          })
+          emailSentRef.current = true
+        }
+        if (!completedToast.current) {
+          toast.success("✅ ¡Tu apunte está listo para descargar!")
+          completedToast.current = true
+        }
       } else if (status === "failed") {
         toast.error(data.errorMessage || "Error al generar el apunte.")
       }
@@ -152,7 +165,9 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
         ? "generateNoteFromPdfEmphasis"
         : "generateNoteFromPdf"
       if (DEBUG) console.log("Llamando Cloud Function:", funcName)
-      const generate = httpsCallable(getFirebaseFunctions(), funcName)
+      const generate = httpsCallable(getFirebaseFunctions(), funcName, {
+        timeout: 540000,
+      })
       await generate({
         noteId,
         plan,
@@ -257,6 +272,12 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                     >
                       Descargar apunte generado
                     </a>
+                  )}
+                  {jobStatus !== "completed" && jobStatus !== "failed" && (
+                    <p className="text-xs text-text-secondary text-center mt-1">
+                      Favor no cerrar la pantalla mientras se procesa tu apunte.
+                      {jobStatus === "pending" && " Cuando esté listo te llegará un mail."}
+                    </p>
                   )}
                 </motion.div>
               )}
