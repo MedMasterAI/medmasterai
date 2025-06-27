@@ -1,6 +1,6 @@
 // src/app/api/create-payment/route.ts
 import { NextResponse } from "next/server"
-import mercadopago from "@/lib/mercadopago"
+import { preference } from "@/lib/mercadopago"
 
 export async function POST(request: Request) {
   try {
@@ -34,11 +34,9 @@ export async function POST(request: Request) {
       external_reference: uid,
     }
 
-    const preference = await mercadopago.preferences.create(payload)
-
+    const pref = await preference.create({ body: payload })
     // Extraemos ambos puntos de inicio
-    const { init_point, sandbox_init_point } = preference.body
-
+    const { init_point, sandbox_init_point } = pref
     // En development usamos sandbox, en producción el init_point real.
     const redirectUrl =
       process.env.NODE_ENV === "development"

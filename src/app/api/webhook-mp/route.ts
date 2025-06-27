@@ -1,7 +1,7 @@
 
 // src/app/api/webhook-mp/route.ts
 import { NextResponse } from "next/server"
-import { mp } from "@/lib/mercadopago"
+import { payment } from "@/lib/mercadopago"
 import { dbAdmin } from "@/lib/firebase-admin"
 import { Timestamp } from "firebase-admin/firestore"
 import { PLAN_LIMITS } from "@/lib/plans"
@@ -23,19 +23,19 @@ export async function POST(request: Request) {
     }
 
     const paymentId = data.id
-    const payment = await mp.payment.findById(paymentId)
-    if (DEBUG) console.log("⚡️ Payment completo:", payment.body)
+    const info = await payment.get({ id: paymentId })
+    if (DEBUG) console.log("⚡️ Payment completo:", info)
 
-    const uid = payment.body.external_reference
-    const status = payment.body.status
-    const dateApprovedMs = payment.body.date_approved
-      ? new Date(payment.body.date_approved).getTime()
+      const uid = info.external_reference
+      const status = info.status
+      const dateApprovedMs = info.date_approved
+        ? new Date(info.date_approved).getTime()
       : Date.now()
     const expiresAtMs = dateApprovedMs + 30 * 24 * 60 * 60 * 1000
 
     // Determina el plan comprado (puedes ajustar esta lógica si tienes más de un plan)
-    const itemTitle = payment.body.items?.[0]?.title?.toLowerCase() || ""
-    const plan = itemTitle.includes("ilimitado") || itemTitle.includes("premium")
+    const itemTitle = info.items?.[0]?.title?.toLowerCase() || ""
+        const plan = itemTitle.includes("ilimitado") || itemTitle.includes("premium")
       ? "unlimited"
       : "pro"
 
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
       .set({
         paymentId,
         status,
-        price: payment.body.transaction_amount,
+        price: info.transaction_amount,
         dateApproved: Timestamp.fromMillis(dateApprovedMs),
         expiresAt: Timestamp.fromMillis(expiresAtMs),
         plan,
