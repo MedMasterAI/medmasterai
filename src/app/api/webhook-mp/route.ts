@@ -1,20 +1,14 @@
 
 // src/app/api/webhook-mp/route.ts
 import { NextResponse } from "next/server"
-import admin from "firebase-admin"
-import mercadopago from "@/lib/mercadopago"
-import serviceAccount from "@/lib/frontedwebmedmaster-firebase-adminsdk-fbsvc-1e8dfbf46f.json"
+import { mp } from "@/lib/mercadopago"
+import { dbAdmin } from "@/lib/firebase-admin"
+import { Timestamp } from "firebase-admin/firestore"
 import { PLAN_LIMITS } from "@/lib/plans"
 
 const DEBUG = process.env.NODE_ENV !== 'production'
 
-// Inicializa Admin SDK con la clave del JSON
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-  })
-}
-const db = admin.firestore()
+const db = dbAdmin
 
 export async function POST(request: Request) {
   try {
@@ -29,7 +23,7 @@ export async function POST(request: Request) {
     }
 
     const paymentId = data.id
-    const payment = await mercadopago.payment.findById(paymentId)
+    const payment = await mp.payment.findById(paymentId)
     if (DEBUG) console.log("⚡️ Payment completo:", payment.body)
 
     const uid = payment.body.external_reference
@@ -55,8 +49,8 @@ export async function POST(request: Request) {
         paymentId,
         status,
         price: payment.body.transaction_amount,
-        dateApproved: admin.firestore.Timestamp.fromMillis(dateApprovedMs),
-        expiresAt: admin.firestore.Timestamp.fromMillis(expiresAtMs),
+        dateApproved: Timestamp.fromMillis(dateApprovedMs),
+        expiresAt: Timestamp.fromMillis(expiresAtMs),
         plan,
       })
 
@@ -67,7 +61,7 @@ export async function POST(request: Request) {
       .set(
         {
           plan,
-          planExpiresAt: admin.firestore.Timestamp.fromMillis(expiresAtMs),
+          planExpiresAt: Timestamp.fromMillis(expiresAtMs),
           pdfCredits: PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS].pdf,
           videoCredits: PLAN_LIMITS[plan as keyof typeof PLAN_LIMITS].video,
         },

@@ -101,6 +101,9 @@ Si Puppeteer no encuentra Chrome, define también `CHROME_PATH` con la ruta al e
 ### Notificaciones por correo (Resend)
 Configura el envío de emails definiendo `RESEND_API_KEY` en tu `.env` y usando una dirección de remitente asociada a un dominio verificado en [Resend](https://resend.com). Las rutas `/api/send-support-email` y `/api/send-note-ready` utilizan esta clave para notificar a los usuarios.
 
+### Pagos (Mercado Pago)
+Define `MP_ACCESS_TOKEN` para autenticar las llamadas a la API de Mercado Pago.
+
 ## Planes y sistema de créditos
 
 El servicio utiliza un modelo basado en créditos para prevenir abusos. Cada video o PDF procesado descuenta un crédito del tipo correspondiente. Los planes disponibles son:

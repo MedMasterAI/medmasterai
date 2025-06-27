@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import mercadopago from "@/lib/mercadopago";
+import { mp } from "@/lib/mercadopago";
 
 export async function POST(req: NextRequest) {
   const { plan, uid } = await req.json();
   const origin = req.headers.get("origin") || "";
-  const preference = await mercadopago.preferences.create({
+  const preference = await mp.preferences.create({
     items: [
       {
         title: plan === "pro" ? "Plus Mensual" : "Ilimitado Mensual",

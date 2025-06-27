@@ -1,5 +1,5 @@
 // src/lib/refundPolicy.ts
-import mercadopago from './mercadopago'
+import { mp } from './mercadopago'
 
 const MAX_DAYS_REFUND = 7
 
@@ -7,7 +7,7 @@ const MAX_DAYS_REFUND = 7
  * Verifica si un pago es elegible para reembolso según las políticas de la app.
  */
 export async function canRefund(paymentId: string) {
-  const payment = await mercadopago.payment.findById(paymentId)
+  const payment = await mp.payment.findById(paymentId)
   const body = payment.body
 
   if (!body || body.status !== 'approved') {

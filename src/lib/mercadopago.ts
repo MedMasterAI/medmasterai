@@ -1,10 +1,9 @@
 // src/lib/mercadopago.ts
-import mercadopago from "mercadopago"
+import MercadoPago from "mercadopago";
 
-// Este método existe en la rama 1.x
-mercadopago.configure({
-  access_token: process.env.MP_ACCESS_TOKEN!,
-})
+// Crea una instancia, pasando el access token
+export const mp = new MercadoPago({
+  accessToken: process.env.MP_ACCESS_TOKEN || "",
+});
 
-export default mercadopago
-
+export default mp;
