@@ -4,12 +4,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
 import { UpgradeButton } from "./upgradeButton"
+import { PLAN_DETAILS } from "@/lib/plans"
 
 const plans = [
   {
     key: "free",
     title: "GRATIS",
-    price: "$0",
+    price: `$${PLAN_DETAILS.free.priceARS}`,
     billed: "para siempre",
     features: [
       "1 PDF al día",
@@ -21,7 +22,7 @@ const plans = [
   {
     key: "pro",
     title: "PLUS",
-    price: "$3000",
+    price: `$${PLAN_DETAILS.pro.priceARS}`,
     billed: "por mes",
     features: [
       "15 PDFs al mes",
@@ -36,7 +37,7 @@ const plans = [
   {
     key: "unlimited",
     title: "ILIMITADO",
-    price: "$5000",
+    price: `$${PLAN_DETAILS.unlimited.priceARS}`,
     billed: "por mes",
     features: [
       "PDFs ilimitados",

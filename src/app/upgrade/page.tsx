@@ -5,6 +5,7 @@ import { useUserPlan } from "@/hooks/useUserPlan"
 import { PlusBenefits } from "@/components/pricing/PlusBenefits"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { PLAN_DETAILS } from "@/lib/plans"
 import Link from "next/link"
 
 export default function UpgradePage() {
@@ -28,7 +29,9 @@ export default function UpgradePage() {
           ) : (
             <>
               <div className="text-center">
-                <p className="text-2xl font-semibold">ARS $500 / mes</p>
+                <p className="text-2xl font-semibold">
+                  ARS ${PLAN_DETAILS.pro.priceARS} / mes
+                </p>
               </div>
               <form action="/pagos" method="POST">
                 <input type="hidden" name="uid" value={user?.uid} />
