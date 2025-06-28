@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useStudyPlan } from '@/hooks/useStudyPlan'
 import { Button } from '@/components/ui/button'
+import StudyPlanEditor from '@/components/StudyPlanEditor'
 
 export default function PlanificadorPage() {
   const { plan, setPlan } = useStudyPlan()
@@ -28,6 +29,8 @@ export default function PlanificadorPage() {
     <div className="px-4 py-6 max-w-3xl mx-auto space-y-6">
       <h1 className="text-2xl font-bold">Planificador Inteligente</h1>
       {plan ? (
+      <StudyPlanEditor />
+      {plan && (
         <pre className="bg-muted p-4 rounded-md overflow-auto text-sm">
           {JSON.stringify(plan, null, 2)}
         </pre>

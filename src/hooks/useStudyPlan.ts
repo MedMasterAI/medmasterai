@@ -3,6 +3,20 @@ import type { StudyPlan } from '@/types/study-plan'
 
 const STORAGE_KEY = 'study-plan'
 
+const DEFAULT_PLAN: StudyPlan = {
+  usuario: '',
+  preferencias: {
+    bloquesCortos: false,
+    maxBloquesPorDia: 4,
+    bloqueMinutos: 50,
+    descansoMinutos: 10,
+    metodosFavoritos: [],
+    metodoOrganizacion: ''
+  },
+  materias: [],
+  planDiario: []
+}
+
 export function useStudyPlan() {
   const [plan, setPlan] = useState<StudyPlan | null>(null)
 
@@ -14,7 +28,10 @@ export function useStudyPlan() {
         setPlan(JSON.parse(saved))
       } catch (err) {
         console.error('Error parsing study plan', err)
+        setPlan(DEFAULT_PLAN)
       }
+    } else {
+      setPlan(DEFAULT_PLAN)
     }
   }, [])
 

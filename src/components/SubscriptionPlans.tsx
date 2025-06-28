@@ -47,7 +47,7 @@ export function SubscriptionPlans() {
             }`}
           >
             <CardTitle className="text-2xl">{plan.label}</CardTitle>
-            <p className="mt-1 text-4xl font-bold">${'`$${plan.price}`'}</p>
+            <p className="mt-1 text-4xl font-bold">{`$${plan.price}`}</p>
             <p className="text-sm opacity-80">{plan.id === 'express' ? 'por día' : plan.id === 'free' ? 'para siempre' : 'por pack'}</p>
           </CardHeader>
           <CardContent className="space-y-4">

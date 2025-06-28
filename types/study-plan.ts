@@ -1,20 +1,3 @@
-export interface StudyBlock {
-  id: string
-  tipo: string
-  duracion: number
-  metodoNeuro: string
-  recomendadoPara: string
-  estado: string
-}
-
-export interface StudyTopic {
-  id: string
-  nombre: string
-  fechaLimite: string
-  dificultad: number
-  bloques: StudyBlock[]
-}
-
 export interface StudySubject {
   id: string
   nombre: string
@@ -40,4 +23,22 @@ export interface StudyPlan {
   }
   materias: StudySubject[]
   planDiario: DailyPlan[]
+  historialBloques?: {
+    fecha: string
+    materiaId: string
+    temaId: string
+    metodo: string
+    resultado: number
+    feedback?: string
+  }[]
+  analisisIA?: {
+    mejorMetodo: string
+    sugerencias: string
+    cambios: string[]
+  }
+  progresoGeneral?: number
+  avancePorMateria?: Record<string, number>
+  bloquesCompletadosSemana?: number
+  bloquesReplanificados?: number
+  rachaEstudioDias?: number
 }
