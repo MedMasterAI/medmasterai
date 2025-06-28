@@ -13,9 +13,12 @@ export function PremiumOnly({ children, fallback }: {
 
   if (!user) return null
   // Solo usuarios con plan activo y distinto de "free" acceden
-  if (!isActive || plan === "free") return fallback ?? (
-    <p className="text-sm text-muted-foreground">🔒 Función disponible solo para usuarios PRO o ILIMITADO</p>
-  )
+  if (!isActive || plan === "free")
+    return (
+      fallback ?? (
+        <p className="text-sm text-muted-foreground">🔒 Función disponible solo para planes pagos</p>
+      )
+    )
 
   return <>{children}</>
 }

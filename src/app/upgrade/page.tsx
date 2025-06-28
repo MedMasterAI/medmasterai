@@ -25,7 +25,7 @@ export default function UpgradePage() {
           <PlusBenefits />
 
           {user && isActive && plan !== "free" ? (
-            <p className="text-green-600 text-sm">✅ Ya sos usuario {plan === "pro" ? "PRO" : "ILIMITADO"}. ¡Gracias por apoyar!</p>
+            <p className="text-green-600 text-sm">✅ Ya tenés un plan activo. ¡Gracias por apoyar!</p>
           ) : (
             <>
               <div className="text-center">

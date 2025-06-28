@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
-import { BookOpen, Video, Mic, File, Sparkles, Bot } from 'lucide-react'
+import { BookOpen, Video, Mic, File, Sparkles, Bot, Star, CheckCircle } from 'lucide-react'
 import { useEffect } from 'react'
 
 export default function HomePage() {
@@ -56,9 +56,8 @@ export default function HomePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           className="text-4xl md:text-6xl font-extrabold text-center tracking-tight leading-tight bg-gradient-to-r from-[#c0b5ff] via-[#a791ff] to-[#f3e9ff] bg-clip-text text-transparent drop-shadow-md"
-
         >
-          Aprendé más rápido,<br /> como nunca antes.
+          La forma inteligente de estudiar medicina
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -66,7 +65,7 @@ export default function HomePage() {
           transition={{ delay: 0.23 }}
           className="mt-7 text-lg md:text-2xl text-[#e8e6ff] text-center max-w-2xl font-medium drop-shadow"
         >
-          Convertí videos, PDFs o audios en apuntes, flashcards y más, con ayuda de la IA.
+          Generá apuntes, flashcards y respuestas al instante a partir de tus videos, audios o PDFs.
         </motion.p>
         <motion.div
           initial={{ opacity: 0 }}
@@ -82,6 +81,51 @@ export default function HomePage() {
         </motion.div>
       </section>
 
+      {/* Beneficios */}
+      <section className="relative z-10 mt-12 w-full max-w-3xl text-center">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-2xl md:text-3xl font-bold mb-6 text-[#e8e6ff]"
+        >
+          Todo lo que ganás con MedMasterAI
+        </motion.h2>
+        <ul className="grid gap-4 md:grid-cols-3 text-left text-[#c0b5ff]/90">
+          <motion.li
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="flex items-start gap-2"
+          >
+            <Star className="w-6 h-6 text-yellow-300" />
+            <span>Resúmenes listos en segundos para optimizar tu tiempo</span>
+          </motion.li>
+          <motion.li
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="flex items-start gap-2"
+          >
+            <CheckCircle className="w-6 h-6 text-green-400" />
+            <span>Mayor comprensión con flashcards y quizzes automáticos</span>
+          </motion.li>
+          <motion.li
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="flex items-start gap-2"
+          >
+            <Sparkles className="w-6 h-6 text-purple-400" />
+            <span>Asistente IA siempre disponible para despejar tus dudas</span>
+          </motion.li>
+        </ul>
+      </section>
+
       {/* Divider */}
       <div className="w-full max-w-2xl my-16 h-px bg-gradient-to-r from-transparent via-[#8f77ff33] to-transparent" />
 
@@ -90,13 +134,13 @@ export default function HomePage() {
         <h2 className="text-3xl font-extrabold mb-8 text-[#c0b5ff]">¿Por qué MedMasterAI?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FeatureCard
-            title="📚 Belleza visual"
-            desc="Apuntes organizados, visualmente atractivos, con tablas, emojis y más."
+            title="📚 Diseño impecable"
+            desc="Apuntes claros y atractivos listos para repasar en cualquier momento."
             icon={<BookOpen className="text-[#c0b5ff] w-10 h-10" />}
           />
           <FeatureCard
-            title="🧠 Multimodalidad"
-            desc="Crea apuntes desde audio, video o PDF en segundos."
+            title="🧠 Audio, video y PDF"
+            desc="Creá apuntes instantáneos sin importar el formato del material."
             icon={
               <div className="flex space-x-4 mt-2">
                 <Video className="text-pink-400 w-7 h-7" />
@@ -107,7 +151,7 @@ export default function HomePage() {
           />
           <FeatureCard
             title="🔁 Flashcards & Quizzes"
-            desc="Transformá tus apuntes en tarjetas inteligentes en 1 clic."
+            desc="Con un clic convertí tus notas en tarjetas y evaluaciones." 
             icon={
               <div className="flex space-x-4 mt-2">
                 <Sparkles className="text-violet-400 w-7 h-7" />
@@ -116,7 +160,7 @@ export default function HomePage() {
           />
           <FeatureCard
             title="🤖 Chat inteligente"
-            desc="Consultá tus apuntes y obtené respuestas contextuales."
+            desc="Preguntá lo que necesites y obtené respuestas precisas al instante."
             icon={
               <div className="flex items-center space-x-3 mt-2">
                 <Bot className="text-pink-400 w-7 h-7" />
@@ -150,7 +194,7 @@ export default function HomePage() {
         <div className="mt-14">
           <Link href="/login">
             <Button size="lg" className="text-white bg-[#8f77ff] hover:bg-[#a995ff] font-bold rounded-xl px-7 py-3 shadow-lg shadow-[#8f77ff20]/50">
-              Empezá ahora — es gratis
+              Potenciá tus estudios gratis
             </Button>
           </Link>
         </div>

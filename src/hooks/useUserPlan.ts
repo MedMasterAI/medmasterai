@@ -5,12 +5,13 @@ import { getFirestore, doc, getDoc, Timestamp } from "firebase/firestore"
 import { getFirebaseApp } from "@/lib/firebase"
 
 interface UserPlanStatus {
-  plan: "free" | "pro" | "unlimited"
+  plan: "free" | "basic" | "pro" | "express" | "extra" | "unlimited"
   expiresAt: Date | null
   daysLeft: number
   isActive: boolean
   isNearExpiration: boolean
   loading: boolean // 👈 agregado
+  isAdmin?: boolean
 }
 
 /**
@@ -27,6 +28,7 @@ export function useUserPlan(uid: string | null): UserPlanStatus {
     isActive: false,
     isNearExpiration: false,
     loading: true, // 👈 inicia en true
+    isAdmin: false,
   })
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export function useUserPlan(uid: string | null): UserPlanStatus {
         isActive: false,
         isNearExpiration: false,
         loading: false, // 👈 ya terminó de “cargar”
+        isAdmin: false,
       })
       return
     }
@@ -51,14 +54,16 @@ export function useUserPlan(uid: string | null): UserPlanStatus {
         const userSnap = await getDoc(userRef)
 
         // Por defecto: plan free
-        let plan: "free" | "pro" | "unlimited" = "free"
+        let plan: UserPlanStatus["plan"] = "free"
         let expiresAt: Date | null = null
         let daysLeft = 0
         let isActive = false
+        let isAdmin = false
 
         if (userSnap.exists()) {
           const data = userSnap.data()
           plan = (data.plan as UserPlanStatus["plan"]) || "free"
+          isAdmin = data.isAdmin === true
           if (data.planExpiresAt) {
             const expiresAtRaw =
               data.planExpiresAt instanceof Timestamp
@@ -79,6 +84,7 @@ export function useUserPlan(uid: string | null): UserPlanStatus {
           isActive,
           isNearExpiration: isActive && daysLeft <= 3,
           loading: false, // 👈 terminó de cargar
+          isAdmin,
         })
       } catch (err) {
         console.error("❌ useUserPlan error:", err)
@@ -89,6 +95,7 @@ export function useUserPlan(uid: string | null): UserPlanStatus {
           isActive: false,
           isNearExpiration: false,
           loading: false, // 👈 también terminó de cargar
+          isAdmin: false,
         })
       }
     }

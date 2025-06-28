@@ -1,29 +1,28 @@
 // src/app/api/create-payment/route.ts
 import { NextResponse } from "next/server"
 import { preference } from "@/lib/mercadopago"
+import { PLAN_DETAILS } from "@/lib/plans"
 
 export async function POST(request: Request) {
   try {
     const { plan, uid } = (await request.json()) as {
-      plan?: string
+      plan?: keyof typeof PLAN_DETAILS
       uid?: string
     }
-    if (!plan || !uid) {
+    if (!plan || !uid || !PLAN_DETAILS[plan]) {
       return NextResponse.json({ error: "Falta plan o uid" }, { status: 400 })
     }
 
     const origin = new URL(request.url).origin
-    const unit_price = plan === "plus" ? 500 : 1000
+    const details = PLAN_DETAILS[plan]
 
     const payload = {
       items: [
         {
-          title: plan === "plus"
-            ? "Plan Plus Mensual"
-            : "Plan Premium Mensual",
+          title: details.name,
           quantity: 1,
           currency_id: "ARS",
-          unit_price,
+          unit_price: details.priceARS,
         },
       ],
       back_urls: {

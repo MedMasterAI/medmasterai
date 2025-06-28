@@ -36,9 +36,20 @@ export default function PagosPage() {
 
   // Helper para mensaje según plan
   function getPlanName(plan: string) {
-    if (plan === "pro") return "PLUS"
-    if (plan === "unlimited") return "ILIMITADO"
-    return "FREE"
+    switch (plan) {
+      case "basic":
+        return "BÁSICO"
+      case "pro":
+        return "PRO"
+      case "express":
+        return "EXPRESS"
+      case "extra":
+        return "PACK EXTRA"
+      case "unlimited":
+        return "ILIMITADO"
+      default:
+        return "FREE"
+    }
   }
 
   return (
@@ -94,7 +105,7 @@ export default function PagosPage() {
           )}
 
           <p className="text-muted-foreground text-sm leading-relaxed">
-            Con nuestros planes PLUS o ILIMITADO accedés a <strong className="text-foreground">todas las funciones</strong> sin restricciones.
+            Con nuestros planes pagos accedés a <strong className="text-foreground">todas las funciones</strong> sin restricciones.
           </p>
 
           {/* Plan de suscripción */}

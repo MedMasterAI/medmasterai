@@ -3,9 +3,10 @@ import { useState } from "react";
 import { getAuth, getIdToken } from "firebase/auth";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { PLAN_DETAILS } from "@/lib/plans";
 
 type UpgradeButtonProps = {
-  plan: "pro" | "unlimited";
+  plan: "basic" | "pro" | "express" | "extra" | "unlimited";
 };
 
 export function UpgradeButton({ plan }: UpgradeButtonProps) {
@@ -56,9 +57,7 @@ export function UpgradeButton({ plan }: UpgradeButtonProps) {
       disabled={loading}
       className="w-full hover:scale-[1.02] transition-transform"
     >
-      {loading
-        ? "Cargando…"
-        : `Actualizar a ${plan === "pro" ? "PLUS" : "ILIMITADO"}`}
+      {loading ? "Cargando…" : `Comprar ${PLAN_DETAILS[plan].name}`}
     </Button>
   );
 }

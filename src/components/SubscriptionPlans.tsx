@@ -4,82 +4,59 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
 import { UpgradeButton } from "./upgradeButton"
-import { PLAN_DETAILS } from "@/lib/plans"
+import { PLANS, PLAN_DETAILS } from "@/lib/plans"
+import { useAuth } from "@/hooks/useAuth"
+import { useUserPlan } from "@/hooks/useUserPlan"
 
-const plans = [
-  {
-    key: "free",
-    title: "GRATIS",
-    price: `$${PLAN_DETAILS.free.priceARS}`,
-    billed: "para siempre",
-    features: [
-      "1 PDF al día",
-      "1 video al día",
-      "Funciones básicas de estudio",
-    ],
-    highlight: false,
-  },
-  {
-    key: "pro",
-    title: "PLUS",
-    price: `$${PLAN_DETAILS.pro.priceARS}`,
-    billed: "por mes",
-    features: [
-      "15 PDFs al mes",
-      "20 videos por mes",
-      "Chat avanzado",
-      "Generación de podcasts",
-      "Notas más rápidas y de mayor calidad",
-      "Acceso anticipado a nuevas funciones",
-    ],
-    highlight: false,
-  },
-  {
-    key: "unlimited",
-    title: "ILIMITADO",
-    price: `$${PLAN_DETAILS.unlimited.priceARS}`,
-    billed: "por mes",
-    features: [
-      "PDFs ilimitados",
-      "Videos ilimitados",
-      "Chat pro-mode ilimitado",
-      "Generación de podcasts sin límite",
-      "Notas más rápidas y premium",
-      "Acceso a beta de modo voz avanzado",
-      "Soporte prioritario",
-    ],
-    highlight: true,
-  },
-]
+const PLAN_FEATURES: Record<string, string[]> = {
+  free: ["2 PDFs", "1 video", "Marca de agua"],
+  basic: ["5 PDFs", "5 videos"],
+  pro: ["20 PDFs", "20 videos"],
+  express: ["3 PDFs", "2 videos", "Vence en 1 día"],
+  extra: ["5 videos adicionales"],
+  unlimited: ["Sin límites", "Soporte prioritario"],
+}
 
 export function SubscriptionPlans() {
+  const { user } = useAuth()
+  const { isAdmin } = useUserPlan(user?.uid ?? null)
+  const plans = [...PLANS]
+  if (isAdmin) {
+    plans.push({
+      id: 'unlimited',
+      label: PLAN_DETAILS.unlimited.name,
+      videos: Infinity,
+      pdfs: Infinity,
+      price: PLAN_DETAILS.unlimited.priceARS,
+    } as any)
+  }
   return (
     <div className="max-w-5xl mx-auto py-8 grid md:grid-cols-3 gap-8">
       {plans.map((plan) => (
         <Card
-          key={plan.key}
+          key={plan.id}
           className={`overflow-hidden rounded-2xl border transition-transform hover:scale-105 hover:shadow-xl ${
-            plan.highlight ? "border-primary shadow-lg" : "border-border"
+            plan.id === 'unlimited' ? 'border-primary shadow-lg' : 'border-border'
           }`}
         >
           <CardHeader
             className={`text-center ${
-              plan.highlight
+              plan.id === 'unlimited'
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted dark:bg-muted/40 text-foreground"
             }`}
           >
-            <CardTitle className="text-2xl">{plan.title}</CardTitle>
-            <p className="mt-1 text-4xl font-bold">{plan.price}</p>
-            <p className="text-sm opacity-80">{plan.billed}</p>
+            <CardTitle className="text-2xl">{plan.label}</CardTitle>
+            <p className="mt-1 text-4xl font-bold">${'`$${plan.price}`'}</p>
+            <p className="text-sm opacity-80">{plan.id === 'express' ? 'por día' : plan.id === 'free' ? 'para siempre' : 'por pack'}</p>
           </CardHeader>
           <CardContent className="space-y-4">
             <ul className="space-y-2">
-              {plan.features.map((feat) => (
+              {PLAN_FEATURES[plan.id]?.map((feat) => (
                 <li key={feat} className="flex items-start">
                   <Check
                     className={`mt-[3px] mr-2 ${
-                      plan.highlight ? "text-primary-foreground" : "text-primary"
+                      plan.id === 'unlimited' ? "text-primary-foreground" : "text-primary"
                     } dark:text-primary`}
                     size={16}
                   />
@@ -88,7 +65,7 @@ export function SubscriptionPlans() {
               ))}
             </ul>
             <div className="pt-4">
-              {plan.key === "free" ? (
+              {plan.id === "free" ? (
                 <Button
                   disabled
                   className="w-full bg-gray-100 text-gray-500 dark:bg-card dark:text-gray-400 cursor-default"
@@ -96,7 +73,7 @@ export function SubscriptionPlans() {
                   Plan actual
                 </Button>
               ) : (
-                <UpgradeButton plan={plan.key as "pro" | "unlimited"} />
+                <UpgradeButton plan={plan.id as any} />
               )}
             </div>
           </CardContent>

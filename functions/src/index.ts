@@ -21,7 +21,7 @@ const beautifyHtml = jsBeautify.html_beautify;
 
 interface GenerateNoteRequestData {
   noteId: string;
-  plan: "free" | "pro" | "unlimited";
+  plan: "free" | "basic" | "pro" | "express" | "extra" | "unlimited";
   fileName: string;
   fileMimeType: string;
 }

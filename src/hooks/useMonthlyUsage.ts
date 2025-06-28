@@ -2,7 +2,13 @@ import { useState, useCallback, useEffect } from "react";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { toast } from "sonner";
 
-type PlanType = "free" | "pro" | "unlimited";
+type PlanType =
+  | "free"
+  | "basic"
+  | "pro"
+  | "express"
+  | "extra"
+  | "unlimited";
 
 type UseMonthlyUsage = {
   pdfCount: number;
