@@ -31,18 +31,18 @@ export default function HomePage() {
           priority
         />
         {/* Gradiente para fundir la imagen con el fondo oscuro */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#21163480] to-[#131121] pointer-events-none"/>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#00000066] via-[#21163499] to-[#131121] pointer-events-none"/>
       </div>
 
       {/* Header */}
-      <header className="w-full flex justify-between items-center py-6 px-8 max-w-6xl z-10">
+      <header className="w-full flex justify-between items-center py-4 px-6 max-w-6xl z-10 bg-[#1d1b2dcc] border-b border-white/10 backdrop-blur-md rounded-b-xl">
         <div className="flex items-center gap-3">
           <Image src="/logo2.png" alt="MedMaster" width={90} height={90} className="rounded-lg" />
         </div>
         <Link href="/login">
           <Button
             variant="outline"
-            className="border-white/10 text-white/90 bg-[#1d1b2d] hover:bg-[#2a2748] hover:text-purple-300 transition rounded-xl px-7 py-2 font-semibold shadow-none"
+            className="border-white/10 bg-[#2a2748] text-white/90 hover:bg-[#3b3760] hover:text-purple-200 transition rounded-xl px-7 py-2 font-semibold shadow-none backdrop-blur-sm"
           >
             Ingresar
           </Button>
@@ -55,7 +55,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: -22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-6xl font-extrabold text-center tracking-tight leading-tight bg-gradient-to-r from-[#c0b5ff] via-[#a791ff] to-[#f3e9ff] bg-clip-text text-transparent drop-shadow-md"
+          className="text-4xl md:text-7xl font-extrabold text-center tracking-tight leading-[1.15] bg-gradient-to-r from-[#c0b5ff] via-[#a791ff] to-[#f3e9ff] bg-clip-text text-transparent drop-shadow-md"
         >
           La forma inteligente de estudiar medicina
         </motion.h1>
@@ -74,7 +74,7 @@ export default function HomePage() {
           className="mt-10"
         >
           <Link href="/login">
-            <Button className="text-base px-8 py-3 rounded-xl bg-[#8f77ff] hover:bg-[#a995ff] text-white font-bold shadow-lg shadow-[#8f77ff20]/40">
+            <Button className="text-base px-8 py-3 rounded-xl bg-gradient-to-r from-[#8f77ff] to-[#c1b3ff] hover:from-[#a995ff] hover:to-[#d9d1ff] text-white font-bold shadow-lg shadow-[#8f77ff40]/40">
               Comenzar gratis
             </Button>
           </Link>
@@ -213,7 +213,7 @@ export default function HomePage() {
 // Componente de card para features
 function FeatureCard({ title, desc, icon }: { title: string, desc: string, icon: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-[#2a2748] bg-[#242046cc] p-7 text-left shadow-xl hover:scale-[1.03] transition-all flex flex-col gap-2 min-h-[170px] backdrop-blur-[1.5px]">
+    <div className="rounded-2xl border border-[#2a2748] bg-gradient-to-br from-[#2a2748cc] to-[#1d1b2dcc] p-7 text-left shadow-xl hover:scale-[1.03] transition-all flex flex-col gap-2 min-h-[170px] backdrop-blur-[1.5px]">
       <h3 className="font-bold text-xl text-[#e9e4ff]">{title}</h3>
       <p className="text-[#b9b4d1] mb-2">{desc}</p>
       <div>{icon}</div>
@@ -224,7 +224,7 @@ function FeatureCard({ title, desc, icon }: { title: string, desc: string, icon:
 // Componente para testimonios
 function Testimony({ quote, author }: { quote: string, author: string }) {
   return (
-    <div className="border border-[#2a2748] rounded-2xl p-7 bg-[#1b1831ee] text-left shadow-md flex flex-col gap-3 backdrop-blur-[2px]">
+    <div className="border border-[#2a2748] rounded-2xl p-7 bg-gradient-to-br from-[#1b1831ee] to-[#131121ee] text-left shadow-md flex flex-col gap-3 backdrop-blur-[2px]">
       <p className="text-lg italic text-[#dcd8ff]">"{quote}"</p>
       <span className="text-xs text-[#c0b5ff]/80 mt-2">{author}</span>
     </div>

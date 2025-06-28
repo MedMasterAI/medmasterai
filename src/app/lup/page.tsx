@@ -27,6 +27,7 @@ export default function LUPPage() {
   const [presentacion, setPresentacion] = useState('')
   const [disp, setDisp] = useState<Disponibilidad>({})
   const [plan, setPlan] = useState<LUPData['plan']>([])
+  const [loading, setLoading] = useState(false)
 
   const dias = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo']
   const bloques = ['08-10','10-12','14-16','16-18']
@@ -43,29 +44,37 @@ export default function LUPPage() {
     setTemasPorMateria({ ...temasPorMateria, [nombre]: '' })
   }
 
-  const generarPlan = () => {
-    const planTemp: LUPData['plan'] = []
-    const dispDias = Object.entries(disp).flatMap(([d, hs]) => hs.map(h=>({d,h})))
-    let idx = 0
-    materias.forEach(m => {
-      m.temas.forEach(t => {
-        if (dispDias.length===0) return
-        const slot = dispDias[idx % dispDias.length]
-        planTemp.push({ fecha: `${slot.d} ${slot.h}`, materia: m.nombre, tema: t, tipo: 'nuevo' })
-        idx++
+  const generarPlan = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/lup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          materias,
+          disponibilidad: disp,
+          presentacion,
+          plan: []
+        } as LUPData)
       })
-    })
-    setPlan(planTemp)
-    if (user) {
-      const db = getFirestoreDb()
-      setDoc(doc(db, 'lupPlans', user.uid), {
-        materias,
-        disponibilidad: disp,
-        presentacion,
-        plan: planTemp,
-      })
+      const data = await res.json()
+      const planGen: LUPData['plan'] = data.plan || []
+      setPlan(planGen)
+      if (user) {
+        const db = getFirestoreDb()
+        setDoc(doc(db, 'lupPlans', user.uid), {
+          materias,
+          disponibilidad: disp,
+          presentacion,
+          plan: planGen,
+        })
+      }
+      setStep(6)
+    } catch (err) {
+      console.error('Error generating plan', err)
+    } finally {
+      setLoading(false)
     }
-    setStep(6)
   }
 
   return (
@@ -171,7 +180,9 @@ export default function LUPPage() {
               ))}
             </tbody>
           </table>
-          <Button onClick={generarPlan}>Generar Plan</Button>
+          <Button onClick={generarPlan} disabled={loading}>
+            {loading ? 'Generando...' : 'Generar Plan con IA'}
+          </Button>
         </div>
       )}
 
