@@ -10,11 +10,13 @@ import { doc, setDoc } from 'firebase/firestore'
 
 interface Materia { nombre: string; temas: string[]; fecha?: string }
 interface Disponibilidad { [dia: string]: string[] }
+interface PlanItem { fecha: string; materia: string; tema: string; tipo: string }
+
 interface LUPData {
   materias: Materia[]
   disponibilidad: Disponibilidad
   presentacion: string
-  plan: { fecha: string; materia: string; tema: string; tipo: string }[]
+  plan: PlanItem[]
 }
 
 export default function LUPPage() {
@@ -27,6 +29,7 @@ export default function LUPPage() {
   const [presentacion, setPresentacion] = useState('')
   const [disp, setDisp] = useState<Disponibilidad>({})
   const [plan, setPlan] = useState<LUPData['plan']>([])
+  const [sugerencias, setSugerencias] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
 
   const dias = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo']
@@ -46,6 +49,7 @@ export default function LUPPage() {
 
   const generarPlan = async () => {
     setLoading(true)
+    setSugerencias([])
     try {
       const res = await fetch('/api/lup', {
         method: 'POST',
@@ -60,6 +64,7 @@ export default function LUPPage() {
       const data = await res.json()
       const planGen: LUPData['plan'] = data.plan || []
       setPlan(planGen)
+      setSugerencias(data.sugerencias || [])
       if (user) {
         const db = getFirestoreDb()
         setDoc(doc(db, 'lupPlans', user.uid), {
@@ -190,7 +195,14 @@ export default function LUPPage() {
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">Plan generado</h2>
           {plan.length===0 ? (
-            <p>No hay disponibilidad suficiente.</p>
+            <div className="space-y-2">
+              <p>No hay bloques suficientes para cubrir todos los temas antes de las fechas.</p>
+              {sugerencias.length>0 && (
+                <ul className="list-disc pl-6">
+                  {sugerencias.map((s,i)=>(<li key={i}>{s}</li>))}
+                </ul>
+              )}
+            </div>
           ) : (
             <ul className="list-disc pl-6">
               {plan.map((p,i)=>(
@@ -198,6 +210,10 @@ export default function LUPPage() {
               ))}
             </ul>
           )}
+          <div className="flex gap-2">
+            <Button onClick={()=>setStep(5)}>Editar disponibilidad</Button>
+            <Button onClick={()=>setStep(1)}>Editar materias</Button>
+          </div>
         </div>
       )}
     </div>

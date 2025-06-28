@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useStudyPlan } from '@/hooks/useStudyPlan'
-import type { StudyPlan, StudySubject, StudyTopic } from '@/types/study-plan'
+import type { StudyPlan, StudySubject, StudyTopic } from '../../types/study-plan'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'

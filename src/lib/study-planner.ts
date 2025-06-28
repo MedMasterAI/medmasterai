@@ -1,4 +1,4 @@
-import type { StudyPlan, DailyPlan } from '@/types/study-plan'
+import type { StudyPlan, DailyPlan } from '../../types/study-plan'
 
 /** Simple planner that distributes topics into daily blocks. */
 export function generateDailyPlan(plan: StudyPlan, days = 7): DailyPlan[] {

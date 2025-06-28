@@ -8,9 +8,22 @@ export interface Disponibilidad {
   [dia: string]: string[]
 }
 
+export interface PlanItem {
+  fecha: string
+  materia: string
+  tema: string
+  tipo: string
+}
+
 export interface LUPData {
   materias: Materia[]
   disponibilidad: Disponibilidad
   presentacion: string
-  plan: { fecha: string; materia: string; tema: string; tipo: string }[]
+  plan: PlanItem[]
+}
+
+export interface LUPResponse {
+  plan: PlanItem[]
+  sugerencias?: string[]
+  raw?: string
 }
