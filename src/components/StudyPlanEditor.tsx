@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, ChangeEvent } from 'react'
 import { useStudyPlan } from '@/hooks/useStudyPlan'
 import type { StudyPlan, StudySubject, StudyTopic } from '../../types/study-plan'
 import { Input } from '@/components/ui/input'
@@ -44,6 +44,50 @@ export default function StudyPlanEditor() {
     setPlan({ ...plan, materias: updated })
   }
 
+  const updateSubject = (
+    id: string,
+    field: keyof StudySubject,
+    value: any
+  ) => {
+    const updated = plan.materias.map(m =>
+      m.id === id ? { ...m, [field]: value } : m
+    )
+    setPlan({ ...plan, materias: updated })
+  }
+
+  const removeSubject = (id: string) => {
+    const updated = plan.materias.filter(m => m.id !== id)
+    setPlan({ ...plan, materias: updated })
+  }
+
+  const updateTopic = (
+    subjectId: string,
+    topicId: string,
+    field: keyof StudyTopic,
+    value: any
+  ) => {
+    const updated = plan.materias.map(m =>
+      m.id === subjectId
+        ? {
+            ...m,
+            temas: m.temas.map(t =>
+              t.id === topicId ? { ...t, [field]: value } : t
+            )
+          }
+        : m
+    )
+    setPlan({ ...plan, materias: updated })
+  }
+
+  const removeTopic = (subjectId: string, topicId: string) => {
+    const updated = plan.materias.map(m =>
+      m.id === subjectId
+        ? { ...m, temas: m.temas.filter(t => t.id !== topicId) }
+        : m
+    )
+    setPlan({ ...plan, materias: updated })
+  }
+
   return (
     <div className="space-y-8">
       <Card>
@@ -62,29 +106,37 @@ export default function StudyPlanEditor() {
             label="Bloques por día"
             type="number"
             value={plan.preferencias.maxBloquesPorDia}
-            onChange={e => updatePrefs('maxBloquesPorDia', Number(e.target.value))}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              updatePrefs('maxBloquesPorDia', Number(e.target.value))
+            }
           />
           <Input
             label="Minutos por bloque"
             type="number"
             value={plan.preferencias.bloqueMinutos}
-            onChange={e => updatePrefs('bloqueMinutos', Number(e.target.value))}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              updatePrefs('bloqueMinutos', Number(e.target.value))
+            }
           />
           <Input
             label="Descanso (min)"
             type="number"
             value={plan.preferencias.descansoMinutos}
-            onChange={e => updatePrefs('descansoMinutos', Number(e.target.value))}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              updatePrefs('descansoMinutos', Number(e.target.value))
+            }
           />
           <Input
             label="Método organización"
             value={plan.preferencias.metodoOrganizacion}
-            onChange={e => updatePrefs('metodoOrganizacion', e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              updatePrefs('metodoOrganizacion', e.target.value)
+            }
           />
           <Input
             label="Métodos favoritos (coma)"
             value={plan.preferencias.metodosFavoritos.join(', ')}
-            onChange={e =>
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
               updatePrefs(
                 'metodosFavoritos',
                 e.target.value.split(',').map(s => s.trim()).filter(Boolean)
@@ -103,30 +155,102 @@ export default function StudyPlanEditor() {
             <Input
               label="Nombre"
               value={name}
-              onChange={e => setName(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
             />
             <Input
               label="Importancia"
               type="number"
               value={importance}
-              onChange={e => setImportance(Number(e.target.value))}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setImportance(Number(e.target.value))
+              }
             />
             <Input
               label="Tipo evaluación"
               value={evaluation}
-              onChange={e => setEvaluation(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEvaluation(e.target.value)
+              }
             />
           </div>
           <Button onClick={addSubject}>Agregar materia</Button>
           {plan.materias.length > 0 && (
             <ul className="space-y-4">
               {plan.materias.map(subject => (
-                <li key={subject.id} className="border rounded-md p-4">
-                  <div className="font-semibold mb-2">{subject.nombre}</div>
+                <li key={subject.id} className="border rounded-md p-4 space-y-2">
+                  <div className="grid grid-cols-3 gap-2 items-end">
+                    <Input
+                      label="Nombre"
+                      value={subject.nombre}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        updateSubject(subject.id, 'nombre', e.target.value)
+                      }
+                    />
+                    <Input
+                      label="Importancia"
+                      type="number"
+                      value={subject.importancia}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        updateSubject(
+                          subject.id,
+                          'importancia',
+                          Number(e.target.value)
+                        )
+                      }
+                    />
+                    <Input
+                      label="Tipo"
+                      value={subject.tipoEvaluacion}
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        updateSubject(subject.id, 'tipoEvaluacion', e.target.value)
+                      }
+                    />
+                    <Button
+                      variant="destructive"
+                      onClick={() => removeSubject(subject.id)}
+                      className="col-span-3"
+                    >
+                      Eliminar materia
+                    </Button>
+                  </div>
+
                   {subject.temas.length > 0 && (
-                    <ul className="pl-4 list-disc space-y-1 text-sm mb-2">
+                    <ul className="pl-4 list-disc space-y-2 text-sm">
                       {subject.temas.map(t => (
-                        <li key={t.id}>{t.nombre}</li>
+                        <li key={t.id} className="flex items-end gap-2">
+                          <Input
+                            value={t.nombre}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                              updateTopic(subject.id, t.id, 'nombre', e.target.value)
+                            }
+                            className="flex-1"
+                          />
+                          <Input
+                            type="date"
+                            value={t.fechaLimite || ''}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                              updateTopic(subject.id, t.id, 'fechaLimite', e.target.value)
+                            }
+                          />
+                          <Input
+                            type="number"
+                            value={t.dificultad}
+                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                              updateTopic(
+                                subject.id,
+                                t.id,
+                                'dificultad',
+                                Number(e.target.value)
+                              )
+                            }
+                          />
+                          <Button
+                            variant="destructive"
+                            onClick={() => removeTopic(subject.id, t.id)}
+                          >
+                            Borrar
+                          </Button>
+                        </li>
                       ))}
                     </ul>
                   )}
@@ -164,13 +288,24 @@ function TopicForm({ onAdd }: { onAdd: (t: StudyTopic) => void }) {
 
   return (
     <div className="grid grid-cols-4 gap-2 items-end">
-      <Input label="Nuevo tema" value={name} onChange={e => setName(e.target.value)} />
-      <Input label="Fecha límite" type="date" value={date} onChange={e => setDate(e.target.value)} />
+      <Input
+        label="Nuevo tema"
+        value={name}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+      />
+      <Input
+        label="Fecha límite"
+        type="date"
+        value={date}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setDate(e.target.value)}
+      />
       <Input
         label="Dificultad"
         type="number"
         value={difficulty}
-        onChange={e => setDifficulty(Number(e.target.value))}
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          setDifficulty(Number(e.target.value))
+        }
       />
       <Button onClick={add}>Agregar</Button>
     </div>

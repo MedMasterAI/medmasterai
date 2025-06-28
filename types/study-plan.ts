@@ -1,3 +1,11 @@
+export interface StudyTopic {
+  id: string
+  nombre: string
+  fechaLimite?: string
+  dificultad: number
+  bloques: string[]
+}
+
 export interface StudySubject {
   id: string
   nombre: string
