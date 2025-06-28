@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import type { StudyPlan } from '@/types/study-plan'
+import { generateDailyPlan } from '@/lib/study-planner'
 
 const STORAGE_KEY = 'study-plan'
 
@@ -19,6 +20,12 @@ const DEFAULT_PLAN: StudyPlan = {
 
 export function useStudyPlan() {
   const [plan, setPlan] = useState<StudyPlan | null>(null)
+
+  const updateDailyPlan = () => {
+    if (!plan) return
+    const planDiario = generateDailyPlan(plan)
+    setPlan({ ...plan, planDiario })
+  }
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -40,5 +47,5 @@ export function useStudyPlan() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(plan))
   }, [plan])
 
-  return { plan, setPlan }
+  return { plan, setPlan, updateDailyPlan }
 }
