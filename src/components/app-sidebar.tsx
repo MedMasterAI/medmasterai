@@ -11,6 +11,8 @@ import {
   FaCreditCard,
   FaMagic,
   FaUser,
+  FaRegCalendarCheck,
+  FaCog,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import Link from "next/link";
@@ -64,6 +66,11 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
         { title: "VideoAI", url: "/dashboard/videoai", icon: FaVideo },
         { title: "Anki", url: "/dashboard/anki", icon: FaMagic },
         {
+          title: "Plan de Estudio",
+          url: "/planificador",
+          icon: FaRegCalendarCheck,
+        },
+        {
           title: "Mis Apuntes",
           url: "/dashboard/mis-apuntes",
           icon: FaFileAlt,
@@ -77,6 +84,15 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
       items: [
         { title: "Pagos", url: "/pagos", icon: FaCreditCard },
         { title: "Mi Perfil", url: "/dashboard/perfil", icon: FaUser },
+      ],
+    },
+    {
+      title: "Configuraci\u00f3n",
+      url: "#",
+      icon: FaCog,
+      items: [
+        { title: "Ajustes", url: "/dashboard/config", icon: FaCog },
+        { title: "Asistente", url: "/dashboard/config/asistente", icon: FaRobot },
       ],
     },
   ];
