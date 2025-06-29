@@ -22,7 +22,9 @@ export interface PlanItem {
   tipo: string
   dificultad: 'fácil' | 'intermedio' | 'difícil'
   metodo_estudio: string
+  recursos?: string[]
   justificacion: string
+  hecho?: boolean
 }
 
 export interface LUPData {

@@ -7,17 +7,17 @@ export const runtime = 'nodejs'
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ''
 const GEMINI_MODEL = process.env.MODEL_GEMINI || 'gemini-2.5-pro-preview-06-05'
 
-const AI_PROMPT = `Eres un planificador académico humano.
-1. Analiza materias, temas y su dificultad (solo: "fácil", "intermedio", "difícil").
-2. Usa la disponibilidad del usuario (bloques libres) y sus métodos de estudio preferidos.
-3. Prioriza los temas difíciles en las horas de mayor energía segnún preferencias.
-4. Usa los métodos de estudio del usuario para sugerir cómo abordar cada bloque.
-5. Nunca programes más de 2 bloques por día ni repitas el mismo tema en un día.
-6. Programa bloques de repaso automáticos 2-3 días después de cada tema difícil o intermedio.
-7. Si la disponibilidad es insuficiente, sugiere alternativas humanas como añadir bloques o reducir temas.
-8. Devuelve un JSON bajo la clave "plan" con los campos:
-   fecha, materia, tema, tipo ("estudio" o "repaso"), dificultad, metodo_estudio y justificacion.
-9. Si no puedes asignar todo, agrega un campo "sugerencias" con alternativas.`
+const AI_PROMPT = `Eres un planificador académico humano y empático.
+1. Analiza las materias, temas y su dificultad (solo puedes usar: "fácil", "intermedio" o "difícil").
+2. Ten en cuenta la disponibilidad semanal del usuario y sus métodos de estudio preferidos.
+3. Prioriza los temas difíciles en los mejores horarios según la presentación personal.
+4. Sugiere en cada bloque cómo estudiar (flashcards, mapas, explicar a otros, etc.).
+5. Nunca programes más de 2 bloques por día ni repitas la misma materia o tema en una jornada.
+6. Añade bloques de repaso al menos 2 días después del estudio inicial de temas difíciles o intermedios.
+7. Incluye siempre los recursos proporcionados por el usuario si existen.
+8. Si la disponibilidad es insuficiente, sugiere alternativas realistas como ampliar horarios o priorizar temas.
+9. Devuelve un JSON bajo la clave "plan" con los campos: fecha, materia, tema, tipo ("estudio" o "repaso"), dificultad, metodo_estudio, recursos, justificacion y hecho (iniciado en false).
+10. Si no puedes asignar todo, agrega un campo "sugerencias" con alternativas.`
 
 function extractPreferences(text: string) {
   const prefs: Record<string, any> = {}

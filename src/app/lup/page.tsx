@@ -1,12 +1,18 @@
 'use client'
 
 import { useState, ChangeEvent } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/authcontext'
 import { getFirestoreDb } from '@/lib/firebase'
+<<<<<<< ours
 import { collection, addDoc } from 'firebase/firestore'
+import Link from 'next/link'
+=======
+import { collection, addDoc, updateDoc, doc } from 'firebase/firestore'
+>>>>>>> theirs
 
 interface Tema {
   id: string
@@ -30,7 +36,9 @@ interface PlanItem {
   tipo: string
   dificultad: 'fácil' | 'intermedio' | 'difícil'
   metodo_estudio: string
+  recursos?: string[]
   justificacion: string
+  hecho?: boolean
 }
 
 interface LUPData {
@@ -55,6 +63,7 @@ export default function LUPPage() {
   const [plan, setPlan] = useState<LUPData['plan']>([])
   const [sugerencias, setSugerencias] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  const [planDocId, setPlanDocId] = useState<string | null>(null)
 
   const dias = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo']
   const bloques = ['08-10','10-12','14-16','16-18']
@@ -159,22 +168,34 @@ export default function LUPPage() {
       setSugerencias(data.sugerencias || [])
       if (user) {
         const db = getFirestoreDb()
-        await addDoc(collection(db, 'lupPlans'), {
-          planId: Date.now().toString(),
+        const ref = await addDoc(collection(db, 'users', user.uid, 'lupPlans'), {
           createdAt: new Date().toISOString(),
-          userId: user.uid,
           materias,
           disponibilidad: disp,
           presentacion,
           metodoEstudio,
           plan: planGen,
         })
+        setPlanDocId(ref.id)
       }
       setStep(6)
     } catch (err) {
       console.error('Error generating plan', err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const toggleHecho = async (index: number) => {
+    const newPlan = plan.map((p, i) =>
+      i === index ? { ...p, hecho: !p.hecho } : p
+    )
+    setPlan(newPlan)
+    if (user && planDocId) {
+      const db = getFirestoreDb()
+      await updateDoc(doc(db, 'users', user.uid, 'lupPlans', planDocId), {
+        plan: newPlan,
+      })
     }
   }
 
@@ -408,7 +429,9 @@ export default function LUPPage() {
                   <th className="p-2 text-left">Tipo</th>
                   <th className="p-2 text-left">Dificultad</th>
                   <th className="p-2 text-left">Método</th>
+                  <th className="p-2 text-left">Recursos</th>
                   <th className="p-2 text-left">Justificación</th>
+                  <th className="p-2 text-center">Hecho</th>
                 </tr>
               </thead>
               <tbody>
@@ -420,7 +443,15 @@ export default function LUPPage() {
                     <td className="p-2">{p.tipo}</td>
                     <td className="p-2">{p.dificultad}</td>
                     <td className="p-2">{p.metodo_estudio}</td>
+                    <td className="p-2">{(p.recursos || []).join(', ')}</td>
                     <td className="p-2">{p.justificacion}</td>
+                    <td className="p-2 text-center">
+                      <input
+                        type="checkbox"
+                        checked={p.hecho || false}
+                        onChange={() => toggleHecho(i)}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
