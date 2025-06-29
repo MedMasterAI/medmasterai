@@ -7,28 +7,17 @@ export const runtime = 'nodejs'
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ''
 const GEMINI_MODEL = process.env.MODEL_GEMINI || 'gemini-2.5-pro-preview-06-05'
 
-const AI_PROMPT = `
-Eres un planificador académico experto y humano, y debes priorizar realismo y bienestar.
-
-1. Recibirás una lista de materias (con importancia), temas (con dificultad), y fechas de examen opcionales.
-2. Recibirás una tabla de bloques de disponibilidad (días y horas). Las casillas marcadas son BLOQUES LIBRES.
-3. Prioriza las materias más importantes y los temas más difíciles, teniendo en cuenta exámenes más cercanos.
-4. Nunca asignes más de 2 bloques de estudio por día. Si hay más bloques para asignar, distribúyelos en días diferentes.
-5. No asignes nunca el mismo tema o materia en dos bloques consecutivos el mismo día.
-6. Siempre que puedas, intercala materias para evitar saturación.
-7. Si un tema es difícil o largo, divídelo en varias partes y distribúyelo en días distintos.
-8. Después de asignar un tema, agenda automáticamente un bloque de "repaso" 2-3 días después, si hay bloques libres.
-9. Si la disponibilidad es insuficiente, en vez de forzar todo en un día, devuelve sugerencias humanas: “agrega más bloques libres, elimina temas, o mueve la fecha de examen”.
-10. El objetivo es que el plan sea realista, flexible y humano, no solo llenar todos los huecos ni forzar al usuario a estudiar varias horas seguidas.
-11. En cada asignación de bloque, incluye un campo "justificacion" explicando brevemente el motivo de esa asignación.
-12. Devuelve SOLO un JSON bajo la clave "plan" con una lista de objetos, cada uno con:
-   - fecha (día y hora)
-   - materia
-   - tema
-   - tipo ("estudio" o "repaso")
-   - justificacion (breve explicación del porqué de esa asignación)
-13. Si no puedes asignar todo realísticamente, devuelve también un campo "sugerencias" con alternativas humanas y razonables.
-`
+const AI_PROMPT = `Eres un planificador académico humano.
+1. Analiza materias, temas y su dificultad (solo: "fácil", "intermedio", "difícil").
+2. Usa la disponibilidad del usuario (bloques libres) y su método de estudio preferido.
+3. Prioriza los temas difíciles en las horas de mayor energía segnún preferencias.
+4. Usa el método de estudio del usuario para sugerir cómo abordar cada bloque.
+5. Nunca programes más de 2 bloques por día ni repitas el mismo tema en un día.
+6. Programa bloques de repaso automáticos 2-3 días después de cada tema difícil o intermedio.
+7. Si la disponibilidad es insuficiente, sugiere alternativas humanas como añadir bloques o reducir temas.
+8. Devuelve un JSON bajo la clave "plan" con los campos:
+   fecha, materia, tema, tipo ("estudio" o "repaso"), dificultad, metodo_estudio y justificacion.
+9. Si no puedes asignar todo, agrega un campo "sugerencias" con alternativas.`
 
 function extractPreferences(text: string) {
   const prefs: Record<string, any> = {}
@@ -45,6 +34,11 @@ function extractPreferences(text: string) {
   if (lower.includes('repaso')) prefs.quiereRepasos = true
   if (lower.includes('bloques cortos')) prefs.bloques = 'cortos'
   if (lower.includes('bloques largos')) prefs.bloques = 'largos'
+  if (lower.includes('flashcards')) prefs.metodo = 'flashcards'
+  if (lower.includes('mapas')) prefs.metodo = 'mapas mentales'
+  if (lower.includes('resúmen')) prefs.metodo = 'resúmenes'
+  if (lower.includes('tests')) prefs.metodo = 'tests'
+  if (lower.includes('explicar')) prefs.metodo = 'explicar a otros'
   return prefs
 }
 
@@ -54,7 +48,7 @@ export async function POST(req: Request) {
     const ai = new GoogleGenerativeAI(GEMINI_API_KEY)
     const model = ai.getGenerativeModel({ model: GEMINI_MODEL })
     const prefs = extractPreferences(data.presentacion || '')
-    const prompt = `${AI_PROMPT}\n\nPreferencias detectadas:\n${JSON.stringify(prefs, null, 2)}\n\nDatos del usuario:\n${JSON.stringify(data)}`
+    const prompt = `${AI_PROMPT}\n\nMétodo de estudio preferido: ${data.metodoEstudio}\n\nPreferencias detectadas:\n${JSON.stringify(prefs, null, 2)}\n\nDatos del usuario:\n${JSON.stringify(data)}`
     const res = await model.generateContent(prompt)
     const text = res.response?.text().trim() || ''
 

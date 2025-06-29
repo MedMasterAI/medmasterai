@@ -6,12 +6,12 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/authcontext'
 import { getFirestoreDb } from '@/lib/firebase'
-import { doc, setDoc } from 'firebase/firestore'
+import { collection, addDoc } from 'firebase/firestore'
 
 interface Tema {
   id: string
   nombre: string
-  dificultad: number
+  dificultad: 'fácil' | 'intermedio' | 'difícil'
 }
 
 interface Materia {
@@ -22,12 +22,21 @@ interface Materia {
   fecha?: string
 }
 interface Disponibilidad { [dia: string]: string[] }
-interface PlanItem { fecha: string; materia: string; tema: string; tipo: string }
+interface PlanItem {
+  fecha: string
+  materia: string
+  tema: string
+  tipo: string
+  dificultad: 'fácil' | 'intermedio' | 'difícil'
+  metodo_estudio: string
+  justificacion: string
+}
 
 interface LUPData {
   materias: Materia[]
   disponibilidad: Disponibilidad
   presentacion: string
+  metodoEstudio: string
   plan: PlanItem[]
 }
 
@@ -40,6 +49,7 @@ export default function LUPPage() {
   const [temasPorMateria, setTemasPorMateria] = useState<Record<string, string>>({})
   const [fechas, setFechas] = useState<Record<string, string>>({})
   const [presentacion, setPresentacion] = useState('')
+  const [metodoEstudio, setMetodoEstudio] = useState('resúmenes')
   const [disp, setDisp] = useState<Disponibilidad>({})
   const [plan, setPlan] = useState<LUPData['plan']>([])
   const [sugerencias, setSugerencias] = useState<string[]>([])
@@ -64,7 +74,7 @@ export default function LUPPage() {
     const nuevos = list.map((t, i) => ({
       id: `${Date.now()}-${i}`,
       nombre: t,
-      dificultad: 3
+      dificultad: 'intermedio'
     }))
     setMaterias(
       materias.map(m =>
@@ -131,6 +141,7 @@ export default function LUPPage() {
           materias,
           disponibilidad: disp,
           presentacion,
+          metodoEstudio,
           plan: []
         } as LUPData)
       })
@@ -140,10 +151,14 @@ export default function LUPPage() {
       setSugerencias(data.sugerencias || [])
       if (user) {
         const db = getFirestoreDb()
-        setDoc(doc(db, 'lupPlans', user.uid), {
+        await addDoc(collection(db, 'lupPlans'), {
+          planId: Date.now().toString(),
+          createdAt: new Date().toISOString(),
+          userId: user.uid,
           materias,
           disponibilidad: disp,
           presentacion,
+          metodoEstudio,
           plan: planGen,
         })
       }
@@ -229,13 +244,17 @@ export default function LUPPage() {
                         onChange={(e: ChangeEvent<HTMLInputElement>) => editTema(m.id, i, 'nombre', e.target.value)}
                         className="flex-1"
                       />
-                      <Input
-                        type="number"
+                      <select
                         value={t.dificultad}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => editTema(m.id, i, 'dificultad', Number(e.target.value))}
-                        placeholder="Dif."
-                        className="w-20"
-                      />
+                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                          editTema(m.id, i, 'dificultad', e.target.value as Tema['dificultad'])
+                        }
+                        className="border border-border bg-background text-foreground rounded-md px-2 py-2 text-sm"
+                      >
+                        <option value="fácil">fácil</option>
+                        <option value="intermedio">intermedio</option>
+                        <option value="difícil">difícil</option>
+                      </select>
                       <Button variant="destructive" onClick={() => removeTema(m.id, i)}>Borrar</Button>
                     </li>
                   ))}
@@ -279,6 +298,20 @@ export default function LUPPage() {
             }
             placeholder="Cuéntame cómo estudias..."
           />
+          <div>
+            <label className="block text-sm mb-1">Método de estudio preferido</label>
+            <select
+              value={metodoEstudio}
+              onChange={(e: ChangeEvent<HTMLSelectElement>) => setMetodoEstudio(e.target.value)}
+              className="border border-border bg-background text-foreground rounded-md px-2 py-2 text-sm"
+            >
+              <option value="resúmenes">resúmenes</option>
+              <option value="mapas mentales">mapas mentales</option>
+              <option value="flashcards">flashcards</option>
+              <option value="tests">tests</option>
+              <option value="explicar a otros">explicar a otros</option>
+            </select>
+          </div>
           <Button onClick={()=>setStep(5)}>Siguiente</Button>
         </div>
       )}
@@ -345,6 +378,9 @@ export default function LUPPage() {
                   <th className="p-2 text-left">Materia</th>
                   <th className="p-2 text-left">Tema</th>
                   <th className="p-2 text-left">Tipo</th>
+                  <th className="p-2 text-left">Dificultad</th>
+                  <th className="p-2 text-left">Método</th>
+                  <th className="p-2 text-left">Justificación</th>
                 </tr>
               </thead>
               <tbody>
@@ -354,6 +390,9 @@ export default function LUPPage() {
                     <td className="p-2">{p.materia}</td>
                     <td className="p-2">{p.tema}</td>
                     <td className="p-2">{p.tipo}</td>
+                    <td className="p-2">{p.dificultad}</td>
+                    <td className="p-2">{p.metodo_estudio}</td>
+                    <td className="p-2">{p.justificacion}</td>
                   </tr>
                 ))}
               </tbody>
@@ -362,6 +401,9 @@ export default function LUPPage() {
           <div className="flex gap-2">
             <Button onClick={()=>setStep(5)}>Editar disponibilidad</Button>
             <Button onClick={()=>setStep(1)}>Editar materias</Button>
+            <Button asChild variant="secondary">
+              <Link href="/lup/historial">Ver historial</Link>
+            </Button>
           </div>
         </div>
       )}
