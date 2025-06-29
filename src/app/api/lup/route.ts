@@ -16,8 +16,10 @@ const AI_PROMPT = `Eres un planificador académico humano y empático.
 6. Añade bloques de repaso al menos 2 días después del estudio inicial de temas difíciles o intermedios.
 7. Incluye los recursos proporcionados por el usuario cuando existan.
 8. Si la disponibilidad es insuficiente para todos los temas y repasos, sugiere ampliar horarios, eliminar temas o extender la fecha.
-9. Devuelve un JSON bajo la clave "plan" con los campos: fecha, materia, tema, tipo ("estudio" o "repaso"), dificultad, metodo_estudio, recursos, justificacion y hecho (false).
-10. Si no puedes asignar todo, agrega un campo "sugerencias" con alternativas.`;
+9. Ajusta los métodos de estudio a las preferencias del usuario y divide los temas muy difíciles en varios bloques si fuera necesario.
+10. Todas las fechas del plan deben estar entre hoy y el día del examen de cada materia, respetando el año proporcionado por el usuario.
+11. Devuelve un JSON bajo la clave "plan" con los campos: fecha, materia, tema, tipo ("estudio" o "repaso"), dificultad, metodo_estudio, recursos, justificacion y hecho (false).
+12. Si no puedes asignar todo, agrega un campo "sugerencias" con alternativas.`;
 
 function extractPreferences(text: string) {
   const prefs: Record<string, any> = {};
@@ -52,6 +54,26 @@ function extractPreferences(text: string) {
   return prefs;
 }
 
+function sanitizePlanDates(plan: LUPResponse["plan"], materias: LUPData["materias"]): LUPResponse["plan"] {
+  const today = new Date();
+  const examMap: Record<string, Date> = {};
+  materias.forEach(m => {
+    if (m.fecha) {
+      const d = new Date(m.fecha);
+      if (!isNaN(d.getTime())) {
+        examMap[m.nombre] = d;
+      }
+    }
+  });
+  return plan.filter(p => {
+    const f = new Date(p.fecha);
+    if (isNaN(f.getTime()) || f < today) return false;
+    const exam = examMap[p.materia];
+    if (exam && f > exam) return false;
+    return true;
+  });
+}
+
 export async function POST(req: Request) {
   try {
     const data = (await req.json()) as LUPData;
@@ -74,6 +96,9 @@ export async function POST(req: Request) {
       parsed = JSON.parse(jsonText);
     } catch {
       return NextResponse.json({ raw: text });
+    }
+    if (parsed.plan) {
+      parsed.plan = sanitizePlanDates(parsed.plan, data.materias);
     }
 
     return NextResponse.json(parsed);
