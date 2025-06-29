@@ -9,7 +9,7 @@ export interface StoredLupPlan {
   materias: any[]
   disponibilidad: any
   presentacion: string
-  metodoEstudio: string
+  metodoEstudio: string[]
   plan: any[]
   createdAt: any
 }

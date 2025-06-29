@@ -1,6 +1,7 @@
 export interface Tema {
   nombre: string
   dificultad: 'fácil' | 'intermedio' | 'difícil'
+  recursos?: string[]
 }
 
 export interface Materia {
@@ -28,7 +29,7 @@ export interface LUPData {
   materias: Materia[]
   disponibilidad: Disponibilidad
   presentacion: string
-  metodoEstudio: string
+  metodoEstudio: string[]
   plan: PlanItem[]
 }
 

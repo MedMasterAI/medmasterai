@@ -9,9 +9,9 @@ const GEMINI_MODEL = process.env.MODEL_GEMINI || 'gemini-2.5-pro-preview-06-05'
 
 const AI_PROMPT = `Eres un planificador académico humano.
 1. Analiza materias, temas y su dificultad (solo: "fácil", "intermedio", "difícil").
-2. Usa la disponibilidad del usuario (bloques libres) y su método de estudio preferido.
+2. Usa la disponibilidad del usuario (bloques libres) y sus métodos de estudio preferidos.
 3. Prioriza los temas difíciles en las horas de mayor energía segnún preferencias.
-4. Usa el método de estudio del usuario para sugerir cómo abordar cada bloque.
+4. Usa los métodos de estudio del usuario para sugerir cómo abordar cada bloque.
 5. Nunca programes más de 2 bloques por día ni repitas el mismo tema en un día.
 6. Programa bloques de repaso automáticos 2-3 días después de cada tema difícil o intermedio.
 7. Si la disponibilidad es insuficiente, sugiere alternativas humanas como añadir bloques o reducir temas.
@@ -48,7 +48,8 @@ export async function POST(req: Request) {
     const ai = new GoogleGenerativeAI(GEMINI_API_KEY)
     const model = ai.getGenerativeModel({ model: GEMINI_MODEL })
     const prefs = extractPreferences(data.presentacion || '')
-    const prompt = `${AI_PROMPT}\n\nMétodo de estudio preferido: ${data.metodoEstudio}\n\nPreferencias detectadas:\n${JSON.stringify(prefs, null, 2)}\n\nDatos del usuario:\n${JSON.stringify(data)}`
+    const metodos = Array.isArray(data.metodoEstudio) ? data.metodoEstudio.join(', ') : data.metodoEstudio
+    const prompt = `${AI_PROMPT}\n\nMétodos de estudio preferidos: ${metodos}\n\nPreferencias detectadas:\n${JSON.stringify(prefs, null, 2)}\n\nDatos del usuario:\n${JSON.stringify(data)}`
     const res = await model.generateContent(prompt)
     const text = res.response?.text().trim() || ''
 

@@ -12,6 +12,7 @@ interface Tema {
   id: string
   nombre: string
   dificultad: 'fácil' | 'intermedio' | 'difícil'
+  recursos?: string[]
 }
 
 interface Materia {
@@ -36,7 +37,7 @@ interface LUPData {
   materias: Materia[]
   disponibilidad: Disponibilidad
   presentacion: string
-  metodoEstudio: string
+  metodoEstudio: string[]
   plan: PlanItem[]
 }
 
@@ -49,7 +50,7 @@ export default function LUPPage() {
   const [temasPorMateria, setTemasPorMateria] = useState<Record<string, string>>({})
   const [fechas, setFechas] = useState<Record<string, string>>({})
   const [presentacion, setPresentacion] = useState('')
-  const [metodoEstudio, setMetodoEstudio] = useState('resúmenes')
+  const [metodoEstudio, setMetodoEstudio] = useState<string[]>(['resúmenes'])
   const [disp, setDisp] = useState<Disponibilidad>({})
   const [plan, setPlan] = useState<LUPData['plan']>([])
   const [sugerencias, setSugerencias] = useState<string[]>([])
@@ -57,6 +58,7 @@ export default function LUPPage() {
 
   const dias = ['lunes','martes','miercoles','jueves','viernes','sabado','domingo']
   const bloques = ['08-10','10-12','14-16','16-18']
+  const metodosOpciones = ['resúmenes','mapas mentales','flashcards','tests','explicar a otros']
 
   const agregarMateria = () => {
     const n = materiaInput.trim()
@@ -71,10 +73,11 @@ export default function LUPPage() {
 
   const agregarTemas = (id: string, texto: string) => {
     const list = texto.split(/\n+/).map(t => t.trim()).filter(Boolean)
-    const nuevos = list.map((t, i) => ({
+  const nuevos = list.map((t, i) => ({
       id: `${Date.now()}-${i}`,
       nombre: t,
-      dificultad: 'intermedio'
+      dificultad: 'intermedio',
+      recursos: []
     }))
     setMaterias(
       materias.map(m =>
@@ -131,6 +134,11 @@ export default function LUPPage() {
   }
 
   const generarPlan = async () => {
+    const totalBloques = Object.values(disp).reduce((a, b) => a + b.length, 0)
+    const totalTemas = materias.reduce((a, m) => a + m.temas.length, 0)
+    if (totalBloques < totalTemas) {
+      alert('Hay menos bloques que temas disponibles. Considera ajustar tu disponibilidad o reducir temas.')
+    }
     setLoading(true)
     setSugerencias([])
     try {
@@ -255,6 +263,19 @@ export default function LUPPage() {
                         <option value="intermedio">intermedio</option>
                         <option value="difícil">difícil</option>
                       </select>
+                      <Input
+                        placeholder="Recursos (url, ...)"
+                        value={(t.recursos || []).join(', ')}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                          editTema(
+                            m.id,
+                            i,
+                            'recursos',
+                            e.target.value.split(',').map(r => r.trim()).filter(Boolean)
+                          )
+                        }
+                        className="flex-1"
+                      />
                       <Button variant="destructive" onClick={() => removeTema(m.id, i)}>Borrar</Button>
                     </li>
                   ))}
@@ -299,18 +320,25 @@ export default function LUPPage() {
             placeholder="Cuéntame cómo estudias..."
           />
           <div>
-            <label className="block text-sm mb-1">Método de estudio preferido</label>
-            <select
-              value={metodoEstudio}
-              onChange={(e: ChangeEvent<HTMLSelectElement>) => setMetodoEstudio(e.target.value)}
-              className="border border-border bg-background text-foreground rounded-md px-2 py-2 text-sm"
-            >
-              <option value="resúmenes">resúmenes</option>
-              <option value="mapas mentales">mapas mentales</option>
-              <option value="flashcards">flashcards</option>
-              <option value="tests">tests</option>
-              <option value="explicar a otros">explicar a otros</option>
-            </select>
+            <label className="block text-sm mb-1">Métodos de estudio preferidos</label>
+            <div className="space-y-1">
+              {metodosOpciones.map(m => (
+                <label key={m} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={metodoEstudio.includes(m)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      setMetodoEstudio(
+                        e.target.checked
+                          ? [...metodoEstudio, m]
+                          : metodoEstudio.filter(x => x !== m)
+                      )
+                    }}
+                  />
+                  {m}
+                </label>
+              ))}
+            </div>
           </div>
           <Button onClick={()=>setStep(5)}>Siguiente</Button>
         </div>
