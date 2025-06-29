@@ -1,6 +1,12 @@
+export interface Tema {
+  nombre: string
+  dificultad: number
+}
+
 export interface Materia {
   nombre: string
-  temas: string[]
+  importancia: number
+  temas: Tema[]
   fecha?: string
 }
 

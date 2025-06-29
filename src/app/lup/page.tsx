@@ -8,10 +8,17 @@ import { useAuth } from '@/authcontext'
 import { getFirestoreDb } from '@/lib/firebase'
 import { doc, setDoc } from 'firebase/firestore'
 
+interface Tema {
+  id: string
+  nombre: string
+  dificultad: number
+}
+
 interface Materia {
   id: string
   nombre: string
-  temas: string[]
+  importancia: number
+  temas: Tema[]
   fecha?: string
 }
 interface Disponibilidad { [dia: string]: string[] }
@@ -28,6 +35,7 @@ export default function LUPPage() {
   const { user } = useAuth()
   const [step, setStep] = useState(0)
   const [materiaInput, setMateriaInput] = useState('')
+  const [materiaImportancia, setMateriaImportancia] = useState(1)
   const [materias, setMaterias] = useState<Materia[]>([])
   const [temasPorMateria, setTemasPorMateria] = useState<Record<string, string>>({})
   const [fechas, setFechas] = useState<Record<string, string>>({})
@@ -43,22 +51,35 @@ export default function LUPPage() {
   const agregarMateria = () => {
     const n = materiaInput.trim()
     if (!n) return
-    setMaterias([...materias, { id: Date.now().toString(), nombre: n, temas: [] }])
+    setMaterias([
+      ...materias,
+      { id: Date.now().toString(), nombre: n, importancia: materiaImportancia, temas: [] }
+    ])
     setMateriaInput('')
+    setMateriaImportancia(1)
   }
 
   const agregarTemas = (id: string, texto: string) => {
     const list = texto.split(/\n+/).map(t => t.trim()).filter(Boolean)
+    const nuevos = list.map((t, i) => ({
+      id: `${Date.now()}-${i}`,
+      nombre: t,
+      dificultad: 3
+    }))
     setMaterias(
       materias.map(m =>
-        m.id === id ? { ...m, temas: [...m.temas, ...list] } : m
+        m.id === id ? { ...m, temas: [...m.temas, ...nuevos] } : m
       )
     )
     setTemasPorMateria({ ...temasPorMateria, [id]: '' })
   }
 
-  const updateMateriaNombre = (id: string, value: string) => {
-    setMaterias(materias.map(m => (m.id === id ? { ...m, nombre: value } : m)))
+  const updateMateria = (
+    id: string,
+    field: keyof Materia,
+    value: any
+  ) => {
+    setMaterias(materias.map(m => (m.id === id ? { ...m, [field]: value } : m)))
   }
 
   const removeMateria = (id: string) => {
@@ -69,11 +90,21 @@ export default function LUPPage() {
     setFechas(restF)
   }
 
-  const editTema = (id: string, index: number, value: string) => {
+  const editTema = (
+    id: string,
+    index: number,
+    field: keyof Tema,
+    value: any
+  ) => {
     setMaterias(
       materias.map(m =>
         m.id === id
-          ? { ...m, temas: m.temas.map((t, i) => (i === index ? value : t)) }
+          ? {
+              ...m,
+              temas: m.temas.map((t, i) =>
+                i === index ? { ...t, [field]: value } : t
+              )
+            }
           : m
       )
     )
@@ -143,6 +174,13 @@ export default function LUPPage() {
               onChange={(e: ChangeEvent<HTMLInputElement>) => setMateriaInput(e.target.value)}
               placeholder="Nueva materia"
             />
+            <Input
+              type="number"
+              value={materiaImportancia}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setMateriaImportancia(Number(e.target.value))}
+              placeholder="Importancia"
+              className="w-20"
+            />
             <Button onClick={agregarMateria}>Agregar</Button>
           </div>
           <ul className="space-y-2">
@@ -150,8 +188,15 @@ export default function LUPPage() {
               <li key={m.id} className="flex gap-2 items-end">
                 <Input
                   value={m.nombre}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => updateMateriaNombre(m.id, e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => updateMateria(m.id, 'nombre', e.target.value)}
                   className="flex-1"
+                />
+                <Input
+                  type="number"
+                  value={m.importancia}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => updateMateria(m.id, 'importancia', Number(e.target.value))}
+                  placeholder="Imp."
+                  className="w-20"
                 />
                 <Button variant="destructive" onClick={() => removeMateria(m.id)}>Borrar</Button>
               </li>
@@ -180,9 +225,16 @@ export default function LUPPage() {
                   {m.temas.map((t,i)=> (
                     <li key={i} className="flex gap-2 items-end">
                       <Input
-                        value={t}
-                        onChange={(e: ChangeEvent<HTMLInputElement>) => editTema(m.id, i, e.target.value)}
+                        value={t.nombre}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => editTema(m.id, i, 'nombre', e.target.value)}
                         className="flex-1"
+                      />
+                      <Input
+                        type="number"
+                        value={t.dificultad}
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => editTema(m.id, i, 'dificultad', Number(e.target.value))}
+                        placeholder="Dif."
+                        className="w-20"
                       />
                       <Button variant="destructive" onClick={() => removeTema(m.id, i)}>Borrar</Button>
                     </li>
