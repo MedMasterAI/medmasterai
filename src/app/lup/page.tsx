@@ -164,11 +164,25 @@ export default function LUPPage() {
   };
 
   const generarPlan = async () => {
-    const totalBloques = Object.values(disp).reduce((a, b) => a + b.length, 0);
+    const totalBloquesSemana = Object.values(disp).reduce(
+      (a, b) => a + b.length,
+      0,
+    );
+    const examDates = materias
+      .map((m) => m.fecha)
+      .filter(Boolean)
+      .map((f) => new Date(f).getTime())
+      .filter((n) => !isNaN(n));
+    const latest = examDates.length ? Math.max(...examDates) : Date.now();
+    const weeksRange = Math.max(
+      1,
+      Math.ceil((latest - Date.now()) / (7 * 24 * 60 * 60 * 1000)) + 1,
+    );
+    const totalBloques = totalBloquesSemana * weeksRange;
     const totalTemas = materias.reduce((a, m) => a + m.temas.length, 0);
     if (totalBloques < totalTemas) {
       alert(
-        "Hay menos bloques que temas disponibles. Considera ajustar tu disponibilidad o reducir temas.",
+        "La disponibilidad semanal podría no cubrir todos los temas a tiempo. Considera ampliar tus bloques o ajustar las fechas.",
       );
     }
     setLoading(true);
@@ -517,6 +531,7 @@ export default function LUPPage() {
               <thead>
                 <tr className="bg-muted">
                   <th className="p-2 text-left">Fecha</th>
+                  <th className="p-2 text-left">Día</th>
                   <th className="p-2 text-left">Materia</th>
                   <th className="p-2 text-left">Tema</th>
                   <th className="p-2 text-left">Tipo</th>
@@ -548,16 +563,24 @@ export default function LUPPage() {
                   <tbody>
                     {Object.entries(weeks).map(([w, items]) => (
                       <React.Fragment key={w}>
-                        <tr className="bg-muted/50">
-                          <td colSpan={9} className="p-2 font-semibold">
+                        <tr className="bg-accent/40">
+                          <td colSpan={10} className="p-2 font-semibold">
                             Semana {Number(w) + 1}
                           </td>
                         </tr>
                         {items.map((p) => {
                           const idx = plan.indexOf(p);
                           return (
-                            <tr key={p.fecha + idx} className="border-t">
+                            <tr
+                              key={p.fecha + idx}
+                              className={`border-t ${p.tipo === "repaso" ? "bg-secondary/30" : "bg-primary/10"}`}
+                            >
                               <td className="p-2">{p.fecha}</td>
+                              <td className="p-2">
+                                {new Date(p.fecha).toLocaleDateString("es-ES", {
+                                  weekday: "short",
+                                })}
+                              </td>
                               <td className="p-2">{p.materia}</td>
                               <td className="p-2">{p.tema}</td>
                               <td className="p-2">{p.tipo}</td>

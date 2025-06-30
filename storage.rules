@@ -1,0 +1,15 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Permitir a cada usuario autenticado escribir en su carpeta temporal
+    match /temp_uploads/{userId}/{noteId}/{fileName} {
+      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if false;
+    }
+
+    // Bloquear todo lo dem\u00e1s por defecto
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

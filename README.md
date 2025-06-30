@@ -101,8 +101,20 @@ Si Puppeteer no encuentra Chrome, define también `CHROME_PATH` con la ruta al e
 ### Notificaciones por correo (Resend)
 Configura el envío de emails definiendo `RESEND_API_KEY` en tu `.env` y usando una dirección de remitente asociada a un dominio verificado en [Resend](https://resend.com). Las rutas `/api/send-support-email` y `/api/send-note-ready` utilizan esta clave para notificar a los usuarios.
 
+
 ### Pagos (Mercado Pago)
 Define `MP_ACCESS_TOKEN` para autenticar las llamadas a la API de Mercado Pago.
+
+## Reglas de Firebase Storage
+Para subir los archivos PDF a la carpeta `temp_uploads` necesitas definir reglas de
+seguridad que permitan la escritura al usuario autenticado.
+Incluye el archivo `storage.rules` de este repositorio y ejecuta:
+
+```bash
+firebase deploy --only storage
+```
+
+Esto habilitará que cada usuario suba sus archivos temporales sin exponer otras rutas.
 
 ## Planes y sistema de créditos
 

@@ -19,7 +19,10 @@ const AI_PROMPT = `Eres un planificador académico humano y empático.
 9. Ajusta los métodos de estudio a las preferencias del usuario y divide los temas muy difíciles en varios bloques si fuera necesario.
 10. Todas las fechas del plan deben estar entre hoy y el día del examen de cada materia, respetando el año proporcionado por el usuario.
 11. Devuelve un JSON bajo la clave "plan" con los campos: fecha, materia, tema, tipo ("estudio" o "repaso"), dificultad, metodo_estudio, recursos, justificacion y hecho (false).
-12. Si no puedes asignar todo, agrega un campo "sugerencias" con alternativas.`;
+12. Aplica principios de neurociencia como la repetición espaciada y la práctica intercalada para mejorar la retención.
+13. Si hay tiempo de sobra reparte los repasos a lo largo de los meses usando ese enfoque.
+14. Responde siempre con un plan distribuyendo los temas en los bloques disponibles aunque debas combinarlos.
+15. Si no puedes asignar todo, agrega un campo "sugerencias" con alternativas.`;
 
 function extractPreferences(text: string) {
   const prefs: Record<string, any> = {};
@@ -54,20 +57,38 @@ function extractPreferences(text: string) {
   return prefs;
 }
 
-function sanitizePlanDates(plan: LUPResponse["plan"], materias: LUPData["materias"]): LUPResponse["plan"] {
+function parseDate(value: string): Date | null {
+  if (!value) return null;
+  const std = new Date(value);
+  if (!isNaN(std.getTime())) return std;
+  const parts = value.split(/[/-]/).map((p) => parseInt(p, 10));
+  if (parts.length === 3) {
+    const [d, m, y] = parts;
+    if (d && m && y) {
+      const iso = `${y}-${String(m).padStart(2, "0")}-${String(d).padStart(
+        2,
+        "0",
+      )}`;
+      const dt = new Date(iso);
+      if (!isNaN(dt.getTime())) return dt;
+    }
+  }
+  return null;
+}
+
+function sanitizePlanDates(
+  plan: LUPResponse["plan"],
+  materias: LUPData["materias"],
+): LUPResponse["plan"] {
   const today = new Date();
   const examMap: Record<string, Date> = {};
-  materias.forEach(m => {
-    if (m.fecha) {
-      const d = new Date(m.fecha);
-      if (!isNaN(d.getTime())) {
-        examMap[m.nombre] = d;
-      }
-    }
+  materias.forEach((m) => {
+    const d = m.fecha ? parseDate(m.fecha) : null;
+    if (d) examMap[m.nombre] = d;
   });
-  return plan.filter(p => {
-    const f = new Date(p.fecha);
-    if (isNaN(f.getTime()) || f < today) return false;
+  return plan.filter((p) => {
+    const f = parseDate(p.fecha);
+    if (!f || f < today) return false;
     const exam = examMap[p.materia];
     if (exam && f > exam) return false;
     return true;
