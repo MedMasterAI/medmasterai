@@ -28,7 +28,7 @@ const statusMessages: Record<JobStatus, string> = {
   uploading_pdf: "Subiendo PDF al almacenamiento...",
   saving_firestore: "Guardando registro en Firestore...",
   calling_function: "Iniciando procesamiento con IA...",
-  pending: "Envío registrado. Te notificaremos por mail cuando esté listo.",
+  pending: "Solicitud enviada. Ya podés salir de la página. Te notificaremos por mail cuando esté listo.",
   processing: "Procesando apunte...",
   extracting_text: "Extrayendo texto del PDF...",
   generating_schema: "Generando esquema del apunte...",
@@ -97,7 +97,7 @@ export default function Page() {
       case "uploading_pdf": return 20
       case "saving_firestore": return 30
       case "calling_function": return 40
-      case "pending": return 40
+      case "pending": return 100
       case "processing": return 50
       case "extracting_text": return 60
       case "generating_schema": return 75
@@ -176,10 +176,10 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
         ...(emphasis && points.trim() ? { emphasis: points.trim() } : {}),
       })
 
-      setProgress(40)
+      setProgress(100)
       setJobStatus("pending")
-      setStatusDetail("Procesando en backend (esperando respuesta)...")
-      toast.success("⏳ Apunte en proceso. Te avisaremos cuando esté listo.")
+      setStatusDetail("Procesando en backend. Ya podés salir de la página...")
+      toast.success("⏳ Solicitud enviada. Podés revisar el estado en Mis Apuntes.")
     } catch (err: any) {
       setJobStatus("failed")
       setStatusDetail("Ocurrió un error en el frontend: " + (err.message || err))

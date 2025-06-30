@@ -21,7 +21,7 @@ export const statusMessages: Record<JobStatus, string> = {
   uploading_pdf: "Subiendo PDF al almacenamiento...",
   saving_firestore: "Guardando registro en Firestore...",
   calling_function: "Iniciando procesamiento con IA...",
-  pending: "Envío registrado. Te notificaremos por mail cuando esté listo.",
+  pending: "Solicitud enviada. Ya podés salir de la página. Te notificaremos por mail cuando esté listo.",
   processing: "Procesando apunte...",
   extracting_text: "Extrayendo texto del PDF...",
   generating_schema: "Generando esquema del apunte...",

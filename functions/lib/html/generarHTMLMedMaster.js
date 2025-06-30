@@ -1,13 +1,13 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { PROMPT_HTML_MEDMASTER } from "./promptTemplates.js";
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const MODEL_GEMINI_2_5 = process.env.MODEL_GEMINI_2_5_PRO_PREVIEW || "gemini-2.5-pro";
-const MODEL_GEMINI_1_5 = process.env.MODEL_GEMINI_1_5_PRO || "gemini-2.5-pro-preview-03-25";
+const MODEL_GEMINI_2_5 = process.env.MODEL_GEMINI_2_5_PRO_PREVIEW || "gemini-2.5-pro-preview-05-06";
+const MODEL_GEMINI_1_5 = process.env.MODEL_GEMINI_1_5_PRO || "gemini-1.5-pro";
 const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 export async function generarHTMLMedMaster(esquema, emphasis = "") {
     const esquemaStr = JSON.stringify(esquema);
     const emphasisText = emphasis
-        ? `\n\nEnfatiza especialmente los siguientes puntos al desarrollar el contenido,(NO INCLUYAS COMENTARIOS NI SALUDOS):\n${emphasis}`
+        ? `\n\nEnfatiza especialmente los siguientes puntos al desarrollar el contenido:\n${emphasis}`
         : "";
     const promptText = `${PROMPT_HTML_MEDMASTER}${emphasisText}\n\n${esquemaStr}`;
     // 1️⃣ Intenta con el modelo principal (2.5)

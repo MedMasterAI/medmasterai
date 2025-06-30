@@ -3,8 +3,8 @@ import { PROMPT_HTML_MEDMASTER } from "./promptTemplates.js";
 import { EsquemaJSON } from "../structura/generarEsquemaJSON.js";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
-const MODEL_GEMINI_2_5 = process.env.MODEL_GEMINI_2_5_PRO_PREVIEW || "gemini-2.5-pro";
-const MODEL_GEMINI_1_5 = process.env.MODEL_GEMINI_1_5_PRO || "gemini-2.5-pro-preview-03-25";
+const MODEL_GEMINI_2_5 = process.env.MODEL_GEMINI_2_5_PRO_PREVIEW || "gemini-2.5-pro-preview-05-06";
+const MODEL_GEMINI_1_5 = process.env.MODEL_GEMINI_1_5_PRO || "gemini-1.5-pro";
 const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 
 export async function generarHTMLMedMaster(

@@ -100,7 +100,7 @@ export default function Page() {
       case "validating": return 10
       case "saving_firestore": return 20
       case "calling_function": return 30
-      case "pending": return 40
+      case "pending": return 100
       case "processing": return 50
       case "generating_schema": return 75
       case "formatting_html": return 85
@@ -197,10 +197,10 @@ export default function Page() {
         console.error('[DEBUG] ERROR FUNCIÓN:', err)
       })
 
-      setProgress(40)
+      setProgress(100)
       setJobStatus("pending")
-      setStatusDetail("Procesando en backend (esperando respuesta)...")
-      toast.success("⏳ Apunte en proceso. Te avisaremos cuando esté listo.")
+      setStatusDetail("Procesando en backend. Ya podés salir de la página...")
+      toast.success("⏳ Solicitud enviada. Podés revisar el estado en Mis Apuntes.")
 
     } catch (err: any) {
       setJobStatus("failed")
