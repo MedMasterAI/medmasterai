@@ -99,7 +99,8 @@ async function processJob(jobId) {
         // Placeholder: read file from Storage
         const file = storage.file(job.request.filePath);
         const [buffer] = await file.download();
-        const prompt = buffer.toString().slice(0, 1000);
+        // Use the full JSON contents as the prompt so Gemini has all the context
+        const prompt = buffer.toString();
         let result = await callGemini(prompt);
         if (!result) {
             console.warn('Gemini falló, usando OpenAI');

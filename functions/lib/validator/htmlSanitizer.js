@@ -8,18 +8,9 @@ function stripCodeFences(text) {
         .replace(/```[\s\S]*?```/g, '')
         .replace(/```.*$/g, '');
 }
-/**
- * Elimina cualquier encabezado o comentario textual
- * antes de la primera etiqueta HTML.
- */
-function stripPreamble(text) {
-    const idx = text.search(/<\s*[a-zA-Z]/);
-    return idx >= 0 ? text.slice(idx) : text;
-}
 export function sanitizeHtmlContent(html) {
     const withoutCode = stripCodeFences(html);
-    const cleanStart = stripPreamble(withoutCode);
-    return sanitizeHtml(cleanStart, {
+    return sanitizeHtml(withoutCode, {
         allowedTags: [
             "h1", "h2", "h3", "p", "ul", "ol", "li",
             "div", "span", "table", "thead", "tbody", "tr", "th", "td",

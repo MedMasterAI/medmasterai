@@ -7,7 +7,7 @@ const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 export async function generarHTMLMedMaster(esquema, emphasis = "") {
     const esquemaStr = JSON.stringify(esquema);
     const emphasisText = emphasis
-        ? `\n\nEnfatiza especialmente los siguientes puntos al desarrollar el contenido:\n${emphasis}`
+        ? `\n\nEnfatiza especialmente los siguientes puntos al desarrollar el contenido,(NO INCLUYAS COMENTARIOS NI SALUDOS):\n${emphasis}`
         : "";
     const promptText = `${PROMPT_HTML_MEDMASTER}${emphasisText}\n\n${esquemaStr}`;
     // 1️⃣ Intenta con el modelo principal (2.5)
