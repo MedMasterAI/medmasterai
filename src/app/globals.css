@@ -1,0 +1,336 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+/* ========== BASE VARIABLES ========== */
+@layer base {
+  :root {
+
+    /* Radios y tipografía */
+    --radius: 0.75rem;
+    font-family: 'Inter', sans-serif;
+
+    /* Fondo principal */
+    --background: #fafaff; /* Fondo muy claro */
+    --foreground: #4c2e9c; /* Texto oscuro */ 
+    --bg: var(--background);
+    --text: var(--foreground);
+  
+    /* Sidebar */
+    --sidebar: linear-gradient(180deg, #f5f4ff 0%, #ebedff 100%);
+    --sidebar-foreground: #4c2e9c;
+    --sidebar-primary: #6c5ce7;
+    --sidebar-primary-foreground: #fff;
+    --sidebar-accent: #ecebff;
+    --sidebar-accent-foreground: #6c5ce7;
+    --sidebar-border: #d5d0ff;
+  
+    /* Card principal */
+    --card: #ffffff;/* Blanco */
+    --card-foreground: #222;
+    --card-border: #b6aaff;
+  
+    /* Card interna/ventaja/features */
+    --card-inner: #f4efff;
+    --card-feature: #ede6ff;
+    --card-feature-border: #cec0ff;
+    --card-feature-title: #4c2e9c;
+    --card-feature-desc: #7a739b;
+    --card-feature-text: #4c2e9c;
+
+    /* Colores principales */
+    --primary: #7b61ff;
+    --primary-foreground: #fff;
+  
+    /* Secundarios y muted */
+    --secondary: #efeaff;
+    --secondary-foreground: #4c3691;
+    --muted: #f3f0ff;
+    --muted-foreground: #8a81b6;
+  
+    /* Acento */
+    --accent: #6b4cff;
+    --accent-foreground: #fff;
+
+    /* Gradiente de la barra de progreso */
+    --progress-from: #7b61ff;
+    --progress-via: #735fd7;
+    --progress-to: rgb(201, 195, 227);
+  
+    /* Textos */
+    --text: var(--foreground);
+    --text-secondary: #86859a;
+    
+    /* Sombra tarjeta */
+    --shadow-card: 0 4px 24px 0 rgba(100, 80, 200, 0.04);
+  
+    /* Otros */
+    --destructive: #f44336;
+    --border: #b6aaff;
+    --input: #ece6ff;
+    --ring: #7b61ff;
+  }
+  
+  .dark {
+    --background: #29264c;
+    --foreground: #f5f2ff;
+    --bg: var(--background);
+    --text: var(--foreground);
+
+    --card: #1e1c2f;
+    --card-foreground: #fff;
+
+    --card-feature: #2d294a;
+    --card-feature-border: #8170ff;
+    --card-feature-title: #d4c9ff;
+    --card-feature-desc: #b1a6d4;
+    --card-feature-text: #d4c9ff;
+
+    --primary: #8f77ff;
+    --primary-foreground: #fff;
+
+    --secondary: #29264c;
+    --secondary-foreground: #d4c9ff;
+
+    --muted: #2a2748;
+    --muted-foreground: #aca5d1;
+
+    --accent: #ffd966;
+    --accent-foreground: #21194d;
+
+    --destructive: #f44336;
+
+    --border: #2a2748;
+    --input: #2a2748;
+    --ring: #8f77ff;
+
+    --sidebar: rgba(28, 29, 60, 0.96);
+    --sidebar-foreground: #e1dfff;
+    --sidebar-primary: #7d6bff;
+    --sidebar-primary-foreground: #fff;
+    --sidebar-accent: #35385c;
+    --sidebar-accent-foreground: #d0c6ff;
+    --sidebar-border: #272a4d;
+  }
+
+  body {
+    background: transparent !important;
+    color: var(--foreground);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-color: var(--border);
+    outline-color: var(--ring);
+    transition:
+    background-color 0.18s,
+    color 0.18s,
+    border-color 0.18s;
+  }
+}
+
+/* ========== SIDEBAR MODERNO ========== */
+.sidebar {
+  background: var(--sidebar);
+  color: var(--sidebar-foreground);
+  min-width: 250px;
+  max-width: 300px;
+  border-right: 1px solid var(--sidebar-border);
+  box-shadow: 0 2px 24px 0 rgba(123, 97, 255, 0.08);
+  transition:
+    background 0.22s,
+    color 0.22s,
+    width 0.3s;
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+}
+
+.sidebar a,
+.sidebar button {
+  color: var(--sidebar-foreground);
+  font-weight: 600;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+
+.sidebar a.active,
+.sidebar button.active,
+.sidebar a[aria-current="page"] {
+  background: var(--sidebar-primary);
+  color: var(--sidebar-primary-foreground);
+  box-shadow: 0 1px 6px 0 rgba(123, 97, 255, 0.15);
+}
+
+.sidebar a:focus-visible,
+.sidebar button:focus-visible {
+  outline: 2px solid var(--sidebar-primary);
+  outline-offset: 2px;
+}
+
+.sidebar a:hover,
+.sidebar button:hover,
+[data-sidebar="menu-button"]:hover {
+  background: var(--sidebar-accent);
+  color: var(--sidebar-accent-foreground);
+  box-shadow: 0 2px 12px 0 rgba(123, 97, 255, 0.10);
+}
+
+.sidebar .sidebar-footer {
+  border-top: 1px solid var(--sidebar-border);
+  padding: 1.5rem 1rem;
+  font-size: 0.95rem;
+  color: var(--muted-foreground);
+  background: transparent;
+  margin-top: auto;
+}
+
+/* ========== ANIMACIONES SUAVES ========== */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* ========== UTILIDADES EXTRA ========== */
+@layer base {
+  .bg-background {
+    background: var(--background) !important;
+  }
+  .bg-sidebar {
+    background: var(--sidebar) !important;
+  }
+  .bg-card {
+    background: var(--card) !important;
+  }
+  .bg-primary {
+    background: var(--primary) !important;
+  }
+  .text-foreground {
+    color: var(--foreground) !important;
+  }
+  .text-sidebar {
+    color: var(--sidebar-foreground) !important;
+  }
+  .text-primary {
+    color: var(--primary) !important;
+  }
+  .border-card {
+    border-color: var(--card) !important;
+  }
+}
+
+/* ========== BOTONES Y TARJETAS MODERNOS ========== */
+.button, .btn, button, [type="button"], [type="submit"] {
+  border-radius: 0.75rem;
+  font-family: inherit;
+  font-weight: 600;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 2px 8px 0 rgba(247, 247, 248, 0.1);
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+  outline: none;
+}
+
+.button:hover, .btn:hover, button:hover, [type="button"]:hover, [type="submit"]:hover {
+  background: #6f54dd;
+}
+
+.card, .bg-card {
+  background: var(--card);
+  border-radius: 1.25rem;
+  box-shadow: var(--shadow-card);
+  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 900px) {
+  .sidebar { min-width: 64px; max-width: 68px; }
+  .sidebar .sidebar-footer { padding: 0.6rem 0.2rem; font-size: 0.8rem;}
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #e3d8ff;
+  border-radius: 8px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #21194d;
+}
+
+/* ========== TRANSICIÓN SUAVE EN TODO ========== */
+* {
+  transition:
+    background-color 0.22s,
+    color 0.22s,
+    border-color 0.22s,
+    box-shadow 0.18s;
+}
+.bg-sidebar {
+  background-color: var(--sidebar) !important;
+  color: var(--sidebar-foreground) !important;
+  transition: background 0.25s, color 0.2s;
+}
+
+/* ========== TIPOGRAFÍA BASE ========== */
+@layer base {
+  h1 {
+    @apply text-4xl font-bold leading-tight mb-4;
+  }
+  h2 {
+    @apply text-3xl font-semibold leading-snug mb-3;
+  }
+  h3 {
+    @apply text-2xl font-semibold leading-snug mb-2;
+  }
+  p {
+    @apply text-base leading-relaxed mb-4;
+  }
+  label {
+    @apply text-sm font-medium;
+  }
+}

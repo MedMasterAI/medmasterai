@@ -1,0 +1,11 @@
+// functions/tsconfig.dev.json
+{
+  "extends": "./tsconfig.json", // Extiende la configuración principal
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.d.ts",
+    ".eslintrc.js" // Esto permite que ESLint también linté tu archivo de configuración
+  ]
+  // No necesitas "exclude" aquí si ya está en tsconfig.json y este lo extiende
+}
