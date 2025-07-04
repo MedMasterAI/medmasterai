@@ -73,21 +73,30 @@ export default function Page() {
       return
     }
 
+    let mimeType = file ? file.type.split(';')[0] : ''
+
+    const extensionMap: Record<string, string> = {
+      mp3: 'audio/mpeg',
+      mp4: 'audio/mp4',
+      mpeg: 'audio/mpeg',
+      mpga: 'audio/mpga',
+      m4a: 'audio/m4a',
+      wav: 'audio/wav',
+      webm: 'audio/webm',
+      ogg: 'audio/ogg',
+      flac: 'audio/flac'
+    }
+
+    if (file && !mimeType) {
+      const ext = file.name.split('.').pop()?.toLowerCase() || ''
+      mimeType = extensionMap[ext] || ''
+    }
+
     if (file) {
-      const type = file.type.split(';')[0]
-      const allowed = [
-        'audio/mpeg',
-        'audio/mp3',
-        'audio/mp4',
-        'audio/mpga',
-        'audio/m4a',
-        'audio/x-m4a',
-        'audio/wav',
-        'audio/webm'
-      ]
-      if (!allowed.includes(type)) {
+      const allowed = Object.values(extensionMap)
+      if (!allowed.includes(mimeType)) {
         setJobStatus('failed')
-        setStatusDetail('Formato de audio no soportado. Usa mp3, mp4, mpeg, mpga, m4a, wav o webm.')
+        setStatusDetail('Formato de audio no soportado. Usa mp3, mp4, mpeg, mpga, m4a, wav, webm, ogg o flac.')
         toast.error('Formato de audio no soportado.')
         return
       }
@@ -123,7 +132,7 @@ export default function Page() {
         noteId,
         plan,
         fileName: file ? file.name : 'audio.mp3',
-        fileMimeType: file ? file.type : 'audio/mpeg',
+        fileMimeType: file ? mimeType || 'audio/mpeg' : 'audio/mpeg',
         ...(file ? {} : { audioUrl }),
       })
 
