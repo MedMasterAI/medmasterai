@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Bot, Video, BookOpen, User } from "lucide-react"
+import { Bot, Video, BookOpen, User, Mic } from "lucide-react"
 
 const items = [
   { href: "/dashboard/apunty", label: "Apunty", icon: Bot },
   { href: "/dashboard/videoai", label: "VideoAI", icon: Video },
+  { href: "/dashboard/audioai", label: "AudioAI", icon: Mic },
   { href: "/dashboard/mis-apuntes", label: "Apuntes", icon: BookOpen },
   { href: "/dashboard", label: "Perfil", icon: User },
 ]

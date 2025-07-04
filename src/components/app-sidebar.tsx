@@ -11,6 +11,8 @@ import {
   FaCreditCard,
   FaMagic,
   FaUser,
+  FaMicrophone,
+  FaLifeRing,
 } from "react-icons/fa";
 import { IconType } from "react-icons";
 import Link from "next/link";
@@ -62,6 +64,7 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
       items: [
         { title: "ApuntyAI", url: "/dashboard/apunty", icon: FaRobot },
         { title: "VideoAI", url: "/dashboard/videoai", icon: FaVideo },
+        { title: "AudioAI", url: "/dashboard/audioai", icon: FaMicrophone },
         { title: "Anki", url: "/dashboard/anki", icon: FaMagic },
         {
           title: "Mis Apuntes",
@@ -77,6 +80,7 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
       items: [
         { title: "Pagos", url: "/pagos", icon: FaCreditCard },
         { title: "Mi Perfil", url: "/dashboard/perfil", icon: FaUser },
+        { title: "Soporte", url: "/soporte", icon: FaLifeRing },
       ],
     },
   ];

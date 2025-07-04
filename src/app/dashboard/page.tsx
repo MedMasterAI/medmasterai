@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { FaRobot, FaVideo, FaFileAlt, FaMagic } from "react-icons/fa";
+import { FaRobot, FaVideo, FaFileAlt, FaMagic, FaMicrophone } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserNotes } from "@/hooks/useUserNotes";
@@ -86,10 +86,10 @@ export default function DashboardPage() {
             description="Historial generado"
           />
           <CardItem
-            href="/dashboard/asistente"
-            icon={FaMagic}
-            title="Asistente"
-            description="Consultas sobre tu cuenta"
+            href="/dashboard/audioai"
+            icon={FaMicrophone}
+            title="AudioAI"
+            description="Convierte audio en apuntes"
           />
         </div>
 
