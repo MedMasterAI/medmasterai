@@ -27,6 +27,14 @@ function chunkTextByTokens(text, maxTokens = CHUNK_TOKEN_SIZE) {
     }
     return chunks;
 }
+const OPENAI_AUDIO_LIMIT = 25 * 1024 * 1024; // 25 MB
+function splitAudioBuffer(buffer, maxBytes = OPENAI_AUDIO_LIMIT) {
+    const chunks = [];
+    for (let i = 0; i < buffer.length; i += maxBytes) {
+        chunks.push(buffer.subarray(i, i + maxBytes));
+    }
+    return chunks;
+}
 async function transcribeAudio(buffer, mimeType) {
     try {
         const model = ai.getGenerativeModel({ model: 'gemini-2.5-pro' });
@@ -48,6 +56,9 @@ async function transcribeAudio(buffer, mimeType) {
         const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
         if (!OPENAI_API_KEY)
             throw err;
+        if (buffer.length > OPENAI_AUDIO_LIMIT) {
+            throw new Error('El archivo de audio supera el límite de 25 MB para transcripción.');
+        }
         const form = new FormData();
         const blob = new Blob([buffer], { type: mimeType });
         form.append('file', blob, 'audio');
@@ -65,8 +76,19 @@ async function transcribeAudio(buffer, mimeType) {
         return String(data.text || '');
     }
 }
+async function transcribeAudioChunks(buffer, mimeType) {
+    if (buffer.length <= OPENAI_AUDIO_LIMIT) {
+        return transcribeAudio(buffer, mimeType);
+    }
+    const parts = splitAudioBuffer(buffer, OPENAI_AUDIO_LIMIT);
+    let result = '';
+    for (const part of parts) {
+        result += `${await transcribeAudio(part, mimeType)} `;
+    }
+    return result.trim();
+}
 export async function procesarAudioMedMaster(buffer, mimeType) {
-    const rawText = await transcribeAudio(buffer, mimeType);
+    const rawText = await transcribeAudioChunks(buffer, mimeType);
     const bloques = chunkTextByTokens(rawText);
     const htmlFragments = [];
     for (const texto of bloques) {

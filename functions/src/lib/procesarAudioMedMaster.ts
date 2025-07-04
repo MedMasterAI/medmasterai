@@ -30,6 +30,16 @@ function chunkTextByTokens(text: string, maxTokens = CHUNK_TOKEN_SIZE): string[]
   return chunks
 }
 
+const OPENAI_AUDIO_LIMIT = 25 * 1024 * 1024 // 25 MB
+
+function splitAudioBuffer(buffer: Buffer, maxBytes = OPENAI_AUDIO_LIMIT): Buffer[] {
+  const chunks: Buffer[] = []
+  for (let i = 0; i < buffer.length; i += maxBytes) {
+    chunks.push(buffer.subarray(i, i + maxBytes))
+  }
+  return chunks
+}
+
 async function transcribeAudio(buffer: Buffer, mimeType: string): Promise<string> {
   try {
     const model = ai.getGenerativeModel({ model: 'gemini-2.5-pro' })
@@ -49,6 +59,10 @@ async function transcribeAudio(buffer: Buffer, mimeType: string): Promise<string
     console.warn('Gemini transcription failed:', (err as any)?.message)
     const OPENAI_API_KEY = process.env.OPENAI_API_KEY
     if (!OPENAI_API_KEY) throw err
+
+    if (buffer.length > OPENAI_AUDIO_LIMIT) {
+      throw new Error('El archivo de audio supera el límite de 25 MB para transcripción.')
+    }
 
     const form = new FormData()
     const blob = new Blob([buffer], { type: mimeType })
@@ -71,8 +85,20 @@ async function transcribeAudio(buffer: Buffer, mimeType: string): Promise<string
   }
 }
 
+async function transcribeAudioChunks(buffer: Buffer, mimeType: string): Promise<string> {
+  if (buffer.length <= OPENAI_AUDIO_LIMIT) {
+    return transcribeAudio(buffer, mimeType)
+  }
+  const parts = splitAudioBuffer(buffer, OPENAI_AUDIO_LIMIT)
+  let result = ''
+  for (const part of parts) {
+    result += `${await transcribeAudio(part, mimeType)} `
+  }
+  return result.trim()
+}
+
 export async function procesarAudioMedMaster(buffer: Buffer, mimeType: string) {
-  const rawText = await transcribeAudio(buffer, mimeType)
+  const rawText = await transcribeAudioChunks(buffer, mimeType)
   const bloques = chunkTextByTokens(rawText)
   const htmlFragments: string[] = []
   for (const texto of bloques) {
