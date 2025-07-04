@@ -28,19 +28,42 @@ function chunkTextByTokens(text, maxTokens = CHUNK_TOKEN_SIZE) {
     return chunks;
 }
 async function transcribeAudio(buffer, mimeType) {
-    const model = ai.getGenerativeModel({ model: 'gemini-2.5-pro' });
-    const result = await model.generateContent({
-        contents: [
-            {
-                role: 'user',
-                parts: [
-                    { text: 'Transcribe el siguiente audio en texto:' },
-                    { inlineData: { mimeType, data: buffer.toString('base64') } }
-                ]
-            }
-        ]
-    });
-    return result.response?.text() || '';
+    try {
+        const model = ai.getGenerativeModel({ model: 'gemini-2.5-pro' });
+        const result = await model.generateContent({
+            contents: [
+                {
+                    role: 'user',
+                    parts: [
+                        { text: 'Transcribe el siguiente audio en texto:' },
+                        { inlineData: { mimeType, data: buffer.toString('base64') } }
+                    ]
+                }
+            ]
+        });
+        return result.response?.text() || '';
+    }
+    catch (err) {
+        console.warn('Gemini transcription failed:', err?.message);
+        const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+        if (!OPENAI_API_KEY)
+            throw err;
+        const form = new FormData();
+        const blob = new Blob([buffer], { type: mimeType });
+        form.append('file', blob, 'audio');
+        form.append('model', 'whisper-1');
+        const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+            body: form
+        });
+        if (!res.ok) {
+            const txt = await res.text();
+            throw new Error(`OpenAI error ${res.status}: ${txt}`);
+        }
+        const data = (await res.json());
+        return String(data.text || '');
+    }
 }
 export async function procesarAudioMedMaster(buffer, mimeType) {
     const rawText = await transcribeAudio(buffer, mimeType);
