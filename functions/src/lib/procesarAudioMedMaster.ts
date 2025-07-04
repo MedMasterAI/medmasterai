@@ -1,10 +1,11 @@
-import { html as beautifyHtml } from 'js-beautify'
+import beautify from 'js-beautify';
+const beautifyHtml = beautify.html;
 import { GoogleGenerativeAI } from '@google/generative-ai'
-import { generarEsquemaJSON } from '@lib/structura/generarEsquemaJSON.js'
-import { generarHTMLMedMaster } from '@lib/html/generarHTMLMedMaster.js'
-import { sanitizeHtmlContent } from '@lib/validator/htmlSanitizer.js'
-import { checkHtmlRules } from '@lib/validator/ruleChecker.js'
-import { htmlToPdf } from '@lib/pdf/htmlToPdf.js'
+import { generarEsquemaJSON } from '../structura/generarEsquemaJSON.js'
+import { generarHTMLMedMaster } from '../html/generarHTMLMedMaster.js'
+import { sanitizeHtmlContent } from '../validator/htmlSanitizer.js'
+import { checkHtmlRules } from '../validator/ruleChecker.js'
+import { htmlToPdf } from '../pdf/htmlToPdf.js'
 
 const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 const CHUNK_TOKEN_SIZE = 10000
@@ -30,8 +31,8 @@ function chunkTextByTokens(text: string, maxTokens = CHUNK_TOKEN_SIZE): string[]
 }
 
 async function transcribeAudio(buffer: Buffer, mimeType: string): Promise<string> {
-  const result = await ai.models.generateContent({
-    model: 'gemini-2.5-pro',
+  const model = ai.getGenerativeModel({ model: 'gemini-2.5-pro' })
+  const result = await model.generateContent({
     contents: [
       {
         role: 'user',
@@ -42,7 +43,7 @@ async function transcribeAudio(buffer: Buffer, mimeType: string): Promise<string
       }
     ]
   })
-  return result.text || ''
+  return result.response?.text() || ''
 }
 
 export async function procesarAudioMedMaster(buffer: Buffer, mimeType: string) {
