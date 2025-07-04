@@ -1,70 +1,163 @@
-"use client"
-
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+'use client'
+import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { httpsCallable } from 'firebase/functions'
+import { getFirebaseFunctions } from '@/lib/firebase'
+import { getFirestore, doc, setDoc, onSnapshot } from 'firebase/firestore'
+import { getStorage, ref, uploadBytes } from 'firebase/storage'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { ProgressTracker } from '@/components/ProgressTracker'
+import { useAuth } from '@/hooks/useAuth'
+import { useUserPlan } from '@/hooks/useUserPlan'
+import { JobStatus } from '@/lib/statusMessages'
+import { toast } from 'sonner'
+import { Mic } from 'lucide-react'
 
 export default function Page() {
-  const [videoUrl, setVideoUrl] = useState("")
-  const [transcript, setTranscript] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const { user, loading } = useAuth()
+  const { plan } = useUserPlan(user?.uid ?? null)
+
+  const [file, setFile] = useState<File | null>(null)
+  const [audioUrl, setAudioUrl] = useState('')
+  const [progress, setProgress] = useState(0)
+  const [jobStatus, setJobStatus] = useState<JobStatus>('idle')
+  const [statusDetail, setStatusDetail] = useState('')
+  const [downloadUrl, setDownloadUrl] = useState('')
+  const [jobNoteId, setJobNoteId] = useState<string | null>(null)
+  const completedToast = useRef(false)
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+    }
+  }, [loading, user, router])
+
+  useEffect(() => {
+    if (!user?.uid || !jobNoteId) return
+    const db = getFirestore()
+    const noteRef = doc(db, 'users', user.uid, 'notes', jobNoteId)
+    const unsub = onSnapshot(noteRef, snap => {
+      const data = snap.data()
+      if (!data) return
+      const status = (data.status || 'idle').toLowerCase() as JobStatus
+      setJobStatus(status)
+      setProgress(p => Math.max(p, Number(data.progress ?? 0)))
+      setStatusDetail(data.errorMessage || '')
+      if (status === 'completed' && data.url) {
+        setDownloadUrl(data.url)
+        if (!completedToast.current) {
+          toast.success('✅ ¡Tu apunte está listo para descargar!')
+          completedToast.current = true
+        }
+      } else if (status === 'failed') {
+        toast.error(data.errorMessage || 'Error al generar el apunte.')
+      }
+    })
+    return () => unsub()
+  }, [user?.uid, jobNoteId])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setTranscript(null)
-    setLoading(true)
+    setStatusDetail('')
+    setDownloadUrl('')
+
+    if ((!file && !audioUrl) || !user?.uid) {
+      setJobStatus('failed')
+      setStatusDetail('Debes subir un archivo o URL válida.')
+      toast.error('Entrada inválida.')
+      return
+    }
+
     try {
-      const res = await fetch("/api/audioai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ videoUrl })
+      const noteId = Date.now().toString()
+      setJobNoteId(noteId)
+
+      if (file) {
+        setProgress(20)
+        setJobStatus('uploading_audio')
+        const storage = getStorage()
+        const storageRef = ref(storage, `temp_uploads/${user.uid}/${noteId}/${file.name}`)
+        await uploadBytes(storageRef, file)
+      }
+
+      setProgress(30)
+      setJobStatus('saving_firestore')
+      const db = getFirestore()
+      await setDoc(doc(db, 'users', user.uid, 'notes', noteId), {
+        fileName: file ? file.name : 'audio-url',
+        audioUrl: file ? '' : audioUrl,
+        status: 'pending',
+        createdAt: new Date(),
+        plan,
       })
-      if (!res.ok) throw new Error(`Error ${res.status}`)
-      const data = await res.json()
-      setTranscript(data.transcript)
-    } catch (err) {
+
+      setProgress(40)
+      setJobStatus('calling_function')
+      const generate = httpsCallable(getFirebaseFunctions(), 'generateNoteFromAudio', { timeout: 540000 })
+      await generate({
+        noteId,
+        plan,
+        fileName: file ? file.name : 'audio.mp3',
+        fileMimeType: file ? file.type : 'audio/mpeg',
+        ...(file ? {} : { audioUrl }),
+      })
+
+      setProgress(50)
+      setJobStatus('pending')
+      toast.success('⏳ Apunte en proceso. Te avisaremos cuando esté listo.')
+    } catch (err: any) {
       console.error(err)
-      alert("Error procesando video")
-    } finally {
-      setLoading(false)
+      setJobStatus('failed')
+      setStatusDetail(err.message || 'Error')
+      toast.error('Error al iniciar la tarea.')
     }
   }
 
+  if (loading || !user) {
+    return <div className='p-8 text-center'>Cargando…</div>
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="w-full max-w-xl">
-        <CardHeader>
-          <CardTitle>Probar extracción de audio</CardTitle>
-          <CardDescription>Descarga el audio de YouTube y transcribe con Gemini</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="videoUrl">URL de YouTube</Label>
-              <Input
-                id="videoUrl"
-                type="url"
-                required
-                value={videoUrl}
-                onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="https://www.youtube.com/watch?v=..."
-              />
+    <SidebarProvider className='flex flex-col'>
+      <div className='flex flex-1'>
+        <SidebarInset className='px-2 sm:px-6 md:px-12 py-10'>
+          <div className='flex flex-col items-center w-full'>
+            <div className='flex flex-col items-center mb-8'>
+              <div className='bg-primary/10 rounded-full p-4 mb-2'>
+                <Mic className='w-8 h-8 text-primary' />
+              </div>
+              <h1 className='text-2xl md:text-3xl font-extrabold text-text text-center'>Generar Apunte desde Audio</h1>
             </div>
-            <Button type="submit" disabled={loading} className="w-full">
-              {loading ? "Procesando..." : "Extraer y Transcribir"}
-            </Button>
-          </form>
-          {transcript && (
-            <div className="mt-4 whitespace-pre-wrap p-2 border rounded">
-              {transcript}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+
+            <ProgressTracker progress={progress} status={jobStatus} statusDetail={statusDetail} downloadUrl={downloadUrl} />
+
+            <Card className='shadow-card bg-card border border-[var(--card-border)] rounded-2xl w-full mt-4'>
+              <CardHeader className='text-center'>
+                <CardTitle>Subí un audio o pegá un enlace</CardTitle>
+                <CardDescription>Procesaremos el archivo y podrás descargar el PDF.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className='space-y-4'>
+                  <div className='space-y-2'>
+                    <Label htmlFor='file'>Archivo de audio</Label>
+                    <Input id='file' type='file' accept='audio/*' onChange={e => setFile(e.target.files?.[0] || null)} />
+                  </div>
+                  <div className='space-y-2'>
+                    <Label htmlFor='audioUrl'>o URL directa</Label>
+                    <Input id='audioUrl' type='url' value={audioUrl} onChange={e => setAudioUrl(e.target.value)} placeholder='https://...' />
+                  </div>
+                  <Button type='submit' className='w-full'>Enviar Audio</Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   )
 }

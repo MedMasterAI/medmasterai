@@ -4,6 +4,7 @@ export type JobStatus =
   | "idle"
   | "validating"
   | "uploading_pdf"
+  | "uploading_audio"
   | "saving_firestore"
   | "calling_function"
   | "pending"
@@ -19,6 +20,7 @@ export const statusMessages: Record<JobStatus, string> = {
   idle: "Esperando acción del usuario.",
   validating: "Validando datos y permisos...",
   uploading_pdf: "Subiendo PDF al almacenamiento...",
+  uploading_audio: "Subiendo audio al almacenamiento...",
   saving_firestore: "Guardando registro en Firestore...",
   calling_function: "Iniciando procesamiento con IA...",
   pending: "Envío registrado. Te notificaremos por mail cuando esté listo.",

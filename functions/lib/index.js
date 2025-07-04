@@ -618,5 +618,96 @@ export const generateNoteFromVideoEmphasis = functions.https.onCall({ memory: '2
         });
     }
 });
+export const generateNoteFromAudio = functions.https.onCall({ memory: '2GiB', timeoutSeconds: 540, cpu: 2 }, async (request) => {
+    if (!request.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'La función debe ser llamada por un usuario autenticado.');
+    }
+    const uid = request.auth.uid;
+    const { noteId, plan, audioUrl, fileName, fileMimeType } = request.data;
+    if (!noteId || !plan || !fileName || !fileMimeType) {
+        throw new functions.https.HttpsError('invalid-argument', 'Faltan argumentos necesarios para procesar el audio.');
+    }
+    const noteRef = db.collection('users').doc(uid).collection('notes').doc(noteId);
+    const bucket = storage.bucket();
+    const filePath = `temp_uploads/${uid}/${noteId}/${fileName}`;
+    const startTime = Date.now();
+    const startMem = process.memoryUsage().rss;
+    console.log(`generateNoteFromAudio start - rss: ${startMem}`);
+    try {
+        await noteRef.set({
+            status: 'processing',
+            progress: 10,
+            lastUpdated: FieldValue.serverTimestamp(),
+        }, { merge: true });
+        let audioBuffer;
+        if (audioUrl) {
+            const res = await fetch(audioUrl);
+            if (!res.ok)
+                throw new Error(`Fetch ${res.status}`);
+            audioBuffer = Buffer.from(await res.arrayBuffer());
+        }
+        else {
+            const file = bucket.file(filePath);
+            const [exists] = await file.exists();
+            if (!exists) {
+                throw new functions.https.HttpsError('not-found', 'Archivo no encontrado');
+            }
+            const [buf] = await file.download();
+            audioBuffer = buf;
+        }
+        await noteRef.update({
+            status: 'processing',
+            progress: 40,
+            lastUpdated: FieldValue.serverTimestamp(),
+        });
+        const { pdfBuffer, rawText, prettyHtml } = await procesarAudioMedMaster(audioBuffer, fileMimeType);
+        await noteRef.update({
+            status: 'processing',
+            progress: 95,
+            lastUpdated: FieldValue.serverTimestamp(),
+        });
+        const timestamp = Date.now();
+        const finalNoteFilePath = `users/${uid}/notes/${timestamp}-${fileName.replace(/\.[^./]+$/, '_note.pdf')}`;
+        const fileRef = bucket.file(finalNoteFilePath);
+        await fileRef.save(Buffer.from(pdfBuffer), { contentType: 'application/pdf' });
+        const [publicURL] = await fileRef.getSignedUrl({
+            action: 'read',
+            expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        });
+        await noteRef.update({
+            title: fileName.replace(/\.[^./]+$/, '') || 'Apunte desde Audio',
+            url: publicURL,
+            type: 'pdf',
+            rawText: rawText.substring(0, 5000),
+            htmlContent: prettyHtml.substring(0, 5000),
+            createdAt: FieldValue.serverTimestamp(),
+            usedOcr: false,
+            usedVision: false,
+            visionInsights: [],
+            status: 'completed',
+            progress: 100,
+            lastUpdated: FieldValue.serverTimestamp(),
+        });
+        if (!audioUrl) {
+            await bucket.file(filePath).delete().catch(() => { });
+        }
+        return { success: true, noteId, publicURL };
+    }
+    catch (err) {
+        let errorMessage = 'Error desconocido';
+        if (err instanceof Error)
+            errorMessage = err.message;
+        await noteRef.update({
+            status: 'failed',
+            errorMessage,
+            lastUpdated: FieldValue.serverTimestamp(),
+        });
+        throw new functions.https.HttpsError('internal', errorMessage);
+    }
+    finally {
+        console.log(`generateNoteFromAudio end - duration: ${Date.now() - startTime}ms rss:` +
+            ` ${process.memoryUsage().rss}`);
+    }
+});
 export { createJob, worker, getJobStatus, downloadJobResult } from './jobs/jobFunctions.js';
 //# sourceMappingURL=index.js.map
