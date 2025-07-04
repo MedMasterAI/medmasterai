@@ -30,7 +30,9 @@ function chunkTextByTokens(text: string, maxTokens = CHUNK_TOKEN_SIZE): string[]
   return chunks
 }
 
-const OPENAI_AUDIO_LIMIT = 25 * 1024 * 1024 // 25 MB
+// 25 MB is the hard limit for the OpenAI API. We subtract a small margin to
+// account for multipart/form-data overhead when sending the file.
+const OPENAI_AUDIO_LIMIT = 25 * 1024 * 1024 - 1024 // slightly under 25 MB
 
 function splitAudioBuffer(buffer: Buffer, maxBytes = OPENAI_AUDIO_LIMIT): Buffer[] {
   const chunks: Buffer[] = []
