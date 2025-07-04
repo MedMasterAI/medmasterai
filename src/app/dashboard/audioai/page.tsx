@@ -73,6 +73,26 @@ export default function Page() {
       return
     }
 
+    if (file) {
+      const type = file.type.split(';')[0]
+      const allowed = [
+        'audio/mpeg',
+        'audio/mp3',
+        'audio/mp4',
+        'audio/mpga',
+        'audio/m4a',
+        'audio/x-m4a',
+        'audio/wav',
+        'audio/webm'
+      ]
+      if (!allowed.includes(type)) {
+        setJobStatus('failed')
+        setStatusDetail('Formato de audio no soportado. Usa mp3, mp4, mpeg, mpga, m4a, wav o webm.')
+        toast.error('Formato de audio no soportado.')
+        return
+      }
+    }
+
     try {
       const noteId = Date.now().toString()
       setJobNoteId(noteId)
