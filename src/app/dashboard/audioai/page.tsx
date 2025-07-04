@@ -23,7 +23,6 @@ export default function Page() {
   const { plan } = useUserPlan(user?.uid ?? null)
 
   const [file, setFile] = useState<File | null>(null)
-  const [audioUrl, setAudioUrl] = useState('')
   const [progress, setProgress] = useState(0)
   const [jobStatus, setJobStatus] = useState<JobStatus>('idle')
   const [statusDetail, setStatusDetail] = useState('')
@@ -66,9 +65,9 @@ export default function Page() {
     setStatusDetail('')
     setDownloadUrl('')
 
-    if ((!file && !audioUrl) || !user?.uid) {
+    if (!file || !user?.uid) {
       setJobStatus('failed')
-      setStatusDetail('Debes subir un archivo o URL válida.')
+      setStatusDetail('Debes subir un archivo MP3.')
       toast.error('Entrada inválida.')
       return
     }
@@ -77,14 +76,6 @@ export default function Page() {
 
     const extensionMap: Record<string, string> = {
       mp3: 'audio/mpeg',
-      mp4: 'audio/mp4',
-      mpeg: 'audio/mpeg',
-      mpga: 'audio/mpga',
-      m4a: 'audio/m4a',
-      wav: 'audio/wav',
-      webm: 'audio/webm',
-      ogg: 'audio/ogg',
-      flac: 'audio/flac'
     }
 
     if (file && !mimeType) {
@@ -96,7 +87,7 @@ export default function Page() {
       const allowed = Object.values(extensionMap)
       if (!allowed.includes(mimeType)) {
         setJobStatus('failed')
-        setStatusDetail('Formato de audio no soportado. Usa mp3, mp4, mpeg, mpga, m4a, wav, webm, ogg o flac.')
+        setStatusDetail('Formato de audio no soportado. Solo se admite mp3.')
         toast.error('Formato de audio no soportado.')
         return
       }
@@ -118,8 +109,7 @@ export default function Page() {
       setJobStatus('saving_firestore')
       const db = getFirestore()
       await setDoc(doc(db, 'users', user.uid, 'notes', noteId), {
-        fileName: file ? file.name : 'audio-url',
-        audioUrl: file ? '' : audioUrl,
+        fileName: file.name,
         status: 'pending',
         createdAt: new Date(),
         plan,
@@ -131,9 +121,8 @@ export default function Page() {
       await generate({
         noteId,
         plan,
-        fileName: file ? file.name : 'audio.mp3',
-        fileMimeType: file ? mimeType || 'audio/mpeg' : 'audio/mpeg',
-        ...(file ? {} : { audioUrl }),
+        fileName: file.name,
+        fileMimeType: mimeType || 'audio/mpeg',
       })
 
       setProgress(50)
@@ -167,21 +156,22 @@ export default function Page() {
 
             <Card className='shadow-card bg-card border border-[var(--card-border)] rounded-2xl w-full mt-4'>
               <CardHeader className='text-center'>
-                <CardTitle>Subí un audio o pegá un enlace</CardTitle>
+                <CardTitle>Subí un audio MP3</CardTitle>
                 <CardDescription>Procesaremos el archivo y podrás descargar el PDF.</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className='space-y-4'>
                   <div className='space-y-2'>
                     <Label htmlFor='file'>Archivo de audio</Label>
-                    <Input id='file' type='file' accept='audio/*' onChange={e => setFile(e.target.files?.[0] || null)} />
-                  </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='audioUrl'>o URL directa</Label>
-                    <Input id='audioUrl' type='url' value={audioUrl} onChange={e => setAudioUrl(e.target.value)} placeholder='https://...' />
+                    <Input id='file' type='file' accept='audio/mpeg' onChange={e => setFile(e.target.files?.[0] || null)} />
                   </div>
                   <Button type='submit' className='w-full'>Enviar Audio</Button>
                 </form>
+                <div className='mt-6 text-sm text-muted-foreground'>
+                  <p>1. Selecciona tu archivo MP3.</p>
+                  <p>2. Presiona &quot;Enviar Audio&quot; y espera la notificación.</p>
+                  <p>3. Cuando la tarea termine, aparecerá el enlace para descargar el PDF.</p>
+                </div>
               </CardContent>
             </Card>
           </div>
