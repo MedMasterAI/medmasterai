@@ -1,15 +1,15 @@
 import { initializeApp, cert, getApps, getApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
-
+import "dotenv/config";
 if (!getApps().length) {
   initializeApp({
     credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      projectId: process.env.PROJECT_ID,
+      clientEmail: process.env.CLIENT_EMAIL,
+      privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, "\n"),
     }),
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+    storageBucket: process.env.STORAGE_BUCKET,
   });
 }
 
@@ -17,6 +17,8 @@ if (!getApps().length) {
 export const dbAdmin = getFirestore(getApp());
 export const storageAdmin = getStorage(getApp()).bucket();
 
-console.log({
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-});
+if (process.env.NODE_ENV !== "production") {
+  console.log({
+    storageBucket: process.env.STORAGE_BUCKET,
+  });
+}

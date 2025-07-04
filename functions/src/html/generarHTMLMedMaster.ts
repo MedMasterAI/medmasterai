@@ -7,9 +7,15 @@ const MODEL_GEMINI_2_5 = process.env.MODEL_GEMINI_2_5_PRO_PREVIEW || "gemini-2.5
 const MODEL_GEMINI_1_5 = process.env.MODEL_GEMINI_1_5_PRO || "gemini-1.5-pro";
 const ai = new GoogleGenerativeAI(GEMINI_API_KEY);
 
-export async function generarHTMLMedMaster(esquema: EsquemaJSON): Promise<string> {
+export async function generarHTMLMedMaster(
+  esquema: EsquemaJSON,
+  emphasis: string = ""
+): Promise<string> {
   const esquemaStr = JSON.stringify(esquema);
-  const promptText = `${PROMPT_HTML_MEDMASTER}\n\n${esquemaStr}`;
+  const emphasisText = emphasis
+    ? `\n\nEnfatiza especialmente los siguientes puntos al desarrollar el contenido:\n${emphasis}`
+    : "";
+  const promptText = `${PROMPT_HTML_MEDMASTER}${emphasisText}\n\n${esquemaStr}`;
 
   // 1️⃣ Intenta con el modelo principal (2.5)
   try {

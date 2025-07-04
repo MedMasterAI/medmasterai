@@ -3,8 +3,14 @@ import sanitizeHtml from "sanitize-html";
  * Elimina etiquetas y atributos no permitidos,
  * dejando solo las tags y clases que usa MedMaster.
  */
+function stripCodeFences(text) {
+    return text
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/```.*$/g, '');
+}
 export function sanitizeHtmlContent(html) {
-    return sanitizeHtml(html, {
+    const withoutCode = stripCodeFences(html);
+    return sanitizeHtml(withoutCode, {
         allowedTags: [
             "h1", "h2", "h3", "p", "ul", "ol", "li",
             "div", "span", "table", "thead", "tbody", "tr", "th", "td",
@@ -21,7 +27,9 @@ export function sanitizeHtmlContent(html) {
             tr: [],
             th: [],
             td: [],
-            h1: [], h2: [], h3: [],
+            h1: [],
+            h2: [],
+            h3: [],
             p: [],
             li: [],
             blockquote: [],
