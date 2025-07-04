@@ -17,8 +17,6 @@ if (!getApps().length) {
 export const dbAdmin = getFirestore(getApp());
 export const storageAdmin = getStorage(getApp()).bucket();
 
-if (process.env.NODE_ENV !== "production") {
   console.log({
     storageBucket: process.env.STORAGE_BUCKET,
   });
-}
