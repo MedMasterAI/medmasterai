@@ -54,7 +54,3 @@ jobs-run/dist
 
 # ignore extraneous prompt data, but keep source templates
 *prompt*
-!lib/html/promptTemplates.ts
-!lib/structura/promptTemplates.ts
-!functions/src/html/promptTemplates.ts
-!functions/src/structura/promptTemplates.ts
