@@ -14,7 +14,7 @@ export default function HomePage() {
   }, [])
 
   return (
-    <main className="min-h-screen w-full bg-background text-foreground flex flex-col items-center px-2 relative overflow-x-hidden transition-colors duration-300">
+    <main className="min-h-screen w-full bg-background text-foreground flex flex-col items-center px-2 relative overflow-x-hidden transition-colors duration-300 font-sans">
 
       {/* HERO fondo imagen y gradiente */}
       <div className="absolute top-0 left-0 w-full h-[600px] md:h-[700px] z-0">
@@ -22,16 +22,12 @@ export default function HomePage() {
           src="/maint.PNG"
           alt="Mountains"
           fill
-          style={{
-            objectFit: "cover",
-            objectPosition: "top",
-            opacity: 0.98,
-            transition: "opacity 0.2s",
-          }}
+          className="object-cover object-top opacity-95 transition-opacity"
           priority
         />
         {/* Gradiente para fundir la imagen con el fondo oscuro */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#21163480] to-[#131121] pointer-events-none"/>
+        <div className="absolute inset-0 bg-black/40 z-0" />
       </div>
       {/* Animated gradient blob */}
       <motion.div
@@ -49,27 +45,24 @@ export default function HomePage() {
         transition={{ duration: 0.6 }}
         className="w-full flex justify-between items-center py-6 px-8 max-w-6xl z-10"
       >
-        <div className="flex items-center gap-3">
-          <Image src="/logo2.png" alt="MedMaster" width={90} height={90} className="rounded-lg" />
+        <div className="flex items-center gap-2">
+          <Image src="/logo-medmaster.png" alt="MedMaster" width={36} height={36} />
+          <span className="font-semibold text-white text-xl">MedMaster</span>
         </div>
-        <Link href="/login">
-          <Button
-            variant="outline"
-            className="border-white/10 text-white/90 bg-[#1d1b2d] hover:bg-[#2a2748] hover:text-purple-300 transition rounded-xl px-7 py-2 font-semibold shadow-none"
-          >
+        <Link href="/login" className="mt-4 md:mt-0">
+          <Button className="px-4 py-2 rounded-lg border border-white bg-transparent text-white hover:bg-white hover:text-purple-700 transition">
             Ingresar
           </Button>
         </Link>
       </motion.header>
 
       {/* HERO */}
-      <section className="z-10 flex flex-col items-center w-full mt-8 mb-2" style={{ minHeight: 340, paddingTop: 32 }}>
+      <section className="z-10 flex flex-col items-center w-full mt-8 mb-2 min-h-[340px] pt-8">
         <motion.h1
           initial={{ opacity: 0, y: -22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-4xl md:text-6xl font-extrabold text-center tracking-tight leading-tight bg-gradient-to-r from-[#c0b5ff] via-[#a791ff] to-[#f3e9ff] bg-clip-text text-transparent drop-shadow-md"
-
+          className="font-bold leading-tight text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-center tracking-tight bg-gradient-to-r from-[#c0b5ff] via-[#a791ff] to-[#f3e9ff] bg-clip-text text-transparent drop-shadow-md"
         >
           Aprendé más rápido,<br /> como nunca antes.
         </motion.h1>
@@ -77,7 +70,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.23 }}
-          className="mt-7 text-lg md:text-2xl text-[#e8e6ff] text-center max-w-2xl font-medium drop-shadow"
+          className="text-lg text-gray-200 text-center max-w-2xl font-medium mb-6"
         >
           Convertí videos, PDFs o audios en apuntes, flashcards y más, con ayuda de la IA.
         </motion.p>
@@ -85,7 +78,7 @@ export default function HomePage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.45 }}
-          className="mt-10"
+          className="mt-8"
         >
           <Link href="/login">
             <Button className="text-base px-8 py-3 rounded-xl bg-[#8f77ff] hover:bg-[#a995ff] text-white font-bold shadow-lg shadow-[#8f77ff20]/40">
@@ -175,6 +168,14 @@ export default function HomePage() {
           </Link>
         </div>
       </section>
+
+      <Image
+        src="/322.png"
+        alt="Decoración"
+        width={1200}
+        height={200}
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full brightness-125 opacity-80 pointer-events-none z-0"
+      />
 
       {/* Footer */}
       <footer className="relative z-10 w-full py-10 text-center text-sm text-[#b9b4d1] border-t border-[#2a2748] bg-[#1a1829]/70 mt-24">

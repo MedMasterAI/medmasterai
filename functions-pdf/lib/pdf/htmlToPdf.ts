@@ -3,6 +3,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.htmlToPdf = htmlToPdf;
 const puppeteer_1 = require("puppeteer");
 
+let browserPromise: Promise<import("puppeteer").Browser> | null = null;
+
+async function getBrowser() {
+  if (browserPromise) return browserPromise;
+
+  const wsEndpoint = process.env.BROWSERLESS_URL;
+  if (wsEndpoint) {
+    browserPromise = (0, puppeteer_1.connect)({ browserWSEndpoint: wsEndpoint });
+  } else {
+    browserPromise = (0, puppeteer_1.launch)({
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath: process.env.CHROME_PATH || undefined,
+    });
+  }
+
+  return browserPromise;
+}
+
 export async function htmlToPdf(fragmentoHtml: string): Promise<Uint8Array>  {
     const fullHtml = `
 
@@ -178,10 +196,7 @@ export async function htmlToPdf(fragmentoHtml: string): Promise<Uint8Array>  {
 </body>
 </html>
 `;
-const browser = await (0, puppeteer_1.launch)({
-  args: ["--no-sandbox", "--disable-setuid-sandbox"],
-  executablePath: process.env.CHROME_PATH || undefined, // Ojo con esto, ver abajo
-});
+const browser = await getBrowser();
 
 const page = await browser.newPage();
 await page.setContent(fullHtml, { waitUntil: "networkidle0" });
@@ -190,6 +205,6 @@ const pdfBuf = await page.pdf({
   margin: { top: "40px", right: "40px", bottom: "40px", left: "40px" },
   printBackground: true,
 });
-await browser.close();
+await page.close();
 return pdfBuf;
 }

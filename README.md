@@ -167,6 +167,11 @@ npm run --prefix functions deploy
 
 Si necesitas procesar cargas a\u00fan mayores, puedes portar el `worker` a [Cloud Run](https://cloud.google.com/run) y ejecutarlo desde una suscripci\u00f3n de Pub/Sub para disponer de m\u00e1s CPU, memoria y tiempos de ejecuci\u00f3n sin l\u00edmites.
 
+Este repositorio incluye un ejemplo b\u00e1sico en `jobs-run/` para desplegar el
+_worker_ en Cloud Run. El servicio expone un endpoint HTTP que procesa los
+mensajes de Pub/Sub y reutiliza la misma l\u00f3gica de `jobFunctions.ts` para
+manejar cada `jobId`.
+
 ## API de pagos
 
 Se incluyen endpoints para integrar Mercado Pago:

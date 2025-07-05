@@ -20,7 +20,8 @@ app.use(express.json({ limit: "20mb" }));
 app.post("/generate-pdf", async (req: Request, res: Response) => {
   // LOGGING para depuración robusta
   logger.log("HEADERS:", req.headers);
-  logger.log("REQ.BODY (entero):", req.body);
+  // Evitar imprimir el cuerpo completo para reducir I/O
+  logger.log("REQ.BODY keys:", Object.keys(req.body));
   logger.log("Tipo recibido:", typeof req.body.html);
   logger.log("Largo recibido:", req.body.html?.length);
   logger.log("Preview recibido:", req.body.html?.slice(0, 200));

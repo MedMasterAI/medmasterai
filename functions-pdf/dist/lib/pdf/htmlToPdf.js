@@ -1,15 +1,29 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.htmlToPdf = htmlToPdf;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.htmlToPdf = htmlToPdf;
 const puppeteer_1 = require("puppeteer");
-/**
- * Genera un PDF a partir de HTML usando Puppeteer y Google Chrome.
- * @param fragmentoHtml HTML que se inserta en el body.
- * @returns Uint8Array con el buffer del PDF.
- */
+let browserPromise = null;
+async function getBrowser() {
+    if (browserPromise)
+        return browserPromise;
+    const wsEndpoint = process.env.BROWSERLESS_URL;
+    if (wsEndpoint) {
+        browserPromise = (0, puppeteer_1.connect)({ browserWSEndpoint: wsEndpoint });
+    }
+    else {
+        browserPromise = (0, puppeteer_1.launch)({
+            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            executablePath: process.env.CHROME_PATH || undefined,
+        });
+    }
+    return browserPromise;
+}
 async function htmlToPdf(fragmentoHtml) {
     const fullHtml = `
-   <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -175,16 +189,13 @@ async function htmlToPdf(fragmentoHtml) {
 </head>
 
 <body>
-      <div id="contenido">
-        ${fragmentoHtml}
-      </div>
-    </body>
-    </html>
-  `;
-    const browser = await (0, puppeteer_1.launch)({
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
-        
-    });
+  <div id="contenido">
+    ${fragmentoHtml}
+  </div>
+</body>
+</html>
+`;
+    const browser = await getBrowser();
     const page = await browser.newPage();
     await page.setContent(fullHtml, { waitUntil: "networkidle0" });
     const pdfBuf = await page.pdf({
@@ -192,6 +203,6 @@ async function htmlToPdf(fragmentoHtml) {
         margin: { top: "40px", right: "40px", bottom: "40px", left: "40px" },
         printBackground: true,
     });
-    await browser.close();
+    await page.close();
     return pdfBuf;
 }
