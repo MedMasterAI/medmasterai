@@ -48,6 +48,7 @@ lib/credentials/vision-service-account.json
 functions/src/credentials/vision-service-account.*
 functions/lib/credentials/vision-service-account.js*
 functions/firebase-debug.log
+functions/pglite-debug.log
 jobs-run/node_modules
 jobs-run/dist
 

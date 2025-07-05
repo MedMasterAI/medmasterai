@@ -16,7 +16,3 @@ if (!getApps().length) {
 // Exportá SIEMPRE así:
 export const dbAdmin = getFirestore(getApp());
 export const storageAdmin = getStorage(getApp()).bucket();
-
-  console.log({
-    storageBucket: process.env.STORAGE_BUCKET,
-  });

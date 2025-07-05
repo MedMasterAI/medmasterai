@@ -172,6 +172,29 @@ _worker_ en Cloud Run. El servicio expone un endpoint HTTP que procesa los
 mensajes de Pub/Sub y reutiliza la misma l\u00f3gica de `jobFunctions.ts` para
 manejar cada `jobId`.
 
+### Despliegue en Cloud Run
+
+1. Instala las dependencias y compila dentro de `jobs-run/`:
+
+```bash
+cd jobs-run
+npm install && npm run build
+```
+
+2. Establece las variables de entorno necesarias (`JOB_TOPIC`, `GEMINI_API_KEY`, `OPENAI_API_KEY`, ...).
+
+3. Ejecuta el despliegue con:
+
+```bash
+gcloud run deploy jobs-worker \
+  --source=. \
+  --region=us-central1 \
+  --project=TU_PROYECTO \
+  --allow-unauthenticated
+```
+
+El `Dockerfile` de `jobs-run/` ya ejecuta `npm run build` durante la creaci\u00f3n de la imagen.
+
 ## API de pagos
 
 Se incluyen endpoints para integrar Mercado Pago:
