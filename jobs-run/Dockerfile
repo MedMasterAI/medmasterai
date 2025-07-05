@@ -4,6 +4,7 @@ WORKDIR /app
 
 # Install all dependencies and build the TypeScript source
 COPY package*.json tsconfig.json ./
+ENV NODE_ENV=development
 RUN npm install
 COPY . .
 RUN npm run build
