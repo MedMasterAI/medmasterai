@@ -3,6 +3,7 @@ import { useState } from "react";
 import { getAuth, getIdToken } from "firebase/auth";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ERROR_CODES, formatErrorMessage } from "@/lib/errorCodes";
 
 type UpgradeButtonProps = {
   plan: "pro" | "unlimited";
@@ -40,7 +41,7 @@ export function UpgradeButton({ plan }: UpgradeButtonProps) {
         {
           loading: "Generando enlace de pago...",
           success: "Redirigiendo al pago...",
-          error: (err) => `No se pudo iniciar el pago: ${err.message}`,
+          error: () => formatErrorMessage(ERROR_CODES.PAYMENT),
         },
       );
     } catch (e: any) {

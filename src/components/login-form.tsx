@@ -10,6 +10,7 @@ import {
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ensureUserDocWithFreePlan } from "@/lib/ensureUserDocWithFreePlan";
 import { toast } from "sonner";
+import { ERROR_CODES, formatErrorMessage } from "@/lib/errorCodes";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +43,7 @@ export function LoginForm({
       redirectToDashboard();
     } catch (err) {
       console.error(err);
-      toast.error("Error al iniciar con Google");
+      toast.error(formatErrorMessage(ERROR_CODES.LOGIN));
     } finally {
       setLoading(false);
     }
@@ -59,7 +60,7 @@ export function LoginForm({
       redirectToDashboard();
     } catch (err) {
       console.error(err);
-      toast.error("Error al iniciar con Apple");
+      toast.error(formatErrorMessage(ERROR_CODES.LOGIN));
     } finally {
       setLoading(false);
     }
@@ -88,7 +89,7 @@ export function LoginForm({
       redirectToDashboard();
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Error al iniciar con email");
+      toast.error(formatErrorMessage(ERROR_CODES.LOGIN));
     } finally {
       setLoading(false);
     }

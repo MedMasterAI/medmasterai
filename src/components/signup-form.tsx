@@ -6,6 +6,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { ensureUserDocWithFreePlan } from "@/lib/ensureUserDocWithFreePlan";
 import { toast } from "sonner";
+import { ERROR_CODES, formatErrorMessage } from "@/lib/errorCodes";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,7 +57,7 @@ export function SignupForm({
       redirectToDashboard();
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Error al registrarse");
+      toast.error(formatErrorMessage(ERROR_CODES.SIGNUP));
     } finally {
       setLoading(false);
     }

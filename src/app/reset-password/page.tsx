@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { ERROR_CODES, formatErrorMessage } from "@/lib/errorCodes";
 
 export default function ResetPasswordPage() {
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function ResetPasswordPage() {
       toast.success("Se envió un enlace a tu correo");
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Error al enviar correo");
+      toast.error(formatErrorMessage(ERROR_CODES.RESET_PASSWORD));
     } finally {
       setLoading(false);
     }

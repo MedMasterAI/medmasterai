@@ -15,6 +15,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { useUserPlan } from '@/hooks/useUserPlan'
 import { JobStatus } from '@/lib/statusMessages'
 import { toast } from 'sonner'
+import { ERROR_CODES, formatErrorMessage } from '@/lib/errorCodes'
 import { Mic } from 'lucide-react'
 
 export default function Page() {
@@ -46,7 +47,7 @@ export default function Page() {
       const status = (data.status || 'idle').toLowerCase() as JobStatus
       setJobStatus(status)
       setProgress(p => Math.max(p, Number(data.progress ?? 0)))
-      setStatusDetail(data.errorMessage || '')
+      setStatusDetail(data.errorMessage ? formatErrorMessage(ERROR_CODES.AUDIO_PROCESS) : '')
       if (status === 'completed' && data.url) {
         setDownloadUrl(data.url)
         if (!completedToast.current) {
@@ -54,7 +55,7 @@ export default function Page() {
           completedToast.current = true
         }
       } else if (status === 'failed') {
-        toast.error(data.errorMessage || 'Error al generar el apunte.')
+        toast.error(formatErrorMessage(ERROR_CODES.AUDIO_PROCESS))
       }
     })
     return () => unsub()
@@ -131,8 +132,8 @@ export default function Page() {
     } catch (err: any) {
       console.error(err)
       setJobStatus('failed')
-      setStatusDetail(err.message || 'Error')
-      toast.error('Error al iniciar la tarea.')
+      setStatusDetail(formatErrorMessage(ERROR_CODES.AUDIO_PROCESS))
+      toast.error(formatErrorMessage(ERROR_CODES.AUDIO_PROCESS))
     }
   }
 

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
+import { ERROR_CODES, formatErrorMessage } from '@/lib/errorCodes'
 import { useAuth } from '@/hooks/useAuth'
 import { useUserPlan } from '@/hooks/useUserPlan'
 import { useMonthlyUsage } from '@/hooks/useMonthlyUsage'
@@ -73,7 +74,7 @@ export default function Page() {
       const status = (data.status || "idle").toLowerCase() as JobStatus
       setJobStatus(status)
       setProgress((p) => Math.max(p, Number(data.progress ?? getProgressForStatus(status))))
-      setStatusDetail(data.errorMessage || "")
+      setStatusDetail(data.errorMessage ? formatErrorMessage(ERROR_CODES.VIDEO_PROCESS) : "")
       if (status === "completed" && data.url) {
         setDownloadUrl(data.url)
         if (!emailSentRef.current && user?.email) {
@@ -89,7 +90,7 @@ export default function Page() {
           completedToast.current = true
         }
       } else if (status === "failed") {
-        toast.error(data.errorMessage || "Error al generar el apunte.")
+        toast.error(formatErrorMessage(ERROR_CODES.VIDEO_PROCESS))
       }
     })
     return () => unsub()
@@ -204,9 +205,9 @@ export default function Page() {
 
     } catch (err: any) {
       setJobStatus("failed")
-      setStatusDetail("Ocurrió un error en el frontend: " + (err.message || err))
+      setStatusDetail(formatErrorMessage(ERROR_CODES.VIDEO_PROCESS))
       console.error("ERROR:", err)
-      toast.error("🔌 Problema de conexión o permisos.")
+      toast.error(formatErrorMessage(ERROR_CODES.VIDEO_PROCESS))
       setProgress(0)
     }
   }

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { useRequireAuth } from '@/hooks/useRequireAuth'
 import { toast } from 'sonner'
+import { ERROR_CODES, formatErrorMessage } from '@/lib/errorCodes'
 import { Loader2, Sparkles, FileTextIcon, CheckCircle, BookCopy } from 'lucide-react'
 import { motion } from 'framer-motion'
 
@@ -113,7 +114,8 @@ export default function Page() {
       setProgress(100)
       toast.success('¡Listo! Archivo para Anki generado.')
     } catch (err: any) {
-      toast.error(err.message)
+      console.error(err)
+      toast.error(formatErrorMessage(ERROR_CODES.ANKI_PROCESS))
       setProgress(0)
     } finally {
       setLoading(false)
