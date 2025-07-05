@@ -48,3 +48,6 @@ lib/credentials/vision-service-account.json
 functions/src/credentials/vision-service-account.*
 functions/lib/credentials/vision-service-account.js*
 functions/firebase-debug.log
+
+# ignore all prompt files
+*prompt*

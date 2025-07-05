@@ -334,3 +334,14 @@
     @apply text-sm font-medium;
   }
 }
+
+
+/* Modern gradient animation */
+@keyframes gradientShift {
+  0%,100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
+}

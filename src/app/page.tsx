@@ -33,9 +33,22 @@ export default function HomePage() {
         {/* Gradiente para fundir la imagen con el fondo oscuro */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#21163480] to-[#131121] pointer-events-none"/>
       </div>
+      {/* Animated gradient blob */}
+      <motion.div
+        aria-hidden
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 0.6, scale: 1 }}
+        transition={{ duration: 1.2 }}
+        className="absolute -top-24 left-1/2 h-[420px] w-[620px] -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-fuchsia-500 blur-3xl animate-gradient"
+      />
 
       {/* Header */}
-      <header className="w-full flex justify-between items-center py-6 px-8 max-w-6xl z-10">
+      <motion.header
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full flex justify-between items-center py-6 px-8 max-w-6xl z-10"
+      >
         <div className="flex items-center gap-3">
           <Image src="/logo2.png" alt="MedMaster" width={90} height={90} className="rounded-lg" />
         </div>
@@ -47,7 +60,7 @@ export default function HomePage() {
             Ingresar
           </Button>
         </Link>
-      </header>
+      </motion.header>
 
       {/* HERO */}
       <section className="z-10 flex flex-col items-center w-full mt-8 mb-2" style={{ minHeight: 340, paddingTop: 32 }}>
@@ -90,11 +103,13 @@ export default function HomePage() {
         <h2 className="text-3xl font-extrabold mb-8 text-[#c0b5ff]">¿Por qué MedMasterAI?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FeatureCard
+            index={0}
             title="📚 Belleza visual"
             desc="Apuntes organizados, visualmente atractivos, con tablas, emojis y más."
             icon={<BookOpen className="text-[#c0b5ff] w-10 h-10" />}
           />
           <FeatureCard
+            index={1}
             title="🧠 Multimodalidad"
             desc="Crea apuntes desde audio, video o PDF en segundos."
             icon={
@@ -106,6 +121,7 @@ export default function HomePage() {
             }
           />
           <FeatureCard
+            index={2}
             title="🔁 Flashcards & Quizzes"
             desc="Transformá tus apuntes en tarjetas inteligentes en 1 clic."
             icon={
@@ -115,6 +131,7 @@ export default function HomePage() {
             }
           />
           <FeatureCard
+            index={3}
             title="🤖 Chat inteligente"
             desc="Consultá tus apuntes y obtené respuestas contextuales."
             icon={
@@ -135,14 +152,17 @@ export default function HomePage() {
         <h2 className="text-2xl font-bold mb-10 text-[#c0b5ff]/90">Lo que dicen los usuarios</h2>
         <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-7">
           <Testimony
+            index={0}
             quote="Esto me salvó el examen de Semiología. ¡Gracias MedMaster!"
             author="Camila R., UNLP"
           />
           <Testimony
+            index={1}
             quote="Transformé todas mis guías en fichas para estudiar en una noche."
             author="Martín A., UBA"
           />
           <Testimony
+            index={2}
             quote="Recién cuando empecé a usar esto, realmente entendí farmacología."
             author="Rocío G., UNC"
           />
@@ -167,22 +187,36 @@ export default function HomePage() {
 }
 
 // Componente de card para features
-function FeatureCard({ title, desc, icon }: { title: string, desc: string, icon: React.ReactNode }) {
+function FeatureCard({ title, desc, icon, index }: { title: string, desc: string, icon: React.ReactNode, index: number }) {
   return (
-    <div className="rounded-2xl border border-[#2a2748] bg-[#242046cc] p-7 text-left shadow-xl hover:scale-[1.03] transition-all flex flex-col gap-2 min-h-[170px] backdrop-blur-[1.5px]">
+    <motion.div
+      variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ delay: index * 0.1 }}
+      className="rounded-2xl border border-[#2a2748] bg-[#242046cc] p-7 text-left shadow-xl hover:scale-[1.03] transition-all flex flex-col gap-2 min-h-[170px] backdrop-blur-[1.5px]"
+    >
       <h3 className="font-bold text-xl text-[#e9e4ff]">{title}</h3>
       <p className="text-[#b9b4d1] mb-2">{desc}</p>
       <div>{icon}</div>
-    </div>
+    </motion.div>
   )
 }
 
 // Componente para testimonios
-function Testimony({ quote, author }: { quote: string, author: string }) {
+function Testimony({ quote, author, index }: { quote: string, author: string, index: number }) {
   return (
-    <div className="border border-[#2a2748] rounded-2xl p-7 bg-[#1b1831ee] text-left shadow-md flex flex-col gap-3 backdrop-blur-[2px]">
+    <motion.div
+      variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0 } }}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ delay: index * 0.1 }}
+      className="border border-[#2a2748] rounded-2xl p-7 bg-[#1b1831ee] text-left shadow-md flex flex-col gap-3 backdrop-blur-[2px]"
+    >
       <p className="text-lg italic text-[#dcd8ff]">"{quote}"</p>
       <span className="text-xs text-[#c0b5ff]/80 mt-2">{author}</span>
-    </div>
+    </motion.div>
   )
 }

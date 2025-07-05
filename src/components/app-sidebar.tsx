@@ -79,6 +79,7 @@ export function AppSidebar({ className = "" }: AppSidebarProps) {
       icon: FaTachometerAlt,
       items: [
         { title: "Pagos", url: "/pagos", icon: FaCreditCard },
+        { title: "Asistente AI", url: "/dashboard/asistente", icon: FaRobot },
         { title: "Mi Perfil", url: "/dashboard/perfil", icon: FaUser },
         { title: "Soporte", url: "/soporte", icon: FaLifeRing },
       ],
