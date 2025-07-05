@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { htmlToPdf } from "./lib/htmlToPdf";
+import { htmlToPdf } from "./lib/pdf/htmlToPdf";
 import cors from "cors";
 import { logger } from "./logger";
 

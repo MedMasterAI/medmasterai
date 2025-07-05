@@ -2,11 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.htmlToPdf = htmlToPdf;
 const puppeteer_1 = require("puppeteer");
+import { Browser } from "puppeteer";
 
-let browserPromise: Promise<import("puppeteer").Browser> | null = null;
+let browserPromise: Promise<Browser> | null = null;
 
-async function getBrowser() {
-  if (browserPromise) return browserPromise;
+async function getBrowser(): Promise<Browser> {
+  if (browserPromise) return browserPromise!;
 
   const wsEndpoint = process.env.BROWSERLESS_URL;
   if (wsEndpoint) {
@@ -18,7 +19,7 @@ async function getBrowser() {
     });
   }
 
-  return browserPromise;
+  return browserPromise!;
 }
 
 export async function htmlToPdf(fragmentoHtml: string): Promise<Uint8Array>  {

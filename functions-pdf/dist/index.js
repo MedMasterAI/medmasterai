@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const htmlToPdf_1 = require("./lib/htmlToPdf");
+const htmlToPdf_1 = require("./lib/pdf/htmlToPdf");
 const cors_1 = __importDefault(require("cors"));
 const logger_1 = require("./logger");
 const app = (0, express_1.default)();
