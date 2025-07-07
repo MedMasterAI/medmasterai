@@ -104,6 +104,9 @@ Configura el envío de emails definiendo `RESEND_API_KEY` en tu `.env` y usando 
 ### Pagos (Mercado Pago)
 Define `MP_ACCESS_TOKEN` para autenticar las llamadas a la API de Mercado Pago.
 
+### Reporte fiscal personal
+Define `ADMIN_EMAIL` y `NEXT_PUBLIC_ADMIN_EMAIL` con el correo del administrador para restringir el módulo de reporte fiscal.
+
 ## Planes y sistema de créditos
 
 El servicio utiliza un modelo basado en créditos para prevenir abusos. Cada video o PDF procesado descuenta un crédito del tipo correspondiente. Los planes disponibles son:
