@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
+import fs from 'fs'
+import { promises as fsp } from 'fs'
 import path from 'path'
 import os from 'os'
 import ytdl from 'ytdl-core'
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
     }
     console.warn('No captions found, using Whisper')
 
-    const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), 'yt-'))
+    const tmpDir = await fsp.mkdtemp(path.join(os.tmpdir(), 'yt-'))
     const inputPath = path.join(tmpDir, 'input.webm')
     const mp3Path = path.join(tmpDir, 'audio.mp3')
     try {
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
           .on('error', reject)
       })
 
-      const audio = await fs.readFile(mp3Path)
+      const audio = await fsp.readFile(mp3Path)
       const form = new FormData()
       form.append('file', new Blob([audio], { type: 'audio/mp3' }), 'audio.mp3')
       form.append('model', 'whisper-1')
@@ -117,7 +118,7 @@ export async function POST(req: NextRequest) {
         }
       })
     } finally {
-      await fs.rm(tmpDir, { recursive: true, force: true })
+      await fsp.rm(tmpDir, { recursive: true, force: true })
     }
   } catch (err: any) {
     console.error('yt-transcript error', err)
