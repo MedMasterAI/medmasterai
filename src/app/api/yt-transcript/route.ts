@@ -4,13 +4,6 @@ import { promises as fsp } from 'fs'
 import path from 'path'
 import os from 'os'
 import ytdl from 'ytdl-core'
-
-/**
- * Optional Dumpling AI key used to fetch transcripts directly.
- * When available, this provides a more reliable caption source
- * than scraping YouTube or using ytdl-core.
- */
-const DUMPLING_API_KEY = process.env.DUMPLING_API_KEY
 import ffmpeg from 'fluent-ffmpeg'
 import ffmpegPath from 'ffmpeg-static'
 
@@ -27,45 +20,7 @@ function getId(url: string): string | null {
 }
 
 async function fetchCaptions(id: string): Promise<string | null> {
-  // 1️⃣ Try Dumpling AI if API key is available
-  if (DUMPLING_API_KEY) {
-    try {
-      const res = await fetch(
-        'https://app.dumplingai.com/api/v1/get-youtube-transcript',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${DUMPLING_API_KEY}`
-          },
-          body: JSON.stringify({ videoUrl: `https://www.youtube.com/watch?v=${id}` })
-        }
-      )
-      if (res.ok) {
-        const { transcript } = (await res.json()) as { transcript: any }
-        if (Array.isArray(transcript)) {
-          const text = transcript
-            .map((i: any) => (typeof i === 'string' ? i : i.text))
-            .join(' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-          if (text) return text
-        } else if (transcript) {
-          const text = String(transcript)
-            .replace(/\s+/g, ' ')
-            .trim()
-          if (text) return text
-        }
-      } else {
-        const txt = await res.text()
-        console.warn(`Dumpling API error ${res.status}: ${txt}`)
-      }
-    } catch (err) {
-      console.warn('fetchCaptions dumpling API error:', (err as any)?.message)
-    }
-  }
-
-  // 2️⃣ Try the public youtubetranscript.com API
+  // 1️⃣ Try the public youtubetranscript.com API
   try {
     const ytRes = await fetch(`https://youtubetranscript.com/?server_vid2=${id}`)
     if (ytRes.ok && ytRes.headers.get('content-type')?.includes('application/json')) {
@@ -141,7 +96,7 @@ export async function POST(req: NextRequest) {
     const inputPath = path.join(tmpDir, 'input.webm')
     const mp3Path = path.join(tmpDir, 'audio.mp3')
     try {
-      await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
         ytdl(videoUrl, { quality: 'highestaudio' })
           .pipe(fs.createWriteStream(inputPath))
           .on('finish', resolve)
@@ -149,7 +104,7 @@ export async function POST(req: NextRequest) {
       })
 
       ffmpeg.setFfmpegPath(ffmpegPath || '')
-      await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
         ffmpeg(inputPath)
           .audioCodec('libmp3lame')
           .save(mp3Path)

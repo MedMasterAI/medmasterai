@@ -10,7 +10,6 @@ import { consumeCredit } from '@/lib/credits'
 import { slugify, extractTitle } from '@lib/utils/slugify'
 
 export const runtime = 'nodejs'
-const DUMPLING_API_KEY = process.env.DUMPLING_API_KEY!
 // Cantidad de tokens objetivo por chunk de entrada
 const CHUNK_TOKEN_SIZE = 5000
 
@@ -51,45 +50,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'UID requerido' }, { status: 400 })
     }
 
-    let rawText: string
+  let rawText: string
 
-    // 1️⃣ YouTube → Dumpling AI
-    const videoUrl = formData.get('videoUrl')
-    if (typeof videoUrl === 'string' && videoUrl.trim()) {
-      await consumeCredit(uid, 'video')
-      const res = await fetch(
-        'https://app.dumplingai.com/api/v1/get-youtube-transcript',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${DUMPLING_API_KEY}`
-          },
-          body: JSON.stringify({
-            videoUrl: videoUrl.trim(),
-            includeTimestamps: true,
-            timestampsToCombine: 5,
-            preferredLanguage: 'en'
-          })
-        }
+  // 1️⃣ YouTube → Transcripción interna
+  const videoUrl = formData.get('videoUrl')
+  if (typeof videoUrl === 'string' && videoUrl.trim()) {
+    await consumeCredit(uid, 'video')
+    const transcriptRes = await fetch(new URL('/api/yt-transcript', request.nextUrl.origin), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ videoUrl: videoUrl.trim() })
+    })
+    if (!transcriptRes.ok) {
+      const err = await transcriptRes.json().catch(() => ({ error: transcriptRes.statusText }))
+      return NextResponse.json(
+        { error: err.error || transcriptRes.statusText },
+        { status: transcriptRes.status }
       )
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: res.statusText }))
-        return NextResponse.json(
-          { error: err.error || `Dumpling AI error: ${res.status}` },
-          { status: res.status }
-        )
-      }
-      const { transcript } = (await res.json()) as { transcript: any }
-      // Normalizar cualquier formato de transcript a texto plano
-      if (Array.isArray(transcript)) {
-        rawText = transcript
-          .map(item => typeof item === 'string' ? item : item.text)
-          .join(' ')
-      } else {
-        rawText = String(transcript)
-      }
-    } else {
+    }
+    rawText = await transcriptRes.text()
+  } else {
       // 2️⃣ PDF → texto plano
       const file = formData.get('file')
       if (!file || typeof file === 'string') {

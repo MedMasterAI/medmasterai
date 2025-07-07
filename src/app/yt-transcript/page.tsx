@@ -52,7 +52,8 @@ export default function YTTranscriptPage() {
             type="url"
             placeholder="https://www.youtube.com/watch?v=..."
             value={url}
-            onChange={(e) => setUrl(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setUrl(e.target.value)}
             required
           />
         </div>
