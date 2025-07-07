@@ -4,7 +4,7 @@ import path from 'path'
 import os from 'os'
 import ytdl from 'ytdl-core'
 import ffmpeg from 'fluent-ffmpeg'
-import ffmpegPath from '@ffmpeg-installer/ffmpeg'
+import ffmpegPath from 'ffmpeg-static'
 
 export const runtime = 'nodejs'
 
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
           .on('error', reject)
       })
 
-      ffmpeg.setFfmpegPath(ffmpegPath.path)
+      ffmpeg.setFfmpegPath(ffmpegPath || '')
       await new Promise((resolve, reject) => {
         ffmpeg(inputPath)
           .audioCodec('libmp3lame')

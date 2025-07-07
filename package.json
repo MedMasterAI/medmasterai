@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.21",
-    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@google-ai/generativelanguage": "^3.1.0",
     "@google-cloud/storage": "^7.16.0",
     "@google-cloud/vision": "^5.1.0",
@@ -38,6 +37,7 @@
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "emitter": "^0.0.2",
+    "ffmpeg-static": "^5.2.0",
     "firebase": "^11.9.0",
     "firebase-admin": "^13.4.0",
     "fluent-ffmpeg": "^2.1.3",

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import ytdl from 'ytdl-core'
 import ffmpeg from 'fluent-ffmpeg'
-import ffmpegPath from '@ffmpeg-installer/ffmpeg'
+import ffmpegPath from 'ffmpeg-static'
 import { promises as fs } from 'fs'
 import path from 'path'
 import os from 'os'
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
           .on('error', reject)
       })
 
-      ffmpeg.setFfmpegPath(ffmpegPath.path)
+      ffmpeg.setFfmpegPath(ffmpegPath || '')
       await new Promise((resolve, reject) => {
         ffmpeg(inputPath)
           .audioCodec('libmp3lame')
