@@ -20,6 +20,25 @@ function getId(url: string): string | null {
 }
 
 async function fetchCaptions(id: string): Promise<string | null> {
+  // Try the public youtubetranscript.com API first
+  try {
+    const ytRes = await fetch(`https://youtubetranscript.com/?server_vid2=${id}`)
+    if (ytRes.ok) {
+      const data = (await ytRes.json()) as any[]
+      if (Array.isArray(data)) {
+        const text = data
+          .map((c: any) => c.text)
+          .join(' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+        if (text) return text
+      }
+    }
+  } catch (err) {
+    console.warn('fetchCaptions yt API error:', (err as any)?.message)
+  }
+
+  // Fallback to ytdl-core method
   try {
     const info = await ytdl.getInfo(id)
     const tracks =
