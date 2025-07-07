@@ -24,6 +24,14 @@ Compila la aplicación e inicia el servidor en modo producción:
 npm run build && npm start
 ```
 
+## Transcripción de videos de YouTube
+
+Para obtener rápidamente el texto de un video ya no es necesario ejecutar el
+script `transcribe-youtube.js`. Con la aplicación en marcha visita la ruta
+`/yt-transcript`, pega la URL del video y presiona **Obtener transcripción**. Si
+el contenido cuenta con subtítulos disponibles se descargará un archivo `.txt`
+con la transcripción.
+
 ## Funciones
 
 Las funciones de Firebase se encuentran en la carpeta `functions`. Para

@@ -8,8 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "patch-package",
-    "transcribe:yt": "node scripts/transcribe-youtube.js"
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.21",
