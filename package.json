@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "transcribe:yt": "node scripts/transcribe-youtube.js"
   },
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.21",
@@ -78,7 +79,6 @@
     "tailwind-merge": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "tesseract.js": "^6.0.1",
-    "youtube-transcript-api": "^1.0.0",
     "youtube-dl-exec": "^3.0.20",
     "ytdl-core": "^4.11.5"
   },
