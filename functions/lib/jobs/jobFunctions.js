@@ -1,6 +1,7 @@
 import 'dotenv/config'; // Load environment variables from .env file
 import { google } from 'googleapis';
 import * as functions from 'firebase-functions/v2';
+import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue } from 'firebase-admin/firestore';
 import { dbAdmin, storageAdmin } from "../firebase-admin.js"; // PONÉ .js si usás ES Modules y .ts si usás TS directo
@@ -139,7 +140,7 @@ export const downloadJobResult = functions.https.onRequest({ memory: '1GiB', tim
     return;
 });
 const JOB_RETENTION_DAYS = Number(process.env.JOB_RETENTION_DAYS || '30');
-export const cleanupOldJobs = functions.pubsub.schedule('every 24 hours').onRun(async () => {
+export const cleanupOldJobs = onSchedule('every 24 hours', async () => {
     const cutoff = Date.now() - JOB_RETENTION_DAYS * 86400000;
     const query = db
         .collection('jobs')
