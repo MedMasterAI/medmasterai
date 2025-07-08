@@ -1,7 +1,9 @@
 import crypto from 'crypto'
-import { FieldValue } from 'firebase-admin/firestore'
+import { FieldValue, Timestamp } from 'firebase-admin/firestore'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { dbAdmin, storageAdmin } from '../firebase-admin.js'
+
+const API_CACHE_TTL_DAYS = Number(process.env.API_CACHE_TTL_DAYS || '30')
 
 function hashKey(obj: any): string {
   return crypto.createHash('sha256').update(JSON.stringify(obj)).digest('hex')
@@ -25,6 +27,10 @@ async function getCached(service: string, key: string): Promise<any | null> {
   const snap = await ref.get()
   if (!snap.exists) return null
   const data = snap.data() as any
+  if (data.expireAt && data.expireAt.toMillis && data.expireAt.toMillis() < Date.now()) {
+    // expired entry
+    return null
+  }
   if (data.response) return JSON.parse(data.response)
   if (data.storagePath) {
     const [buf] = await storageAdmin.file(data.storagePath).download()
@@ -36,12 +42,13 @@ async function getCached(service: string, key: string): Promise<any | null> {
 async function setCached(service: string, key: string, value: any): Promise<void> {
   const ref = dbAdmin.collection('apiCache').doc(`${service}_${key}`)
   const str = JSON.stringify(value)
+  const expireAt = Timestamp.fromMillis(Date.now() + API_CACHE_TTL_DAYS * 86400000)
   if (Buffer.byteLength(str, 'utf8') < 900000) {
-    await ref.set({ response: str, createdAt: FieldValue.serverTimestamp() })
+    await ref.set({ response: str, createdAt: FieldValue.serverTimestamp(), expireAt })
   } else {
     const path = `apiCache/${service}/${key}.json`
     await storageAdmin.file(path).save(str)
-    await ref.set({ storagePath: path, createdAt: FieldValue.serverTimestamp() })
+    await ref.set({ storagePath: path, createdAt: FieldValue.serverTimestamp(), expireAt })
   }
 }
 

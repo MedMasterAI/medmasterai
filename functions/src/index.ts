@@ -24,6 +24,20 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
 const beautifyHtml = jsBeautify.html_beautify;
+import type { File } from "@google-cloud/storage";
+
+async function waitForFile(
+  file: File,
+  retries = 3,
+  delayMs = 1000
+): Promise<boolean> {
+  for (let i = 0; i < retries; i++) {
+    const [exists] = await file.exists();
+    if (exists) return true;
+    await new Promise((res) => setTimeout(res, delayMs));
+  }
+  return false;
+}
 
 interface GenerateNoteRequestData {
   noteId: string;
@@ -124,7 +138,7 @@ export const generateNoteFromPdf = functions.https.onCall(
       const filePath = `temp_uploads/${uid}/${noteId}/${fileName}`;
       const file = bucket.file(filePath);
 
-      const [exists] = await file.exists();
+      const exists = await waitForFile(file);
       if (!exists) {
         throw new functions.https.HttpsError(
           "not-found",
@@ -971,4 +985,5 @@ export const generateNoteFromAudio = functions.https.onCall(
   }
 );
 
-export { createJob, worker, getJobStatus, downloadJobResult } from './jobs/jobFunctions.js';
+export { createJob, worker, getJobStatus, downloadJobResult, cleanupOldJobs } from './jobs/jobFunctions.js';
+export { deleteApiCacheFile } from './utils/apiCacheCleanup.js';

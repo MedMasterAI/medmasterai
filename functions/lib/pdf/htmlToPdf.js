@@ -15,13 +15,15 @@ export async function htmlToPdf(html) {
     // === LOG COMPLETO DE LO QUE SE ENVÍA ===
     const endpoint = process.env.PDF_SERVICE_URL;
     const payload = { html: htmlLimpio };
-    console.log("\n[DEBUG: htmlToPdf] === ENVÍO A FUNCTION 2 (fetch) ===");
-    console.log("Endpoint:", endpoint);
-    console.log("Payload (JSON):", JSON.stringify(payload, null, 2));
-    console.log("Tipo de htmlLimpio:", typeof htmlLimpio);
-    console.log("Largo de htmlLimpio:", htmlLimpio.length);
-    console.log("Primeros 200 caracteres:", htmlLimpio.slice(0, 200));
-    console.log("=========================\n");
+    if (process.env.DEBUG_PDF === 'true') {
+        console.log("\n[DEBUG: htmlToPdf] === ENVÍO A FUNCTION 2 (fetch) ===");
+        console.log("Endpoint:", endpoint);
+        console.log("Payload (JSON):", JSON.stringify(payload, null, 2));
+        console.log("Tipo de htmlLimpio:", typeof htmlLimpio);
+        console.log("Largo de htmlLimpio:", htmlLimpio.length);
+        console.log("Primeros 200 caracteres:", htmlLimpio.slice(0, 200));
+        console.log("=========================\n");
+    }
     try {
         const response = await fetch(endpoint, {
             method: "POST",

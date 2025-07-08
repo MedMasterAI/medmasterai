@@ -105,6 +105,7 @@ ALLOWED_ORIGINS=https://ejemplo.com,https://otro.com
 ```
 Al desplegar, establece `ALLOWED_ORIGINS` con los dominios autorizados a invocar la función PDF.
 Si Puppeteer no encuentra Chrome, define también `CHROME_PATH` con la ruta al ejecutable.
+Si necesitas depurar la generación de PDFs, define `DEBUG_PDF=true` para mostrar logs detallados.
 
 ### Notificaciones por correo (Resend)
 Configura el envío de emails definiendo `RESEND_API_KEY` en tu `.env` y usando una dirección de remitente asociada a un dominio verificado en [Resend](https://resend.com). Las rutas `/api/send-support-email` y `/api/send-note-ready` utilizan esta clave para notificar a los usuarios.
@@ -114,6 +115,20 @@ Define `MP_ACCESS_TOKEN` para autenticar las llamadas a la API de Mercado Pago.
 
 ### Reporte fiscal personal
 Define `ADMIN_EMAIL` y `NEXT_PUBLIC_ADMIN_EMAIL` con el correo del administrador para restringir el módulo de reporte fiscal.
+
+### TTL de la caché de APIs
+La colección `apiCache` guarda las respuestas de Gemini y otros servicios para acelerar consultas. Controla su tiempo de vida con:
+```bash
+API_CACHE_TTL_DAYS=30  # Días antes de que expire cada entrada
+```
+Firestore elimina automáticamente los documentos vencidos y la función `deleteApiCacheFile` borra el archivo asociado en Cloud Storage.
+
+### Limpieza de jobs antiguos
+Los resultados procesados mediante Pub/Sub se almacenan en `jobs/`. Para evitar acumulación establece:
+```bash
+JOB_RETENTION_DAYS=30
+```
+La tarea programada `cleanupOldJobs` elimina diariamente los documentos y archivos con más antigüedad que el valor indicado.
 
 ## Planes y sistema de créditos
 
@@ -159,6 +174,7 @@ JOB_TOPIC=jobs                # Nombre del topic de Pub/Sub
 JOBS_PER_MINUTE=5             # L\u00edmite de trabajos por usuario
 GEMINI_API_KEY=...            # API key de Gemini
 OPENAI_API_KEY=...            # API key de OpenAI
+JOB_RETENTION_DAYS=30         # Días a conservar cada job completo
 ```
 
 Ejemplo para aumentar recursos de una funci\u00f3n:

@@ -737,5 +737,6 @@ export const generateNoteFromAudio = functions.https.onCall({ memory: '2GiB', ti
             ` ${process.memoryUsage().rss}`);
     }
 });
-export { createJob, worker, getJobStatus, downloadJobResult } from './jobs/jobFunctions.js';
+export { createJob, worker, getJobStatus, downloadJobResult, cleanupOldJobs } from './jobs/jobFunctions.js';
+export { deleteApiCacheFile } from './utils/apiCacheCleanup.js';
 //# sourceMappingURL=index.js.map

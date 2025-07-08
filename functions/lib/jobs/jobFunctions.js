@@ -138,4 +138,25 @@ export const downloadJobResult = functions.https.onRequest({ memory: '1GiB', tim
     res.json({ url });
     return;
 });
+const JOB_RETENTION_DAYS = Number(process.env.JOB_RETENTION_DAYS || '30');
+export const cleanupOldJobs = functions.pubsub.schedule('every 24 hours').onRun(async () => {
+    const cutoff = Date.now() - JOB_RETENTION_DAYS * 86400000;
+    const query = db
+        .collection('jobs')
+        .where('status', 'in', ['completed', 'failed'])
+        .where('updatedAt', '<', new Date(cutoff));
+    const snap = await query.get();
+    for (const doc of snap.docs) {
+        const data = doc.data();
+        if (data.resultPath) {
+            try {
+                await storage.file(data.resultPath).delete();
+            }
+            catch (err) {
+                console.error('cleanupOldJobs delete', err);
+            }
+        }
+        await doc.ref.delete();
+    }
+});
 //# sourceMappingURL=jobFunctions.js.map
