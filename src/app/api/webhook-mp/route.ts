@@ -5,6 +5,9 @@ import { payment } from "@/lib/mercadopago"
 import { dbAdmin } from "@/lib/firebase-admin"
 import { Timestamp } from "firebase-admin/firestore"
 import { PLAN_LIMITS } from "@/lib/plans"
+import { createHmac } from "crypto"
+
+export const runtime = 'nodejs'
 
 const DEBUG = process.env.NODE_ENV !== 'production'
 
@@ -12,7 +15,33 @@ const db = dbAdmin
 
 export async function POST(request: Request) {
   try {
-    const { type, data } = (await request.json()) as {
+    const rawBody = await request.text()
+    const signature = request.headers.get('x-signature') || ''
+    const tokenHeader = request.headers.get('x-webhook-token') || ''
+    const secret = process.env.MP_WEBHOOK_SECRET
+    const token = process.env.MP_WEBHOOK_TOKEN
+
+    if (secret) {
+      if (!signature) {
+        if (DEBUG) console.warn('Missing signature header')
+        return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
+      }
+      const expected = createHmac('sha256', secret).update(rawBody).digest('hex')
+      if (signature !== expected) {
+        if (DEBUG) console.warn('Invalid webhook signature')
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
+      }
+    } else if (token) {
+      if (tokenHeader !== token) {
+        if (DEBUG) console.warn('Invalid webhook token')
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+      }
+    } else {
+      if (DEBUG) console.warn('No webhook verification configured')
+      return NextResponse.json({ error: 'Webhook verification not configured' }, { status: 401 })
+    }
+
+    const { type, data } = JSON.parse(rawBody) as {
       type: string
       data: { id: string }
     }

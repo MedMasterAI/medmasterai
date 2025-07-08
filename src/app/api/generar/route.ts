@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getAuth } from 'firebase-admin/auth'
 import { html as beautifyHtml } from 'js-beautify'
 import { pdfExtract } from '@lib/ingesta/pdfExtractPdfReader'
 import { generarEsquemaJSON } from '@lib/structura/generarEsquemaJSON'
@@ -45,11 +46,15 @@ function chunkTextByTokens(text: string, maxTokens = CHUNK_TOKEN_SIZE): string[]
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData()
-    const uid = formData.get('uid')
-    if (typeof uid !== 'string' || !uid) {
-      return NextResponse.json({ error: 'UID requerido' }, { status: 400 })
+    const authHeader = request.headers.get('authorization') || ''
+    if (!authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Token requerido' }, { status: 401 })
     }
+    const idToken = authHeader.split(' ')[1]
+    const decoded = await getAuth().verifyIdToken(idToken)
+    const uid = decoded.uid
+
+    const formData = await request.formData()
 
   let rawText: string
 

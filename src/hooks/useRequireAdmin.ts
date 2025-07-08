@@ -1,19 +1,36 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useRequireAuth } from './useRequireAuth'
 
 export function useRequireAdmin() {
   const user = useRequireAuth()
   const router = useRouter()
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
 
   useEffect(() => {
-    if (user && adminEmail && user.email !== adminEmail) {
-      router.replace('/dashboard')
+    const check = async () => {
+      if (!user) return
+      try {
+        const token = await user.getIdToken()
+        const res = await fetch('/api/is-admin', {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        if (res.ok) {
+          setIsAdmin(true)
+        } else {
+          setIsAdmin(false)
+          router.replace('/dashboard')
+        }
+      } catch (err) {
+        console.error('check admin error', err)
+        setIsAdmin(false)
+        router.replace('/dashboard')
+      }
     }
-  }, [user, router, adminEmail])
+    check()
+  }, [user, router])
 
-  if (!user || user.email !== adminEmail) return null
+  if (!user || isAdmin !== true) return null
   return user
 }

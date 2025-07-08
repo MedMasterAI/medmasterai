@@ -1,6 +1,9 @@
 
 import { NextResponse } from "next/server"
+import { getAuth } from 'firebase-admin/auth'
 import { dbAdmin } from '@/lib/firebase-admin'
+
+export const runtime = 'nodejs'
 
 const PLAN_LIMITS = {
   free:      { pdf: 1,  video: 1 },
@@ -10,9 +13,16 @@ const PLAN_LIMITS = {
 
 export async function POST(req: Request) {
   try {
-    const { type, uid, plan } = (await req.json()) as {
+    const authHeader = req.headers.get('authorization') || ''
+    if (!authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Token requerido' }, { status: 401 })
+    }
+    const idToken = authHeader.split(' ')[1]
+    const decoded = await getAuth().verifyIdToken(idToken)
+    const uid = decoded.uid
+
+    const { type, plan } = (await req.json()) as {
       type: "pdf" | "video"
-      uid: string
       plan: "free" | "pro" | "unlimited"
     }
 

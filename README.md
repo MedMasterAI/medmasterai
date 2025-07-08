@@ -118,7 +118,7 @@ Configura el envío de emails definiendo `RESEND_API_KEY` en tu `.env` y usando 
 Define `MP_ACCESS_TOKEN` para autenticar las llamadas a la API de Mercado Pago.
 
 ### Reporte fiscal personal
-Define `ADMIN_EMAIL` y `NEXT_PUBLIC_ADMIN_EMAIL` con el correo del administrador para restringir el módulo de reporte fiscal.
+Define `ADMIN_EMAIL` con el correo del administrador. Se valida exclusivamente en el servidor para restringir el módulo de reporte fiscal.
 
 ### TTL de la caché de APIs
 La colección `apiCache` guarda las respuestas de Gemini y otros servicios para acelerar consultas. Controla su tiempo de vida con:
