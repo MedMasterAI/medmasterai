@@ -3,6 +3,37 @@ import { htmlToPdf } from "./lib/pdf/htmlToPdf";
 import cors from "cors";
 import { logger } from "./logger";
 
+class Semaphore {
+  private queue: Array<() => void> = [];
+  private active = 0;
+
+  constructor(private readonly limit: number) {}
+
+  async acquire(): Promise<() => void> {
+    return new Promise((resolve) => {
+      const run = () => {
+        this.active++;
+        resolve(this.release.bind(this));
+      };
+      if (this.active < this.limit) {
+        run();
+      } else {
+        this.queue.push(run);
+      }
+    });
+  }
+
+  private release() {
+    this.active--;
+    const next = this.queue.shift();
+    if (next) next();
+  }
+}
+
+const semaphore = new Semaphore(
+  Number(process.env.PAGE_CONCURRENCY || 2)
+);
+
 const app = express();
 
 // Middleware global
@@ -26,7 +57,9 @@ app.post("/generate-pdf", async (req: Request, res: Response) => {
   logger.log("Largo recibido:", req.body.html?.length);
   logger.log("Preview recibido:", req.body.html?.slice(0, 200));
 
+  let release: () => void;
   try {
+    release = await semaphore.acquire();
     const html = req.body?.html;
     if (typeof html !== "string" || !html.trim()) {
       res.status(400).json({ error: "Missing HTML" });
@@ -45,6 +78,8 @@ app.post("/generate-pdf", async (req: Request, res: Response) => {
       res.status(500).json({ error: error.message || "Internal server error" });
     }
     logger.error("Error en /generate-pdf:", error);
+  } finally {
+    if (release) release();
   }
 });
 

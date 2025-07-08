@@ -10,6 +10,8 @@ import { htmlToPdf } from '../pdf/htmlToPdf.js'
 const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
 const CHUNK_TOKEN_SIZE = 10000
 
+import { Readable } from 'stream'
+
 function chunkTextByTokens(text: string, maxTokens = CHUNK_TOKEN_SIZE): string[] {
   const maxChars = maxTokens * 4
   const chunks: string[] = []
@@ -97,6 +99,51 @@ async function transcribeAudioChunks(buffer: Buffer, mimeType: string): Promise<
     result += `${await transcribeAudio(part, mimeType)} `
   }
   return result.trim()
+}
+
+async function* chunkReadable(readable: Readable, maxBytes: number): AsyncGenerator<Buffer> {
+  let buf = Buffer.alloc(0)
+  for await (const chunk of readable) {
+    buf = Buffer.concat([buf, Buffer.from(chunk)])
+    while (buf.length >= maxBytes) {
+      yield buf.subarray(0, maxBytes)
+      buf = buf.subarray(maxBytes)
+    }
+  }
+  if (buf.length > 0) {
+    yield buf
+  }
+}
+
+async function transcribeAudioStream(readable: Readable, mimeType: string): Promise<string> {
+  let result = ''
+  for await (const part of chunkReadable(readable, OPENAI_AUDIO_LIMIT)) {
+    result += `${await transcribeAudio(part, mimeType)} `
+  }
+  return result.trim()
+}
+
+export async function procesarAudioMedMasterStream(readable: Readable, mimeType: string) {
+  const rawText = await transcribeAudioStream(readable, mimeType)
+  const bloques = chunkTextByTokens(rawText)
+  const htmlFragments: string[] = []
+  for (const texto of bloques) {
+    const esquema = await generarEsquemaJSON(texto)
+    const html = await generarHTMLMedMaster(esquema)
+    htmlFragments.push(html)
+  }
+  const fullHtml = htmlFragments.join('\n\n')
+  const cleanHtml = sanitizeHtmlContent(fullHtml)
+  checkHtmlRules(cleanHtml)
+  const prettyHtml = beautifyHtml(cleanHtml, {
+    indent_size: 2,
+    wrap_line_length: 0,
+    preserve_newlines: true,
+    max_preserve_newlines: 2,
+    end_with_newline: true
+  })
+  const pdfBuffer = await htmlToPdf(prettyHtml)
+  return { pdfBuffer, rawText, prettyHtml }
 }
 
 export async function procesarAudioMedMaster(buffer: Buffer, mimeType: string) {

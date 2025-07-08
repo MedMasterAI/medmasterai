@@ -4,7 +4,7 @@ import "./firebase-admin.js";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 
-import { pdfExtract } from "./ingesta/pdfExtractPdfReader.js";
+import { pdfExtractFile } from "./ingesta/pdfExtractPdfReader.js";
 import { generarEsquemaJSON } from "./structura/generarEsquemaJSON.js";
 import { generarHTMLMedMaster } from "./html/generarHTMLMedMaster.js";
 import { sanitizeHtmlContent } from "./validator/htmlSanitizer.js";
@@ -13,7 +13,13 @@ import { htmlToPdf } from "./pdf/htmlToPdf.js";
 import { ocrConDocumentAI } from "./ocr/ocrConDocumentAI.js";
 import { splitPdfByPageCount } from "./pdfsplit/splitPdfBuffer.js";
 import { cleanupStuckNotes } from "./utils/cleanupStuckNotes.js";
-import { procesarAudioMedMaster } from "./lib/procesarAudioMedMaster.js";
+import { procesarAudioMedMasterStream } from "./lib/procesarAudioMedMaster.js";
+import * as fs from "node:fs";
+import * as fsp from "node:fs/promises";
+import * as path from "node:path";
+import { tmpdir } from "node:os";
+import { pipeline } from "node:stream/promises";
+import { Readable } from "node:stream";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
@@ -101,7 +107,7 @@ export const generateNoteFromPdf = functions.https.onCall(
 
     const isPlus = plan === "pro" || plan === "unlimited";
     const noteRef = db.collection("users").doc(uid).collection("notes").doc(noteId);
-    let fileBuffer: Buffer | undefined;
+    const tmpPdfPath = path.join(tmpdir(), `${noteId}-${fileName}`);
     await cleanupStuckNotes(uid);
     const startTime = Date.now();
     const startMem = process.memoryUsage().rss;
@@ -126,10 +132,9 @@ export const generateNoteFromPdf = functions.https.onCall(
         );
       }
 
-      const [downloadedBuffer] = await file.download();
-      fileBuffer = downloadedBuffer;
+      await pipeline(file.createReadStream(), fs.createWriteStream(tmpPdfPath));
 
-      let rawText = await pdfExtract(fileBuffer);
+      let rawText = await pdfExtractFile(tmpPdfPath);
       await noteRef.update({
         status: "processing",
         progress: 30,
@@ -138,7 +143,8 @@ export const generateNoteFromPdf = functions.https.onCall(
 
       // OCR solo para usuarios Plus si no hay texto extraído
       if (isPlus && (!rawText || rawText.trim().length < 200)) {
-        const partes = await splitPdfByPageCount(fileBuffer, 15);
+        const buffer = await fsp.readFile(tmpPdfPath);
+        const partes = await splitPdfByPageCount(buffer, 15);
         const textos: string[] = [];
         for (let i = 0; i < partes.length; i++) {
           const texto = await ocrConDocumentAI(partes[i]);
@@ -245,6 +251,7 @@ export const generateNoteFromPdf = functions.https.onCall(
           console.error("Error deleting temp file:", err);
         }
       });
+      await fsp.unlink(tmpPdfPath).catch(() => {});
 
       return { success: true, noteId: noteId, publicURL: publicURL };
     } catch (err: unknown) {
@@ -266,6 +273,7 @@ export const generateNoteFromPdf = functions.https.onCall(
         `generateNoteFromPdf end - duration: ${Date.now() - startTime}ms rss:` +
           ` ${process.memoryUsage().rss}`
       );
+      await fsp.unlink(tmpPdfPath).catch(() => {});
     }
   }
 );
@@ -294,7 +302,7 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
 
     const isPlus = plan === 'pro' || plan === 'unlimited';
     const noteRef = db.collection('users').doc(uid).collection('notes').doc(noteId);
-    let fileBuffer: Buffer | undefined;
+    const tmpPdfPath = path.join(tmpdir(), `${noteId}-${fileName}`);
     await cleanupStuckNotes(uid);
     const startTime = Date.now();
     const startMem = process.memoryUsage().rss;
@@ -318,10 +326,9 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
         );
       }
 
-      const [downloadedBuffer] = await file.download();
-      fileBuffer = downloadedBuffer;
+      await pipeline(file.createReadStream(), fs.createWriteStream(tmpPdfPath));
 
-      let rawText = await pdfExtract(fileBuffer);
+      let rawText = await pdfExtractFile(tmpPdfPath);
       await noteRef.update({
         status: 'processing',
         progress: 30,
@@ -329,7 +336,8 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
       });
 
       if (isPlus && (!rawText || rawText.trim().length < 200)) {
-        const partes = await splitPdfByPageCount(fileBuffer, 15);
+        const buffer = await fsp.readFile(tmpPdfPath);
+        const partes = await splitPdfByPageCount(buffer, 15);
         const textos: string[] = [];
         for (let i = 0; i < partes.length; i++) {
           const texto = await ocrConDocumentAI(partes[i]);
@@ -418,6 +426,7 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
           console.error('Error deleting temp file:', err);
         }
       });
+      await fsp.unlink(tmpPdfPath).catch(() => {});
 
       return { success: true, noteId: noteId, publicURL: publicURL };
     } catch (err: unknown) {
@@ -438,6 +447,7 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
         `generateNoteFromPdfEmphasis end - duration: ${Date.now() - startTime}ms rss:` +
           ` ${process.memoryUsage().rss}`
       );
+      await fsp.unlink(tmpPdfPath).catch(() => {});
     }
   }
 );
@@ -476,29 +486,37 @@ export const generateNoteFromVideo = functions.https.onCall(
     const isPlus = plan === "pro" || plan === "unlimited";
 
     await cleanupStuckNotes(uid);
-    const userSnap = await userRef.get();
-    const activeCount = userSnap.exists ? userSnap.get("activeNoteCount") || 0 : 0;
+    try {
+      await db.runTransaction(async tx => {
+        const snap = await tx.get(userRef);
+        const activeCount = snap.exists ? snap.get('activeNoteCount') || 0 : 0;
+        console.log(`Concurrencia actual: ${activeCount}`);
 
-    console.log(`Concurrencia actual: ${activeCount}`);
+        if (activeCount >= 3) {
+          throw new functions.https.HttpsError(
+            'resource-exhausted',
+            'Ya estás generando 3 tareas. Espera a que finalicen.'
+          );
+        }
 
-    if (activeCount >= 3) {
-      await noteRef.set(
-        {
-          status: "failed",
-          errorMessage: "Ya estás generando 3 videos, espera a que finalicen para enviar más",
-          lastUpdated: FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      );
-      throw new functions.https.HttpsError(
-        "resource-exhausted",
-        "Ya estás generando 3 tareas. Espera a que finalicen."
-      );
+        tx.update(userRef, {
+          activeNoteCount: FieldValue.increment(1),
+        });
+      });
+    } catch (err) {
+      if ((err as functions.https.HttpsError).code === 'resource-exhausted') {
+        await noteRef.set(
+          {
+            status: 'failed',
+            errorMessage:
+              'Ya estás generando 3 videos, espera a que finalicen para enviar más',
+            lastUpdated: FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        );
+      }
+      throw err;
     }
-
-    await userRef.update({
-      activeNoteCount: FieldValue.increment(1),
-    });
 
     const startTime = Date.now();
     const startMem = process.memoryUsage().rss;
@@ -666,29 +684,37 @@ export const generateNoteFromVideoEmphasis = functions.https.onCall(
     const isPlus = plan === 'pro' || plan === 'unlimited';
 
     await cleanupStuckNotes(uid);
-    const userSnap = await userRef.get();
-    const activeCount = userSnap.exists ? userSnap.get('activeNoteCount') || 0 : 0;
+    try {
+      await db.runTransaction(async tx => {
+        const snap = await tx.get(userRef);
+        const activeCount = snap.exists ? snap.get('activeNoteCount') || 0 : 0;
+        console.log(`Concurrencia actual: ${activeCount}`);
 
-    console.log(`Concurrencia actual: ${activeCount}`);
+        if (activeCount >= 3) {
+          throw new functions.https.HttpsError(
+            'resource-exhausted',
+            'Ya estás generando 3 tareas. Espera a que finalicen.'
+          );
+        }
 
-    if (activeCount >= 3) {
-      await noteRef.set(
-        {
-          status: 'failed',
-          errorMessage: 'Ya estás generando 3 videos, espera a que finalicen para enviar más',
-          lastUpdated: FieldValue.serverTimestamp(),
-        },
-        { merge: true }
-      );
-      throw new functions.https.HttpsError(
-        'resource-exhausted',
-        'Ya estás generando 3 tareas. Espera a que finalicen.'
-      );
+        tx.update(userRef, {
+          activeNoteCount: FieldValue.increment(1),
+        });
+      });
+    } catch (err) {
+      if ((err as functions.https.HttpsError).code === 'resource-exhausted') {
+        await noteRef.set(
+          {
+            status: 'failed',
+            errorMessage:
+              'Ya estás generando 3 videos, espera a que finalicen para enviar más',
+            lastUpdated: FieldValue.serverTimestamp(),
+          },
+          { merge: true }
+        );
+      }
+      throw err;
     }
-
-    await userRef.update({
-      activeNoteCount: FieldValue.increment(1),
-    });
 
     const startTime = Date.now();
     const startMem = process.memoryUsage().rss;
@@ -869,19 +895,18 @@ export const generateNoteFromAudio = functions.https.onCall(
         { merge: true }
       );
 
-      let audioBuffer: Buffer;
+      let audioStream: NodeJS.ReadableStream;
       if (audioUrl) {
         const res = await fetch(audioUrl);
         if (!res.ok) throw new Error(`Fetch ${res.status}`);
-        audioBuffer = Buffer.from(await res.arrayBuffer());
+        audioStream = res.body ? (Readable.fromWeb(res.body as any) as NodeJS.ReadableStream) : Readable.from([]);
       } else {
         const file = bucket.file(filePath);
         const [exists] = await file.exists();
         if (!exists) {
           throw new functions.https.HttpsError('not-found', 'Archivo no encontrado');
         }
-        const [buf] = await file.download();
-        audioBuffer = buf;
+        audioStream = file.createReadStream();
       }
 
       await noteRef.update({
@@ -890,7 +915,7 @@ export const generateNoteFromAudio = functions.https.onCall(
         lastUpdated: FieldValue.serverTimestamp(),
       });
 
-      const { pdfBuffer, rawText, prettyHtml } = await procesarAudioMedMaster(audioBuffer, fileMimeType);
+      const { pdfBuffer, rawText, prettyHtml } = await procesarAudioMedMasterStream(audioStream, fileMimeType);
 
       await noteRef.update({
         status: 'processing',

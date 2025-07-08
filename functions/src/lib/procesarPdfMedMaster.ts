@@ -1,6 +1,7 @@
 // src/lib/procesarPdfMedMaster.ts
 import { html as beautifyHtml } from 'js-beautify'
-import { pdfExtract } from '@lib/ingesta/pdfExtractPdfReader.js'
+import { pdfExtract, pdfExtractFile } from '@lib/ingesta/pdfExtractPdfReader.js'
+import * as fs from 'node:fs/promises'
 import { generarEsquemaJSON } from '@lib/structura/generarEsquemaJSON.js'
 import { generarHTMLMedMaster } from '@lib/html/generarHTMLMedMaster.js'
 import { sanitizeHtmlContent } from '@lib/validator/htmlSanitizer.js'
@@ -71,4 +72,39 @@ export async function procesarPdfMedMaster(buffer: Buffer, { isPlus = false } = 
   const pdfBuffer = await htmlToPdf(prettyHtml)
 
   return { pdfBuffer, rawText, prettyHtml }
+}
+
+export async function procesarPdfMedMasterFile(filePath: string, { isPlus = false } = {}) {
+  let rawText = await pdfExtractFile(filePath);
+  const buffer = await fs.readFile(filePath);
+  if (isPlus && (!rawText || rawText.trim().length < 200)) {
+    const partes = await splitPdfByPageCount(buffer, 15);
+    const textos: string[] = [];
+    for (const parte of partes) {
+      const texto = await ocrConDocumentAI(parte);
+      textos.push(texto);
+    }
+    rawText = textos.join('\n\n');
+  } else if (!isPlus && (!rawText || rawText.trim().length < 200)) {
+    throw new Error('No se pudo extraer texto del PDF.');
+  }
+  const bloques = chunkTextByTokens(rawText);
+  const htmlFragments: string[] = [];
+  for (const texto of bloques) {
+    const esquema = await generarEsquemaJSON(texto);
+    const html = await generarHTMLMedMaster(esquema);
+    htmlFragments.push(html);
+  }
+  const fullHtml = htmlFragments.join('\n\n');
+  const cleanHtml = sanitizeHtmlContent(fullHtml);
+  checkHtmlRules(cleanHtml);
+  const prettyHtml = beautifyHtml(cleanHtml, {
+    indent_size: 2,
+    wrap_line_length: 0,
+    preserve_newlines: true,
+    max_preserve_newlines: 2,
+    end_with_newline: true,
+  });
+  const pdfBuffer = await htmlToPdf(prettyHtml);
+  return { pdfBuffer, rawText, prettyHtml };
 }

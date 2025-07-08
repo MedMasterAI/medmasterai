@@ -5,12 +5,11 @@ import { Request, Response } from 'express';
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { dbAdmin, storageAdmin } from "../firebase-admin.js"; // PONÉ .js si usás ES Modules y .ts si usás TS directo
+import { callGemini, callOpenAI } from '../utils/apiWrappers.js'
 const db = dbAdmin;
 const storage = storageAdmin;
 
-const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 const JOB_TOPIC = process.env.JOB_TOPIC || 'jobs';
 const JOB_LIMIT = Number(process.env.JOBS_PER_MINUTE || '5');
@@ -82,29 +81,6 @@ export const createJob = functions.https.onRequest(
   }
 );
 
-async function callGemini(prompt: string) {
-  const model = ai.getGenerativeModel({ model: process.env.MODEL_GEMINI || 'gemini-pro' });
-  const response = await model.generateContent(prompt);
-  return response.response?.text();
-}
-
-async function callOpenAI(prompt: string) {
-  const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
-  const res = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
-  if (!res.ok) throw new Error(`OpenAI error ${res.status}`);
-  const data = (await res.json()) as any;
-  return data.choices?.[0]?.message?.content as string;
-}
 
 async function processJob(jobId: string) {
   const jobRef = db.collection('jobs').doc(jobId);

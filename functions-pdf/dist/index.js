@@ -7,6 +7,34 @@ const express_1 = __importDefault(require("express"));
 const htmlToPdf_1 = require("./lib/pdf/htmlToPdf");
 const cors_1 = __importDefault(require("cors"));
 const logger_1 = require("./logger");
+class Semaphore {
+    constructor(limit) {
+        this.limit = limit;
+        this.queue = [];
+        this.active = 0;
+    }
+    async acquire() {
+        return new Promise((resolve) => {
+            const run = () => {
+                this.active++;
+                resolve(this.release.bind(this));
+            };
+            if (this.active < this.limit) {
+                run();
+            }
+            else {
+                this.queue.push(run);
+            }
+        });
+    }
+    release() {
+        this.active--;
+        const next = this.queue.shift();
+        if (next)
+            next();
+    }
+}
+const semaphore = new Semaphore(Number(process.env.PAGE_CONCURRENCY || 2));
 const app = (0, express_1.default)();
 // Middleware global
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")
@@ -25,7 +53,9 @@ app.post("/generate-pdf", async (req, res) => {
     logger_1.logger.log("Tipo recibido:", typeof req.body.html);
     logger_1.logger.log("Largo recibido:", req.body.html?.length);
     logger_1.logger.log("Preview recibido:", req.body.html?.slice(0, 200));
+    let release;
     try {
+        release = await semaphore.acquire();
         const html = req.body?.html;
         if (typeof html !== "string" || !html.trim()) {
             res.status(400).json({ error: "Missing HTML" });
@@ -42,6 +72,10 @@ app.post("/generate-pdf", async (req, res) => {
             res.status(500).json({ error: error.message || "Internal server error" });
         }
         logger_1.logger.error("Error en /generate-pdf:", error);
+    }
+    finally {
+        if (release)
+            release();
     }
 });
 const PORT = process.env.PORT || 8080;

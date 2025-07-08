@@ -8,6 +8,7 @@ import { checkHtmlRules } from '@lib/validator/ruleChecker'
 import { htmlToPdf } from '@lib/pdf/htmlToPdf'
 import { consumeCredit } from '@/lib/credits'
 import { slugify, extractTitle } from '@lib/utils/slugify'
+import { callDumplingAI } from '@lib/apiWrappers'
 
 export const runtime = 'nodejs'
 // Cantidad de tokens objetivo por chunk de entrada
@@ -52,24 +53,25 @@ export async function POST(request: NextRequest) {
 
   let rawText: string
 
-  // 1️⃣ YouTube → Transcripción interna
-  const videoUrl = formData.get('videoUrl')
-  if (typeof videoUrl === 'string' && videoUrl.trim()) {
-    await consumeCredit(uid, 'video')
-    const transcriptRes = await fetch(new URL('/api/yt-transcript', request.nextUrl.origin), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ videoUrl: videoUrl.trim() })
-    })
-    if (!transcriptRes.ok) {
-      const err = await transcriptRes.json().catch(() => ({ error: transcriptRes.statusText }))
-      return NextResponse.json(
-        { error: err.error || transcriptRes.statusText },
-        { status: transcriptRes.status }
-      )
-    }
-    rawText = await transcriptRes.text()
-  } else {
+    // 1️⃣ YouTube → Dumpling AI
+    const videoUrl = formData.get('videoUrl')
+    if (typeof videoUrl === 'string' && videoUrl.trim()) {
+      await consumeCredit(uid, 'video')
+      const { transcript } = await callDumplingAI({
+        videoUrl: videoUrl.trim(),
+        includeTimestamps: true,
+        timestampsToCombine: 5,
+        preferredLanguage: 'en'
+      })
+      // Normalizar cualquier formato de transcript a texto plano
+      if (Array.isArray(transcript)) {
+        rawText = transcript
+          .map(item => typeof item === 'string' ? item : item.text)
+          .join(' ')
+      } else {
+        rawText = String(transcript)
+      }
+    } else {
       // 2️⃣ PDF → texto plano
       const file = formData.get('file')
       if (!file || typeof file === 'string') {

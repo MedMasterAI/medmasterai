@@ -45,3 +45,28 @@ export async function pdfExtract(data: Uint8Array): Promise<string> {
     });
   });
 }
+
+export async function pdfExtractFile(filePath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    let lastY: number | null = null;
+    let result = "";
+    new PdfReader().parseFileItems(filePath, (err: unknown, item: unknown) => {
+      if (err) {
+        if (err instanceof Error) {
+          return reject(err);
+        }
+        return reject(new Error(`PdfReader error: ${String(err)}`));
+      }
+      if (!item) {
+        return resolve(result);
+      }
+      if (isPdfTextItem(item)) {
+        if (lastY !== item.y) {
+          result += "\n";
+          lastY = item.y;
+        }
+        result += item.text;
+      }
+    });
+  });
+}
