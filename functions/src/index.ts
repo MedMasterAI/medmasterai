@@ -24,10 +24,13 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
 const beautifyHtml = jsBeautify.html_beautify;
-import type { File } from "@google-cloud/storage";
+interface StorageFile {
+  exists(): Promise<[boolean]>;
+  createReadStream(): NodeJS.ReadableStream;
+}
 
 async function waitForFile(
-  file: File,
+  file: StorageFile,
   retries = 3,
   delayMs = 1000
 ): Promise<boolean> {
