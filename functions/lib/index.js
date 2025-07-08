@@ -23,6 +23,15 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
 const beautifyHtml = jsBeautify.html_beautify;
+async function waitForFile(file, retries = 3, delayMs = 1000) {
+    for (let i = 0; i < retries; i++) {
+        const [exists] = await file.exists();
+        if (exists)
+            return true;
+        await new Promise((res) => setTimeout(res, delayMs));
+    }
+    return false;
+}
 const CHUNK_TOKEN_SIZE = 10000;
 /**
  * Split a large text into token-sized chunks.
@@ -85,7 +94,7 @@ export const generateNoteFromPdf = functions.https.onCall({ memory: '2GiB', time
         const bucket = storage.bucket();
         const filePath = `temp_uploads/${uid}/${noteId}/${fileName}`;
         const file = bucket.file(filePath);
-        const [exists] = await file.exists();
+        const exists = await waitForFile(file);
         if (!exists) {
             throw new functions.https.HttpsError("not-found", "El archivo PDF no se encontró en Cloud Storage.");
         }
