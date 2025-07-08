@@ -34,7 +34,7 @@ class Semaphore {
             next();
     }
 }
-const semaphore = new Semaphore(Number(process.env.PAGE_CONCURRENCY || 2));
+const semaphore = new Semaphore(Number(process.env.PDF_PAGE_CONCURRENCY || 5));
 const app = (0, express_1.default)();
 // Middleware global
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "")

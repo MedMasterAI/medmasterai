@@ -1,4 +1,7 @@
-import fs from "fs/promises";
+import { createReadStream } from "node:fs";
+import { unlink } from "node:fs/promises";
+import { pipeline } from "node:stream/promises";
+import { Writable } from "node:stream";
 import { File } from "formidable";
 
 /**
@@ -10,10 +13,16 @@ import { File } from "formidable";
  * @returns Array de datos base64 tipo data:...;base64
  */
 export async function pdfToImages(uploaded: File): Promise<string[]> {
-  // Leemos el archivo desde el disco
-  const buffer = await fs.readFile(uploaded.filepath);
-  // Convertimos a base64
-  const base64 = buffer.toString("base64");
-  // Y devolvemos el data URI completo
+  let base64 = "";
+  await pipeline(
+    createReadStream(uploaded.filepath),
+    new Writable({
+      write(chunk, _enc, cb) {
+        base64 += (chunk as Buffer).toString("base64");
+        cb();
+      },
+    })
+  );
+  await unlink(uploaded.filepath).catch(() => {});
   return [`data:${uploaded.mimetype};base64,${base64}`];
 }

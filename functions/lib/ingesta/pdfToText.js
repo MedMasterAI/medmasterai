@@ -1,10 +1,17 @@
 // lib/ingesta/pdfToText.ts
 import pdfParse from "pdf-parse"; // Corregido: comillas dobles
-import * as fs from "node:fs/promises"; // Corregido: comillas dobles
+import { createReadStream } from "node:fs";
+import { pipeline } from "node:stream/promises";
+import { Writable } from "node:stream";
 export async function pdfToText(filePath) {
-    // Primero, leemos el contenido del archivo PDF en un Buffer
-    const pdfBuffer = await fs.readFile(filePath);
-    // Ahora llamamos a pdfParse con el Buffer
+    const chunks = [];
+    await pipeline(createReadStream(filePath), new Writable({
+        write(chunk, _enc, cb) {
+            chunks.push(chunk);
+            cb();
+        },
+    }));
+    const pdfBuffer = Buffer.concat(chunks);
     const data = (await pdfParse(pdfBuffer));
     if (typeof data.text === "string") { // Corregido: comillas dobles
         return data.text;

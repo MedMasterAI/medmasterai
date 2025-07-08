@@ -96,6 +96,9 @@ GOOGLE_API_KEY                  # Clave de la API de Gemini/Generative AI
 GEMINI_API_KEY                 # API key para usar Gemini en las rutas del backend
 MODEL_GEMINI                   # Modelo principal del asistente (p. ej. "gemini-pro")
 MODEL_GEMINI_FALLBACK          # Modelo de respaldo opcional (por defecto "gemini-1.5-pro")
+API_TOKENS_PER_MINUTE         # Valor por defecto para los límites de la cubeta
+GEMINI_TPS                     # Solicitudes por segundo permitidas a Gemini
+OPENAI_TPS                     # Solicitudes por segundo permitidas a OpenAI
 ```
 
 ### CORS para la función PDF
@@ -106,6 +109,7 @@ ALLOWED_ORIGINS=https://ejemplo.com,https://otro.com
 Al desplegar, establece `ALLOWED_ORIGINS` con los dominios autorizados a invocar la función PDF.
 Si Puppeteer no encuentra Chrome, define también `CHROME_PATH` con la ruta al ejecutable.
 Si necesitas depurar la generación de PDFs, define `DEBUG_PDF=true` para mostrar logs detallados.
+Puedes ajustar cuántas páginas abre Puppeteer en paralelo con `PDF_PAGE_CONCURRENCY` (valor recomendado de 1 a 10, por defecto 5).
 
 ### Notificaciones por correo (Resend)
 Configura el envío de emails definiendo `RESEND_API_KEY` en tu `.env` y usando una dirección de remitente asociada a un dominio verificado en [Resend](https://resend.com). Las rutas `/api/send-support-email` y `/api/send-note-ready` utilizan esta clave para notificar a los usuarios.
@@ -172,6 +176,7 @@ Variables relevantes:
 ```bash
 JOB_TOPIC=jobs                # Nombre del topic de Pub/Sub
 JOBS_PER_MINUTE=5             # L\u00edmite de trabajos por usuario
+MAX_GLOBAL_JOBS=100           # Jobs m\u00e1ximos encolados o en ejecuci\u00f3n
 GEMINI_API_KEY=...            # API key de Gemini
 OPENAI_API_KEY=...            # API key de OpenAI
 JOB_RETENTION_DAYS=30         # Días a conservar cada job completo
@@ -231,4 +236,18 @@ Se incluyen endpoints para integrar Mercado Pago:
 - `/api/refund` procesa reembolsos aplicando las políticas de la app.
 
 Todas las acciones se registran en Firestore mediante `src/lib/logger.ts`.
+
+## Monitoreo y alertas
+
+Las funciones exportan métricas personalizadas a Cloud Monitoring mediante `@google-cloud/monitoring`:
+
+- `custom.googleapis.com/pdf_processing_time_ms`: tiempo en milisegundos que tarda en generarse un apunte desde un PDF.
+- `custom.googleapis.com/job_queue_size`: cantidad de trabajos en cola o en proceso.
+
+Ejemplos de políticas de alerta:
+
+- **Procesamiento de PDF lento**: activar una alerta si el valor `pdf_processing_time_ms` (p95) supera los `600000` ms durante 5 minutos.
+- **Cola de trabajos saturada**: notificar cuando `job_queue_size` se mantiene por encima de `50` durante 10 minutos.
+
+Crea estas reglas desde la consola de Monitoring seleccionando el tipo de métrica correspondiente.
 

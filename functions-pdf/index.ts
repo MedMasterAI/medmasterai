@@ -31,7 +31,7 @@ class Semaphore {
 }
 
 const semaphore = new Semaphore(
-  Number(process.env.PAGE_CONCURRENCY || 2)
+  Number(process.env.PDF_PAGE_CONCURRENCY || 5)
 );
 
 const app = express();

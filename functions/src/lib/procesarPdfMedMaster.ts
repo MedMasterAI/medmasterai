@@ -1,7 +1,10 @@
 // src/lib/procesarPdfMedMaster.ts
 import { html as beautifyHtml } from 'js-beautify'
 import { pdfExtract, pdfExtractFile } from '@lib/ingesta/pdfExtractPdfReader.js'
-import * as fs from 'node:fs/promises'
+import { createReadStream } from 'node:fs'
+import { unlink } from 'node:fs/promises'
+import { pipeline } from 'node:stream/promises'
+import { Writable } from 'node:stream'
 import { generarEsquemaJSON } from '@lib/structura/generarEsquemaJSON.js'
 import { generarHTMLMedMaster } from '@lib/html/generarHTMLMedMaster.js'
 import { sanitizeHtmlContent } from '@lib/validator/htmlSanitizer.js'
@@ -76,7 +79,17 @@ export async function procesarPdfMedMaster(buffer: Buffer, { isPlus = false } = 
 
 export async function procesarPdfMedMasterFile(filePath: string, { isPlus = false } = {}) {
   let rawText = await pdfExtractFile(filePath);
-  const buffer = await fs.readFile(filePath);
+  const chunks: Buffer[] = [];
+  await pipeline(
+    createReadStream(filePath),
+    new Writable({
+      write(chunk, _enc, cb) {
+        chunks.push(chunk as Buffer);
+        cb();
+      },
+    })
+  );
+  const buffer = Buffer.concat(chunks);
   if (isPlus && (!rawText || rawText.trim().length < 200)) {
     const partes = await splitPdfByPageCount(buffer, 15);
     const textos: string[] = [];
@@ -106,5 +119,6 @@ export async function procesarPdfMedMasterFile(filePath: string, { isPlus = fals
     end_with_newline: true,
   });
   const pdfBuffer = await htmlToPdf(prettyHtml);
+  await unlink(filePath).catch(() => {});
   return { pdfBuffer, rawText, prettyHtml };
 }

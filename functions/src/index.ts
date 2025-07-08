@@ -13,6 +13,7 @@ import { htmlToPdf } from "./pdf/htmlToPdf.js";
 import { ocrConDocumentAI } from "./ocr/ocrConDocumentAI.js";
 import { splitPdfByPageCount } from "./pdfsplit/splitPdfBuffer.js";
 import { cleanupStuckNotes } from "./utils/cleanupStuckNotes.js";
+import { recordMetric } from "./utils/metrics.js";
 import { procesarAudioMedMasterStream } from "./lib/procesarAudioMedMaster.js";
 import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
@@ -290,6 +291,10 @@ export const generateNoteFromPdf = functions.https.onCall(
         `generateNoteFromPdf end - duration: ${Date.now() - startTime}ms rss:` +
           ` ${process.memoryUsage().rss}`
       );
+      await recordMetric(
+        'custom.googleapis.com/pdf_processing_time_ms',
+        Date.now() - startTime
+      );
       await fsp.unlink(tmpPdfPath).catch(() => {});
     }
   }
@@ -463,6 +468,10 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
       console.log(
         `generateNoteFromPdfEmphasis end - duration: ${Date.now() - startTime}ms rss:` +
           ` ${process.memoryUsage().rss}`
+      );
+      await recordMetric(
+        'custom.googleapis.com/pdf_processing_time_ms',
+        Date.now() - startTime
       );
       await fsp.unlink(tmpPdfPath).catch(() => {});
     }

@@ -2,7 +2,10 @@ import crypto from 'crypto';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { dbAdmin, storageAdmin } from '../firebase-admin.js';
+import { getThrottler } from './throttler.js';
 const API_CACHE_TTL_DAYS = Number(process.env.API_CACHE_TTL_DAYS || '30');
+const geminiThrottle = getThrottler('gemini', Number(process.env.GEMINI_TPS || '1'));
+const openAIThrottle = getThrottler('openai', Number(process.env.OPENAI_TPS || '1'));
 function hashKey(obj) {
     return crypto.createHash('sha256').update(JSON.stringify(obj)).digest('hex');
 }
@@ -80,6 +83,7 @@ export async function callGemini(prompt, model = process.env.MODEL_GEMINI || 'ge
     const cached = await getCached('gemini', key);
     if (cached)
         return cached;
+    await geminiThrottle.acquire();
     const ai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
     const fn = async () => {
         const m = ai.getGenerativeModel({ model });
@@ -98,6 +102,7 @@ export async function callOpenAI(prompt) {
     const cached = await getCached('openai', key);
     if (cached)
         return cached;
+    await openAIThrottle.acquire();
     const fn = async () => {
         const res = await fetch('https://api.openai.com/v1/chat/completions', {
             method: 'POST',

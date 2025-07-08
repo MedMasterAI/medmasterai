@@ -32,6 +32,7 @@
     "pdf2pic": "^3.1.4",
     "pdfjs-dist": "^5.2.133",
     "pdfreader": "^3.0.7",
+    "@google-cloud/monitoring": "^3.2.0",
     "puppeteer": "^24.9.0",
     "sanitize-html": "^2.17.0",
     "tesseract.js": "^6.0.1"
