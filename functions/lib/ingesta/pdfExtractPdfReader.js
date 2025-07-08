@@ -32,4 +32,28 @@ export async function pdfExtract(data) {
         });
     });
 }
+export async function pdfExtractFile(filePath) {
+    return new Promise((resolve, reject) => {
+        let lastY = null;
+        let result = "";
+        new PdfReader().parseFileItems(filePath, (err, item) => {
+            if (err) {
+                if (err instanceof Error) {
+                    return reject(err);
+                }
+                return reject(new Error(`PdfReader error: ${String(err)}`));
+            }
+            if (!item) {
+                return resolve(result);
+            }
+            if (isPdfTextItem(item)) {
+                if (lastY !== item.y) {
+                    result += "\n";
+                    lastY = item.y;
+                }
+                result += item.text;
+            }
+        });
+    });
+}
 //# sourceMappingURL=pdfExtractPdfReader.js.map

@@ -57,7 +57,7 @@ app.post("/generate-pdf", async (req: Request, res: Response) => {
   logger.log("Largo recibido:", req.body.html?.length);
   logger.log("Preview recibido:", req.body.html?.slice(0, 200));
 
-  let release: () => void;
+  let release: (() => void) | undefined;
   try {
     release = await semaphore.acquire();
     const html = req.body?.html;

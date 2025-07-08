@@ -895,18 +895,18 @@ export const generateNoteFromAudio = functions.https.onCall(
         { merge: true }
       );
 
-      let audioStream: NodeJS.ReadableStream;
+      let audioStream: Readable;
       if (audioUrl) {
         const res = await fetch(audioUrl);
         if (!res.ok) throw new Error(`Fetch ${res.status}`);
-        audioStream = res.body ? (Readable.fromWeb(res.body as any) as NodeJS.ReadableStream) : Readable.from([]);
+        audioStream = res.body ? Readable.fromWeb(res.body as any) : Readable.from([]);
       } else {
         const file = bucket.file(filePath);
         const [exists] = await file.exists();
         if (!exists) {
           throw new functions.https.HttpsError('not-found', 'Archivo no encontrado');
         }
-        audioStream = file.createReadStream();
+        audioStream = file.createReadStream() as unknown as Readable;
       }
 
       await noteRef.update({
