@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { toast } from "sonner";
+import { getAuth } from "firebase/auth";
 
 type PlanType = "free" | "pro" | "unlimited";
 
@@ -33,9 +34,15 @@ export function useMonthlyUsage(
     if (!uid) return;
     const fetchCounts = async () => {
       try {
+        const user = getAuth().currentUser;
+        if (!user) throw new Error("No hay usuario");
+        const token = await user.getIdToken();
         const res = await fetch("/api/usage", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ type: "status", uid, plan }),
         });
         const data = await res.json();
@@ -55,9 +62,15 @@ export function useMonthlyUsage(
   const increment = useCallback(
     async (type: "pdf" | "video") => {
       if (!uid) throw new Error("No hay usuario");
+      const user = getAuth().currentUser;
+      if (!user) throw new Error("No hay usuario");
+      const token = await user.getIdToken();
       const res = await fetch("/api/usage", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ type, uid, plan }),
       });
       const data = await res.json();

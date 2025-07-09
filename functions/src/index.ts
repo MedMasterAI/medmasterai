@@ -32,7 +32,7 @@ interface StorageFile {
 
 async function waitForFile(
   file: StorageFile,
-  retries = 3,
+  retries = 5,
   delayMs = 1000
 ): Promise<boolean> {
   for (let i = 0; i < retries; i++) {
@@ -340,7 +340,7 @@ export const generateNoteFromPdfEmphasis = functions.https.onCall(
       const filePath = `temp_uploads/${uid}/${noteId}/${fileName}`;
       const file = bucket.file(filePath);
 
-      const [exists] = await file.exists();
+      const exists = await waitForFile(file);
       if (!exists) {
         throw new functions.https.HttpsError(
           'not-found',
