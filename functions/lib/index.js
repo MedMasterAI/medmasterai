@@ -689,9 +689,9 @@ export const generateNoteFromAudio = functions.https.onCall({ memory: '2GiB', ti
         }
         else {
             const file = bucket.file(filePath);
-            const [exists] = await file.exists();
+            const exists = await waitForFile(file);
             if (!exists) {
-                throw new functions.https.HttpsError('not-found', 'Archivo no encontrado');
+                throw new functions.https.HttpsError('not-found', 'El archivo de audio no se encontró en Cloud Storage.');
             }
             audioStream = file.createReadStream();
         }
