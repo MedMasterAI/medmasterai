@@ -32,7 +32,7 @@ interface StorageFile {
 
 async function waitForFile(
   file: StorageFile,
-  retries = 15,
+  retries = 30,
   delayMs = 1000
 ): Promise<boolean> {
   for (let i = 0; i < retries; i++) {

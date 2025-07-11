@@ -52,6 +52,10 @@ ubicados en la raíz del proyecto. `firebase.json` define la configuración
 básica de *hosting* y funciones, mientras que `.firebaserc` indica el
 proyecto de Firebase por defecto.
 
+Al procesar audios o PDFs, las funciones esperan hasta **30 segundos** a que el
+archivo aparezca en Cloud Storage. Asegúrate de finalizar la subida antes de
+invocar la función si tu conexión es lenta o el archivo es grande.
+
 ## Configuración del entorno y CORS
 
 El proyecto utiliza varias credenciales que se definen como variables de entorno. Guárdalas en un archivo `.env` o en tu gestor de secretos antes de ejecutar la aplicación o desplegar las funciones.

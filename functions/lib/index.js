@@ -24,7 +24,7 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const jsBeautify = require("js-beautify");
 const beautifyHtml = jsBeautify.html_beautify;
-async function waitForFile(file, retries = 15, delayMs = 1000) {
+async function waitForFile(file, retries = 30, delayMs = 1000) {
     for (let i = 0; i < retries; i++) {
         const [exists] = await file.exists();
         if (exists)

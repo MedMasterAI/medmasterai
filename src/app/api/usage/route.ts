@@ -21,7 +21,17 @@ export async function POST(req: Request) {
     const decoded = await getAuth().verifyIdToken(idToken)
     const uid = decoded.uid
 
-    const { type, plan } = (await req.json()) as {
+    let body: any
+    try {
+      body = await req.json()
+    } catch (err) {
+      return NextResponse.json(
+        { error: "JSON inválido" },
+        { status: 400 }
+      )
+    }
+
+    const { type, plan } = body as {
       type: "pdf" | "video"
       plan: "free" | "pro" | "unlimited"
     }
