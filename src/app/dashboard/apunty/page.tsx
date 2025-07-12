@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { ERROR_CODES, formatErrorMessage } from "@/lib/errorCodes"
 import { useRequireAuth } from "@/hooks/useRequireAuth"
@@ -21,6 +20,7 @@ import { getFirestore, doc, setDoc, onSnapshot } from "firebase/firestore"
 import { getStorage, ref, uploadBytes } from "firebase/storage"
 import { httpsCallable } from "firebase/functions"
 import { getFirebaseFunctions } from "@/lib/firebase"
+import { v4 as uuidv4 } from 'uuid'
 
 const DEBUG = process.env.NODE_ENV !== 'production'
 const statusMessages: Record<JobStatus, string> = {
@@ -47,8 +47,6 @@ export default function Page() {
   const { pdfCount, canPdf, increment } = useMonthlyUsage(user?.uid ?? null, plan)
 
   const [file, setFile] = useState<File | null>(null)
-  const [emphasis, setEmphasis] = useState(false)
-  const [points, setPoints] = useState("")
   const [loadingForm, setLoadingForm] = useState(false)
   const [progress, setProgress] = useState(0)
   const [jobStatus, setJobStatus] = useState<JobStatus>("idle")
@@ -133,7 +131,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
     setStatusDetail("Validando datos y usuario...")
     try {
       await increment("pdf")
-      const noteId = Date.now().toString()
+      const noteId = uuidv4()
       setJobNoteId(noteId)
 
       // Subir PDF al storage temporal
@@ -162,9 +160,7 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
       setProgress(35)
       setJobStatus("calling_function")
       setStatusDetail("Llamando función Cloud Function (IA)...")
-      const funcName = emphasis && points.trim()
-        ? "generateNoteFromPdfEmphasis"
-        : "generateNoteFromPdf"
+      const funcName = "generateNoteFromPdf"
       if (DEBUG) console.log("Llamando Cloud Function:", funcName)
       const generate = httpsCallable(getFirebaseFunctions(), funcName, {
         timeout: 540000,
@@ -174,7 +170,6 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
         plan,
         fileName: file.name,
         fileMimeType: "application/pdf",
-        ...(emphasis && points.trim() ? { emphasis: points.trim() } : {}),
       })
 
       setProgress(40)
@@ -338,19 +333,6 @@ if (DEBUG) console.log("Usuario Firebase actual:", user);
                       <p className="text-xs text-primary mt-1 font-semibold flex items-center gap-1">
                         <FileTextIcon className="w-4 h-4" /> {file.name}
                       </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2">
-                      <input type="checkbox" checked={emphasis} onChange={(e) => setEmphasis(e.target.checked)} />
-                      ¿Querés enfatizar algún punto?
-                    </label>
-                    {emphasis && (
-                      <Textarea
-                        placeholder="Fisiopatología, diagnóstico diferencial..."
-                        value={points}
-                        onChange={(e) => setPoints(e.target.value)}
-                      />
                     )}
                   </div>
 

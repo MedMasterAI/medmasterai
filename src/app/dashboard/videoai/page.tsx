@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 import { ERROR_CODES, formatErrorMessage } from '@/lib/errorCodes'
 import { useAuth } from '@/hooks/useAuth'
@@ -30,8 +29,6 @@ export default function Page() {
   const { videoCount, canVideo, increment } = useMonthlyUsage(user?.uid ?? null, plan)
 
   const [videoUrl, setVideoUrl] = useState('')
-  const [emphasis, setEmphasis] = useState(false)
-  const [points, setPoints] = useState('')
   const [progress, setProgress] = useState(0)
   const [jobStatus, setJobStatus] = useState<JobStatus>("idle")
   const [statusDetail, setStatusDetail] = useState<string>("")
@@ -180,9 +177,7 @@ export default function Page() {
       setProgress(30)
       setJobStatus("calling_function")
       setStatusDetail("Llamando función Cloud Function (IA)...")
-      const funcName = emphasis && points.trim()
-        ? "generateNoteFromVideoEmphasis"
-        : "generateNoteFromVideo"
+      const funcName = "generateNoteFromVideo"
       const generateNoteFromVideo = httpsCallable(getFirebaseFunctions(), funcName, {
         timeout: 540000,
       })
@@ -191,7 +186,6 @@ export default function Page() {
         plan,
         videoUrl,
         fileName: "Apunte-Video.pdf",
-        ...(emphasis && points.trim() ? { emphasis: points.trim() } : {}),
       }).then(r => {
         if (DEBUG) console.log('[DEBUG] Response función:', r)
       }).catch(err => {
@@ -322,19 +316,6 @@ export default function Page() {
  className="bg-accent-2/50 dark:bg-card-dark focus:border-primary"
 />
 
-                      <div className="space-y-2 pt-2">
-                        <label className="flex items-center gap-2">
-                          <input type="checkbox" checked={emphasis} onChange={(e) => setEmphasis(e.target.checked)} />
-                          ¿Querés enfatizar algún punto?
-                        </label>
-                        {emphasis && (
-                          <Textarea
-                            placeholder="Fisiopatología, diagnóstico diferencial..."
-                            value={points}
-                            onChange={(e) => setPoints(e.target.value)}
-                          />
-                        )}
-                      </div>
 
                       </div>
                       <Button

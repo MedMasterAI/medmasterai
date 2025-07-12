@@ -17,6 +17,7 @@ import { JobStatus } from '@/lib/statusMessages'
 import { toast } from 'sonner'
 import { ERROR_CODES, formatErrorMessage } from '@/lib/errorCodes'
 import { Mic } from 'lucide-react'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function Page() {
   const router = useRouter()
@@ -95,7 +96,7 @@ export default function Page() {
     }
 
     try {
-      const noteId = Date.now().toString()
+      const noteId = uuidv4()
       setJobNoteId(noteId)
 
       if (file) {
